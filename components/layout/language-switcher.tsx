@@ -12,7 +12,6 @@ export function LanguageSwitcher() {
   function switchLocale() {
     const nextLocale = locale === "ka" ? "en" : "ka";
 
-    // Strip current locale prefix and prepend new one
     const pathWithoutLocale = pathname.replace(/^\/(ka|en)/, "") || "/";
     const newPath =
       nextLocale === "ka" ? pathWithoutLocale : `/en${pathWithoutLocale}`;
@@ -21,7 +20,12 @@ export function LanguageSwitcher() {
   }
 
   return (
-    <Button variant="ghost" size="sm" onClick={switchLocale}>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-8 w-8 rounded-xl text-xs font-medium text-muted-foreground/70"
+      onClick={switchLocale}
+    >
       {locale === "ka" ? "EN" : "ქარ"}
     </Button>
   );

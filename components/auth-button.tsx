@@ -10,16 +10,18 @@ export async function AuthButton() {
   } = await supabase.auth.getUser();
 
   return user ? (
-    <div className="flex items-center gap-4">
-      Hey, {user.email}!
+    <div className="flex items-center gap-3 pl-2">
+      <span className="hidden sm:inline text-[13px] text-muted-foreground truncate max-w-[160px]">
+        {user.email}
+      </span>
       <LogoutButton />
     </div>
   ) : (
-    <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
+    <div className="flex gap-1.5 pl-1.5">
+      <Button asChild size="sm" variant="ghost">
         <Link href="/auth/login">Sign in</Link>
       </Button>
-      <Button asChild size="sm" variant={"default"}>
+      <Button asChild size="sm" variant="default">
         <Link href="/auth/sign-up">Sign up</Link>
       </Button>
     </div>

@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    /* Slate-based palette with soft Indigo accent */
+    /* Light — pure white cards on faint slate background */
     --background: 210 40% 98%;
     --foreground: 222 47% 11.2%;
     --card: 0 0% 100%;
@@ -13,14 +13,14 @@
     --popover-foreground: 222 47% 11.2%;
     --primary: 226 64% 52%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 214 32% 95%;
     --secondary-foreground: 222 47% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
+    --accent: 214 32% 95%;
     --accent-foreground: 222 47% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 226 64% 52%;
@@ -33,24 +33,25 @@
   }
 
   .dark {
-    --background: 222 47% 11.2%;
+    /* Dark — deep elegant slate, never pitch black */
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
-    --card: 217.2 32.6% 17.5%;
+    --card: 222 47% 11.2%;
     --card-foreground: 210 40% 98%;
-    --popover: 217.2 32.6% 17.5%;
+    --popover: 222 47% 11.2%;
     --popover-foreground: 210 40% 98%;
     --primary: 224 64% 68%;
-    --primary-foreground: 222 47% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --primary-foreground: 224 71% 4%;
+    --secondary: 215.3 25% 18%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 215.3 25% 26.7%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --muted: 215.3 25% 18%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215.3 25% 18%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 215.3 25% 26.7%;
-    --input: 215.3 25% 26.7%;
+    --border: 215.3 25% 18%;
+    --input: 215.3 25% 18%;
     --ring: 224 64% 68%;
     --chart-1: 224 64% 68%;
     --chart-2: 160 60% 45%;
@@ -66,14 +67,6 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-  }
-
-  /* Smooth transitions for theme switching */
-  html.transitioning,
-  html.transitioning *,
-  html.transitioning *::before,
-  html.transitioning *::after {
-    transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease !important;
+    @apply bg-background text-foreground antialiased leading-relaxed;
   }
 }

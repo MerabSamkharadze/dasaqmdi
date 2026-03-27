@@ -9,26 +9,26 @@ export async function Header() {
   const t = await getTranslations("nav");
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
-      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
         {/* Logo + Nav */}
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
+            className="text-base font-semibold tracking-tight text-foreground transition-colors duration-200 hover:text-primary"
           >
             დასაქმდი
           </Link>
           <nav className="hidden sm:flex items-center gap-6">
             <Link
               href="/jobs"
-              className="text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              className="text-[13px] font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               {t("jobs")}
             </Link>
             <Link
               href="/companies"
-              className="text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+              className="text-[13px] font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
             >
               {t("companies")}
             </Link>
@@ -36,7 +36,7 @@ export async function Header() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5">
           <LanguageSwitcher />
           <ThemeSwitcher />
           <Suspense>

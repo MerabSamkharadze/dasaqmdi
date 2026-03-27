@@ -54,13 +54,13 @@ export default async function HomePage({
       <Header />
 
       <main className="flex-1 w-full">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12">
           {/* Page header */}
-          <div className="flex items-baseline justify-between mb-6">
-            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          <div className="flex items-baseline justify-between mb-8">
+            <h1 className="text-lg font-semibold tracking-tight text-foreground">
               {t("jobs.title")}
             </h1>
-            <span className="text-sm text-muted-foreground tabular-nums">
+            <span className="text-xs text-muted-foreground/60 tabular-nums">
               {totalCount}
             </span>
           </div>

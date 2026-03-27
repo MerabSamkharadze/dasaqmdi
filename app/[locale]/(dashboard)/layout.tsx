@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+import { getProfile } from "@/lib/queries/profile";
+import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import type { UserRole } from "@/lib/types/enums";
 
 export default async function DashboardLayout({
   children,
@@ -17,15 +19,22 @@ export default async function DashboardLayout({
     redirect("/auth/login");
   }
 
+  const profile = await getProfile(user.id);
+  const role: UserRole = profile?.role ?? "seeker";
+
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col items-center">
-        <Header />
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5 w-full">
-          {children}
-        </div>
-        <Footer />
+    <div className="flex h-screen overflow-hidden bg-background">
+      <DashboardSidebar role={role} />
+
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <DashboardHeader email={user.email ?? ""} role={role} />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+            {children}
+          </div>
+        </main>
       </div>
-    </main>
+    </div>
   );
 }

@@ -28,10 +28,10 @@ export function DeleteApplicationButton({
       size="sm"
       onClick={handleDelete}
       disabled={pending}
-      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+      className="text-destructive/70 hover:text-destructive hover:bg-destructive/5"
     >
-      <Trash2 className="h-4 w-4 mr-1" />
-      {t("deleteApplication")}
+      <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+      <span className="text-[13px]">{t("deleteApplication")}</span>
     </Button>
   );
 }

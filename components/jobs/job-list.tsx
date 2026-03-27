@@ -15,14 +15,14 @@ type JobListProps = {
 export function JobList({ jobs, locale, translations }: JobListProps) {
   if (jobs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-20 text-muted-foreground">
-        <p className="text-base">{translations.noJobs}</p>
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-24 text-muted-foreground/60">
+        <p className="text-sm">{translations.noJobs}</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {jobs.map((job, i) => (
         <div
           key={job.id}

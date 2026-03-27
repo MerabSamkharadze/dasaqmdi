@@ -23,7 +23,14 @@
     "logout": "Log Out",
     "profile": "Profile",
     "myApplications": "My Applications",
-    "myJobs": "My Jobs"
+    "myJobs": "My Jobs",
+    "myCompany": "My Company",
+    "createCompany": "Create Company",
+    "manageUsers": "Manage Users",
+    "manageJobs": "Manage Jobs",
+    "manageCompanies": "Manage Companies",
+    "settings": "Settings",
+    "backToSite": "Back to Site"
   },
   "home": {
     "title": "Find Your Dream Job in Georgia",

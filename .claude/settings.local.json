@@ -22,7 +22,13 @@
       "Bash(node -e \"try { const rd = require\\(''''react-dom''''\\); console.log\\(Object.keys\\(rd\\).filter\\(k => k.includes\\(''''Form''''\\)\\)\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npm run build)",
       "Bash(npx next:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(find /c/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\\\\\(dashboard\\\\\\) -type f -name \"*.tsx\" -o -name \"*.ts\")",
+      "Bash(npx shadcn@latest add separator sheet avatar tooltip scroll-area textarea select --yes)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add separator sheet avatar tooltip scroll-area textarea select --yes)",
+      "Bash(ls \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/profile/\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/company/new\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs\")"
     ]
   }
 }

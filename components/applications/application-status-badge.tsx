@@ -9,11 +9,11 @@ type ApplicationStatusBadgeProps = {
 };
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  reviewed: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
-  shortlisted: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400",
-  rejected: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-  accepted: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  pending: "bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400/90",
+  reviewed: "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400/90",
+  shortlisted: "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400/90",
+  rejected: "bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400/90",
+  accepted: "bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400/90",
 };
 
 export function ApplicationStatusBadge({
@@ -22,17 +22,16 @@ export function ApplicationStatusBadge({
   label,
   seenLabel,
 }: ApplicationStatusBadgeProps) {
-  // If pending but viewed, show "Seen" instead of "Pending"
   const displayLabel = status === "pending" && isViewed ? seenLabel : label;
   const displayStatus = status === "pending" && isViewed ? "reviewed" : status;
 
   return (
     <Badge
       variant="secondary"
-      className={cn("text-xs font-medium", statusColors[displayStatus])}
+      className={cn("text-[11px] font-medium", statusColors[displayStatus])}
     >
       {isViewed && status === "pending" && (
-        <span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5" />
       )}
       {displayLabel}
     </Badge>
