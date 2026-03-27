@@ -508,7 +508,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [x] Job CRUD for employers (create/edit/close/renew)
 - [x] Public company pages (directory + profile)
 
-### Phase 3: Applications & Tracking [IN PROGRESS]
+### Phase 3: Applications & Tracking [DONE]
 - [x] Smart Visibility: deadline + freshness filter on job feed
 - [x] Application tracking schema: `is_viewed`, `viewed_at` fields
 - [x] `markApplicationViewedAction()` — employer marks as seen
@@ -516,16 +516,17 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [x] Seeker dashboard (`/seeker/applications`) — full tracking UI
 - [x] ApplicationStatusBadge — green dot for "Seen", color-coded statuses
 - [x] Expired job visual: red row highlight + "Expired" badge + Delete button
-- [ ] Apply to job (resume upload + cover letter form)
-- [ ] Employer: review applicants per job (trigger markViewed)
-- [ ] Employer dashboard: expired jobs red indicator
+- [x] Apply to job (resume upload + cover letter form)
+- [x] Employer: review applicants per job (trigger markViewed, update status)
+- [x] Employer dashboard: expired jobs red indicator + renew/close buttons
 
-### Phase 4: Admin & Polish [TODO]
-- [ ] Admin dashboard (stats, moderation)
-- [ ] Admin: manage users, jobs, companies
-- [ ] 30-Day Freshness: "Renew for 30 days" button in employer dashboard
+### Phase 4: Admin & Polish [IN PROGRESS]
+- [x] Admin dashboard (stats: users, jobs, companies, applications)
+- [x] Admin: manage users (role select), jobs (delete), companies (verify)
+- [x] Admin layout guard (role check, redirect non-admins)
+- [x] 30-Day Freshness: "Renew for 30 days" button in employer dashboard
+- [x] SEO: generateMetadata on job detail, company pages
 - [ ] Loading states (Skeleton) + error boundaries
-- [ ] SEO: generateMetadata on key pages
 - [ ] Responsive design pass (mobile-first)
 
 ### Phase 5: Intelligence [FUTURE]

@@ -32,7 +32,14 @@
       "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(public\\)/jobs/[id]\")",
       "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(public\\)/companies/[slug]\")",
       "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs/new\")",
-      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs/[id]\")"
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs/[id]\")",
+      "Bash(npm info:*)",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/admin/users\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/admin/jobs\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/admin/companies\")",
+      "Bash(curl:*)",
+      "Bash(node:*)",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add skeleton --yes)"
     ]
   }
 }

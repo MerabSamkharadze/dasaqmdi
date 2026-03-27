@@ -1,11 +1,13 @@
 "use client";
 
+import { useRef, useCallback } from "react";
 import { useFormState } from "react-dom";
 import { useTranslations } from "next-intl";
 import { createJobAction, updateJobAction } from "@/lib/actions/jobs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { AIDraftButton } from "@/components/dashboard/ai-draft-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -35,6 +37,18 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
   const t = useTranslations("jobs");
   const tc = useTranslations("common");
   const tt = useTranslations("jobs.types");
+  const descRef = useRef<HTMLTextAreaElement>(null);
+  const descKaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleAIDraft = useCallback((text: string) => {
+    const targetRef = locale === "ka" ? descKaRef : descRef;
+    if (targetRef.current) {
+      targetRef.current.value = text;
+      // Trigger React's change detection
+      const event = new Event("input", { bubbles: true });
+      targetRef.current.dispatchEvent(event);
+    }
+  }, [locale]);
 
   return (
     <form action={formAction} className="space-y-6">
@@ -42,15 +56,23 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       {job && <input type="hidden" name="job_id" value={job.id} />}
 
       {state.error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
           {state.error}
         </div>
       )}
 
       {mode === "edit" && state.error === null && state !== initialState && (
-        <div className="rounded-lg border border-green-500/50 bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400">
+        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-3 text-[13px] text-green-700 dark:text-green-400">
           Saved
         </div>
+      )}
+
+      {/* AI Draft */}
+      {mode === "create" && (
+        <AIDraftButton
+          onDraftComplete={handleAIDraft}
+          language={locale === "ka" ? "ka" : "en"}
+        />
       )}
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -198,6 +220,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
+          ref={descRef}
           id="description"
           name="description"
           rows={6}
@@ -210,6 +233,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       <div className="space-y-2">
         <Label htmlFor="description_ka">Description (Georgian)</Label>
         <Textarea
+          ref={descKaRef}
           id="description_ka"
           name="description_ka"
           rows={6}

@@ -26,8 +26,8 @@ export default async function CreateJobPage() {
 
   if (!company) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-20 gap-4">
-        <p className="text-sm text-muted-foreground">
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 gap-4">
+        <p className="text-sm text-muted-foreground/60">
           You need to create a company first
         </p>
         <Button asChild>
@@ -41,8 +41,8 @@ export default async function CreateJobPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">{t("create")}</h1>
-      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
+      <h1 className="text-lg font-semibold tracking-tight">{t("create")}</h1>
+      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
         <JobForm
           companyId={company.id}
           categories={categories}

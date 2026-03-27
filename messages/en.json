@@ -71,7 +71,10 @@
     "create": "Post a New Job",
     "editJob": "Edit Job",
     "closeJob": "Close Job",
-    "jobClosed": "This job is no longer accepting applications"
+    "jobClosed": "This job is no longer accepting applications",
+    "match": "{score}% Match",
+    "matchingSkills": "Your matching skills",
+    "noMatchData": "Add skills to your profile to see match scores"
   },
   "categories": {
     "it-software": "IT & Software",

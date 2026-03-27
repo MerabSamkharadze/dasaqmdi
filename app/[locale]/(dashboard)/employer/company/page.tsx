@@ -26,9 +26,9 @@ export default async function EmployerCompanyPage() {
   if (!company) {
     return (
       <div className="flex flex-col gap-6">
-        <h1 className="text-xl font-semibold tracking-tight">{t("title")}</h1>
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-20 gap-4">
-          <p className="text-sm text-muted-foreground">{t("createCompany")}</p>
+        <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 gap-4">
+          <p className="text-sm text-muted-foreground/60">{t("createCompany")}</p>
           <Button asChild>
             <Link href="/employer/company/new">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -42,8 +42,8 @@ export default async function EmployerCompanyPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">{t("editCompany")}</h1>
-      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
+      <h1 className="text-lg font-semibold tracking-tight">{t("editCompany")}</h1>
+      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
         <CompanyForm company={company} mode="edit" userId={user.id} />
       </div>
     </div>

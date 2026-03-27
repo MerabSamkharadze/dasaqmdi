@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { closeJobAction, renewJobAction } from "@/lib/actions/jobs";
-import { Edit, XCircle, RefreshCw } from "lucide-react";
+import { Edit, XCircle, RefreshCw, Users } from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
 
@@ -28,16 +28,16 @@ export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButton
   }
 
   return (
-    <div className="flex items-center gap-1 shrink-0">
+    <div className="flex items-center gap-0.5 shrink-0">
       {(isExpired || isClosed) && (
         <Button
           variant="outline"
           size="sm"
           onClick={handleRenew}
           disabled={isPending}
-          className="gap-1.5"
+          className="gap-1.5 text-[13px]"
         >
-          <RefreshCw className="h-3.5 w-3.5" />
+          <RefreshCw className="h-3 w-3" />
           Renew
         </Button>
       )}
@@ -48,16 +48,22 @@ export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButton
           size="sm"
           onClick={handleClose}
           disabled={isPending}
-          className="gap-1.5 text-muted-foreground"
+          className="gap-1.5 text-muted-foreground/70 text-[13px]"
         >
-          <XCircle className="h-3.5 w-3.5" />
+          <XCircle className="h-3 w-3" />
           Close
         </Button>
       )}
 
-      <Button variant="ghost" size="sm" asChild>
+      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" asChild>
+        <Link href={`/employer/jobs/${jobId}/applications`}>
+          <Users className="h-3.5 w-3.5 text-muted-foreground/70" />
+        </Link>
+      </Button>
+
+      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" asChild>
         <Link href={`/employer/jobs/${jobId}`}>
-          <Edit className="h-3.5 w-3.5" />
+          <Edit className="h-3.5 w-3.5 text-muted-foreground/70" />
         </Link>
       </Button>
     </div>

@@ -22,17 +22,16 @@ export default async function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <p>Profile not found</p>
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 text-muted-foreground/60">
+        <p className="text-sm">Profile not found</p>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-xl font-semibold tracking-tight">{t("title")}</h1>
-
-      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
+      <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
+      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
         <ProfileForm profile={profile} />
       </div>
     </div>

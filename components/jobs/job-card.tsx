@@ -1,16 +1,18 @@
 import { Badge } from "@/components/ui/badge";
 import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
-import { Building2, Calendar, Clock, MapPin } from "lucide-react";
+import { Building2, Calendar, Clock, MapPin, Zap } from "lucide-react";
 import Link from "next/link";
 
 type JobCardProps = {
   job: JobWithCompany;
   locale: string;
+  matchScore?: number | null;
   translations: {
     remote: string;
     types: Record<string, string>;
     deadline: string;
+    match?: string;
   };
 };
 
@@ -32,7 +34,7 @@ function formatSalary(
   return `${max!.toLocaleString()} ${currency}`;
 }
 
-export function JobCard({ job, locale, translations }: JobCardProps) {
+export function JobCard({ job, locale, matchScore, translations }: JobCardProps) {
   const title = localized(job, "title", locale);
   const companyName = localized(job.company, "name", locale);
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency);
@@ -85,6 +87,15 @@ export function JobCard({ job, locale, translations }: JobCardProps) {
             {job.is_remote && (
               <Badge variant="outline" className="text-[11px] font-normal px-2 py-0.5 border-primary/20 text-primary/80">
                 {translations.remote}
+              </Badge>
+            )}
+            {matchScore != null && matchScore > 0 && (
+              <Badge
+                variant="outline"
+                className="text-[11px] font-medium px-2 py-0.5 border-emerald-300/50 bg-emerald-50/80 text-emerald-700 dark:border-emerald-700/40 dark:bg-emerald-900/20 dark:text-emerald-400 gap-1"
+              >
+                <Zap className="h-2.5 w-2.5" />
+                {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
               </Badge>
             )}
           </div>

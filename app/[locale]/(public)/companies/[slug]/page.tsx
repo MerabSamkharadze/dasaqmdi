@@ -42,15 +42,15 @@ export default async function CompanyProfilePage({ params }: PageProps) {
     <div className="flex flex-col gap-8">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted/60">
           {company.logo_url ? (
             <img
               src={company.logo_url}
               alt={name}
-              className="h-12 w-12 rounded-lg object-contain"
+              className="h-10 w-10 rounded-lg object-contain"
             />
           ) : (
-            <Building2 className="h-8 w-8 text-muted-foreground" />
+            <Building2 className="h-6 w-6 text-muted-foreground/50" />
           )}
         </div>
 
@@ -58,23 +58,23 @@ export default async function CompanyProfilePage({ params }: PageProps) {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
             {company.is_verified && (
-              <Badge variant="secondary" className="gap-1">
+              <Badge variant="secondary" className="gap-1 text-[12px] bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400/90">
                 <CheckCircle className="h-3 w-3" />
                 {t("verified")}
               </Badge>
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-[13px] text-muted-foreground/70">
             {company.city && (
               <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5 opacity-60" />
+                <MapPin className="h-3.5 w-3.5 opacity-50" />
                 {company.city}
               </span>
             )}
             {company.employee_count && (
               <span className="flex items-center gap-1">
-                <Users className="h-3.5 w-3.5 opacity-60" />
+                <Users className="h-3.5 w-3.5 opacity-50" />
                 {company.employee_count}
               </span>
             )}
@@ -83,7 +83,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
                 href={company.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-primary hover:underline"
+                className="flex items-center gap-1 text-primary/80 hover:text-primary transition-colors duration-200"
               >
                 <Globe className="h-3.5 w-3.5" />
                 Website
@@ -96,7 +96,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
 
       {/* Description */}
       {description && (
-        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
+        <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
           <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {description}
           </div>
@@ -105,8 +105,8 @@ export default async function CompanyProfilePage({ params }: PageProps) {
 
       {/* Address */}
       {address && (
-        <div className="text-sm text-muted-foreground flex items-center gap-2">
-          <MapPin className="h-4 w-4 opacity-60" />
+        <div className="text-[13px] text-muted-foreground/60 flex items-center gap-2">
+          <MapPin className="h-3.5 w-3.5 opacity-50" />
           {address}
         </div>
       )}

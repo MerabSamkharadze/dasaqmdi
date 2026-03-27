@@ -42,26 +42,26 @@ export default async function SeekerApplicationsPage() {
 
   if (applications.length === 0) {
     return (
-      <div className="flex-1 flex flex-col gap-4">
-        <h1 className="text-2xl font-bold">{t("myApplications")}</h1>
-        <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-          <p className="text-lg">{t("noApplications")}</p>
+      <div className="flex-1 flex flex-col gap-6">
+        <h1 className="text-lg font-semibold tracking-tight">{t("myApplications")}</h1>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 text-muted-foreground/60">
+          <p className="text-sm">{t("noApplications")}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t("myApplications")}</h1>
-        <span className="text-sm text-muted-foreground">
-          {applications.length} {t("title").toLowerCase()}
+    <div className="flex-1 flex flex-col gap-6">
+      <div className="flex items-baseline justify-between">
+        <h1 className="text-lg font-semibold tracking-tight">{t("myApplications")}</h1>
+        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
+          {applications.length}
         </span>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        {applications.map((app) => {
+      <div className="flex flex-col gap-2.5">
+        {applications.map((app, i) => {
           const expired = isJobExpired(
             app.job.application_deadline,
             app.job.status,
@@ -69,7 +69,6 @@ export default async function SeekerApplicationsPage() {
           const jobTitle = localized(app.job, "title", locale);
           const companyName = localized(app.job.company, "name", locale);
 
-          // Determine display status label
           const statusKey = app.status as keyof typeof statusLabels;
           const statusLabels = {
             pending: t("status.pending"),
@@ -83,83 +82,80 @@ export default async function SeekerApplicationsPage() {
             <div
               key={app.id}
               className={cn(
-                "flex items-center gap-4 p-4 border-b border-border last:border-b-0 transition-colors",
-                expired &&
-                  "bg-red-50/50 dark:bg-red-950/20 border-l-2 border-l-red-400 dark:border-l-red-600",
+                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-sm transition-all duration-200 animate-fade-in",
+                expired
+                  ? "border-red-200/60 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10"
+                  : "border-border/30",
               )}
+              style={{ animationDelay: `${i * 50}ms` }}
             >
-              {/* Company logo */}
-              <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border bg-muted">
-                {app.job.company.logo_url ? (
-                  <img
-                    src={app.job.company.logo_url}
-                    alt={companyName}
-                    className="h-8 w-8 rounded object-contain"
+              <div className="flex items-center gap-4">
+                {/* Company logo */}
+                <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+                  {app.job.company.logo_url ? (
+                    <img
+                      src={app.job.company.logo_url}
+                      alt={companyName}
+                      className="h-8 w-8 rounded-md object-contain"
+                    />
+                  ) : (
+                    <Building2 className="h-4 w-4 text-muted-foreground/50" />
+                  )}
+                </div>
+
+                {/* Job info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link
+                      href={`/jobs/${app.job.id}`}
+                      className="text-[15px] font-semibold leading-snug tracking-tight text-foreground hover:text-primary transition-colors duration-200 truncate"
+                    >
+                      {jobTitle}
+                    </Link>
+                    {expired ? (
+                      <Badge variant="destructive" className="text-[11px]">
+                        {t("expired")}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400/90">
+                        {t("jobActive")}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 mt-1.5 text-[12px] text-muted-foreground/70">
+                    <span className="flex items-center gap-1.5">
+                      <Building2 className="h-3 w-3 opacity-50" />
+                      {companyName}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Calendar className="h-3 w-3 opacity-50" />
+                      {formatDate(app.created_at, locale)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Status + Seen indicator */}
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  <ApplicationStatusBadge
+                    status={app.status}
+                    isViewed={app.is_viewed}
+                    label={statusLabels[statusKey]}
+                    seenLabel={t("seen")}
                   />
-                ) : (
-                  <Building2 className="h-4 w-4 text-muted-foreground" />
-                )}
-              </div>
-
-              {/* Job info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Link
-                    href={`/jobs/${app.job.id}`}
-                    className="font-medium text-foreground hover:text-primary transition-colors truncate"
-                  >
-                    {jobTitle}
-                  </Link>
-                  {expired && (
-                    <Badge
-                      variant="destructive"
-                      className="text-xs"
-                    >
-                      {t("expired")}
-                    </Badge>
-                  )}
-                  {!expired && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs text-green-700 dark:text-green-400 border-green-300 dark:border-green-700"
-                    >
-                      {t("jobActive")}
-                    </Badge>
+                  {!app.is_viewed && app.status === "pending" && (
+                    <span className="text-[11px] text-muted-foreground/50">
+                      {t("notSeen")}
+                    </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Building2 className="h-3.5 w-3.5" />
-                    {companyName}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {t("dateSent")} {formatDate(app.created_at, locale)}
-                  </span>
-                </div>
-              </div>
 
-              {/* Status + Seen indicator */}
-              <div className="flex flex-col items-end gap-2 shrink-0">
-                <ApplicationStatusBadge
-                  status={app.status}
-                  isViewed={app.is_viewed}
-                  label={statusLabels[statusKey]}
-                  seenLabel={t("seen")}
-                />
-                {!app.is_viewed && app.status === "pending" && (
-                  <span className="text-xs text-muted-foreground">
-                    {t("notSeen")}
-                  </span>
+                {/* Delete button for expired jobs */}
+                {expired && (
+                  <div className="shrink-0">
+                    <DeleteApplicationButton applicationId={app.id} />
+                  </div>
                 )}
               </div>
-
-              {/* Delete button for expired jobs */}
-              {expired && (
-                <div className="shrink-0">
-                  <DeleteApplicationButton applicationId={app.id} />
-                </div>
-              )}
             </div>
           );
         })}

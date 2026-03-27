@@ -37,11 +37,11 @@ export default async function EmployerJobsPage() {
     return (
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold tracking-tight">{t("myJobs")}</h1>
+          <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
         </div>
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-20 gap-4">
-          <Briefcase className="h-8 w-8 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">No jobs posted yet</p>
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 gap-4">
+          <Briefcase className="h-7 w-7 text-muted-foreground/30" />
+          <p className="text-sm text-muted-foreground/60">No jobs posted yet</p>
           <Button asChild>
             <Link href="/employer/jobs/new">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -56,7 +56,7 @@ export default async function EmployerJobsPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold tracking-tight">{t("myJobs")}</h1>
+        <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
         <Button asChild size="sm">
           <Link href="/employer/jobs/new">
             <PlusCircle className="mr-2 h-4 w-4" />
@@ -65,8 +65,8 @@ export default async function EmployerJobsPage() {
         </Button>
       </div>
 
-      <div className="border rounded-xl overflow-hidden">
-        {jobs.map((job) => {
+      <div className="flex flex-col gap-2.5">
+        {jobs.map((job, i) => {
           const isExpired = new Date(job.expires_at) < new Date();
           const isClosed = job.status === "closed" || job.status === "archived";
           const title = localized(job, "title", locale);
@@ -75,49 +75,50 @@ export default async function EmployerJobsPage() {
             <div
               key={job.id}
               className={cn(
-                "flex items-center gap-4 p-4 border-b border-border/60 last:border-b-0 transition-colors",
-                (isExpired || isClosed) &&
-                  "bg-red-50/50 dark:bg-red-950/20 border-l-2 border-l-red-400 dark:border-l-red-600"
+                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-sm transition-all duration-200 animate-fade-in",
+                (isExpired || isClosed)
+                  ? "border-red-200/60 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10"
+                  : "border-border/30",
               )}
+              style={{ animationDelay: `${i * 50}ms` }}
             >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Link
-                    href={`/employer/jobs/${job.id}`}
-                    className="font-medium text-foreground hover:text-primary transition-colors truncate"
-                  >
-                    {title}
-                  </Link>
-
-                  {isClosed && (
-                    <Badge variant="secondary" className="text-xs">Closed</Badge>
-                  )}
-                  {isExpired && !isClosed && (
-                    <Badge variant="destructive" className="text-xs">Expired</Badge>
-                  )}
-                  {!isExpired && !isClosed && (
-                    <Badge
-                      variant="outline"
-                      className="text-xs text-green-700 dark:text-green-400 border-green-300 dark:border-green-700"
+              <div className="flex items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Link
+                      href={`/employer/jobs/${job.id}`}
+                      className="text-[15px] font-semibold leading-snug tracking-tight text-foreground hover:text-primary transition-colors duration-200 truncate"
                     >
-                      Active
-                    </Badge>
-                  )}
-                </div>
-                <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {formatDate(job.created_at, locale)}
-                  </span>
-                  <span>{job.views_count} views</span>
-                </div>
-              </div>
+                      {title}
+                    </Link>
 
-              <JobActionButtons
-                jobId={job.id}
-                isExpired={isExpired}
-                isClosed={isClosed}
-              />
+                    {isClosed && (
+                      <Badge variant="secondary" className="text-[11px]">Closed</Badge>
+                    )}
+                    {isExpired && !isClosed && (
+                      <Badge variant="destructive" className="text-[11px]">Expired</Badge>
+                    )}
+                    {!isExpired && !isClosed && (
+                      <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400/90">
+                        Active
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 mt-1.5 text-[12px] text-muted-foreground/70">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3 opacity-50" />
+                      {formatDate(job.created_at, locale)}
+                    </span>
+                    <span>{job.views_count} views</span>
+                  </div>
+                </div>
+
+                <JobActionButtons
+                  jobId={job.id}
+                  isExpired={isExpired}
+                  isClosed={isClosed}
+                />
+              </div>
             </div>
           );
         })}

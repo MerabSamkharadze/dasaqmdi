@@ -29,14 +29,14 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
       <input type="hidden" name="resume_url" value={resumeUrl} />
 
       {state.error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
           {state.error}
         </div>
       )}
 
       {/* Resume Upload */}
       <div className="space-y-2">
-        <Label>{t("resume")}</Label>
+        <Label className="text-[13px]">{t("resume")}</Label>
         <FileUpload
           bucket="resumes"
           userId={userId}
@@ -49,7 +49,7 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
           prefix="application"
         />
         {!resumeUrl && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[11px] text-muted-foreground/60">
             Resume is required
           </p>
         )}
@@ -57,7 +57,7 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
 
       {/* Cover Letter */}
       <div className="space-y-2">
-        <Label htmlFor="cover_letter">{t("coverLetter")}</Label>
+        <Label htmlFor="cover_letter" className="text-[13px]">{t("coverLetter")}</Label>
         <Textarea
           id="cover_letter"
           name="cover_letter"

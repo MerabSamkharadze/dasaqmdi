@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { uploadFile, getFilePath } from "@/lib/storage";
 import { Upload, X, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 type FileUploadProps = {
   bucket: string;
@@ -38,7 +37,6 @@ export function FileUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate size
     if (file.size > maxSizeMB * 1024 * 1024) {
       setError(`File must be under ${maxSizeMB}MB`);
       return;
@@ -79,12 +77,12 @@ export function FileUpload({
           <img
             src={previewUrl}
             alt="Preview"
-            className="h-20 w-20 rounded-xl border border-border/60 object-cover"
+            className="h-20 w-20 rounded-xl border border-border/30 object-cover"
           />
           <button
             type="button"
             onClick={handleRemove}
-            className="absolute -right-2 -top-2 rounded-full bg-destructive p-1 text-destructive-foreground shadow-sm hover:bg-destructive/90"
+            className="absolute -right-2 -top-2 rounded-full bg-destructive/80 p-1 text-destructive-foreground shadow-sm hover:bg-destructive transition-colors duration-200"
           >
             <X className="h-3 w-3" />
           </button>
@@ -92,16 +90,16 @@ export function FileUpload({
       )}
 
       {previewUrl && !isImage && (
-        <div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/50 px-3 py-2 text-sm">
-          <span className="truncate flex-1 text-muted-foreground">
+        <div className="flex items-center gap-2 rounded-xl border border-border/30 bg-muted/40 px-3.5 py-2.5 text-[13px]">
+          <span className="truncate flex-1 text-muted-foreground/70">
             {previewUrl.split("/").pop()}
           </span>
           <button
             type="button"
             onClick={handleRemove}
-            className="text-destructive hover:text-destructive/80"
+            className="text-destructive/60 hover:text-destructive transition-colors duration-200"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
           </button>
         </div>
       )}
@@ -121,19 +119,19 @@ export function FileUpload({
           size="sm"
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
-          className={cn("gap-2")}
+          className="gap-2 text-[13px]"
         >
           {uploading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <Upload className="h-4 w-4" />
+            <Upload className="h-3.5 w-3.5" />
           )}
           {label}
         </Button>
       </div>
 
       {error && (
-        <p className="text-xs text-destructive">{error}</p>
+        <p className="text-[11px] text-destructive/80">{error}</p>
       )}
     </div>
   );
