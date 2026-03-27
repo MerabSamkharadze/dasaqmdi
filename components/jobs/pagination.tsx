@@ -33,7 +33,6 @@ export function Pagination({
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
-  // Generate visible page numbers (show max 5 around current)
   const pages: number[] = [];
   const start = Math.max(1, currentPage - 2);
   const end = Math.min(totalPages, currentPage + 2);
@@ -42,16 +41,16 @@ export function Pagination({
   }
 
   return (
-    <nav className="flex items-center justify-center gap-1 py-6">
+    <nav className="flex items-center justify-center gap-1.5 pt-8 pb-2">
       {/* Previous */}
       {currentPage > 1 ? (
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" asChild>
           <Link href={buildHref(basePath, currentPage - 1, searchParams)}>
             <ChevronLeft className="h-4 w-4" />
           </Link>
         </Button>
       ) : (
-        <Button variant="ghost" size="icon" disabled>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" disabled>
           <ChevronLeft className="h-4 w-4" />
         </Button>
       )}
@@ -59,11 +58,11 @@ export function Pagination({
       {/* First page + ellipsis */}
       {start > 1 && (
         <>
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-sm" asChild>
             <Link href={buildHref(basePath, 1, searchParams)}>1</Link>
           </Button>
           {start > 2 && (
-            <span className="px-2 text-muted-foreground text-sm">...</span>
+            <span className="px-1.5 text-muted-foreground/60 text-sm select-none">...</span>
           )}
         </>
       )}
@@ -74,6 +73,9 @@ export function Pagination({
           key={p}
           variant={p === currentPage ? "default" : "ghost"}
           size="icon"
+          className={`h-9 w-9 rounded-lg text-sm ${
+            p === currentPage ? "shadow-sm" : ""
+          }`}
           asChild={p !== currentPage}
         >
           {p === currentPage ? (
@@ -88,9 +90,9 @@ export function Pagination({
       {end < totalPages && (
         <>
           {end < totalPages - 1 && (
-            <span className="px-2 text-muted-foreground text-sm">...</span>
+            <span className="px-1.5 text-muted-foreground/60 text-sm select-none">...</span>
           )}
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg text-sm" asChild>
             <Link href={buildHref(basePath, totalPages, searchParams)}>
               {totalPages}
             </Link>
@@ -100,13 +102,13 @@ export function Pagination({
 
       {/* Next */}
       {currentPage < totalPages ? (
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" asChild>
           <Link href={buildHref(basePath, currentPage + 1, searchParams)}>
             <ChevronRight className="h-4 w-4" />
           </Link>
         </Button>
       ) : (
-        <Button variant="ghost" size="icon" disabled>
+        <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg" disabled>
           <ChevronRight className="h-4 w-4" />
         </Button>
       )}

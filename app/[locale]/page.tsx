@@ -30,7 +30,6 @@ export default async function HomePage({
     q: searchParams.q,
   });
 
-  // Build translations object for job components
   const jobTranslations = {
     remote: t("jobs.remote"),
     deadline: t("jobs.deadline"),
@@ -44,7 +43,6 @@ export default async function HomePage({
     },
   };
 
-  // Preserve current filters for pagination links
   const preservedParams: Record<string, string> = {};
   if (searchParams.category) preservedParams.category = searchParams.category;
   if (searchParams.city) preservedParams.city = searchParams.city;
@@ -52,18 +50,18 @@ export default async function HomePage({
   if (searchParams.q) preservedParams.q = searchParams.q;
 
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col items-center">
-        <Header />
+    <div className="min-h-screen flex flex-col bg-background">
+      <Header />
 
-        <div className="flex-1 w-full max-w-5xl px-4 sm:px-6 py-6">
+      <main className="flex-1 w-full">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
           {/* Page header */}
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold text-foreground">
+          <div className="flex items-baseline justify-between mb-6">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
               {t("jobs.title")}
             </h1>
-            <span className="text-sm text-muted-foreground">
-              {totalCount} {t("jobs.title").toLowerCase()}
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {totalCount}
             </span>
           </div>
 
@@ -82,9 +80,9 @@ export default async function HomePage({
             searchParams={preservedParams}
           />
         </div>
+      </main>
 
-        <Footer />
-      </div>
-    </main>
+      <Footer />
+    </div>
   );
 }

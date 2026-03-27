@@ -40,77 +40,84 @@ export function JobCard({ job, locale, translations }: JobCardProps) {
   return (
     <Link
       href={`/jobs/${job.id}`}
-      className="group flex items-center gap-4 p-4 border-b border-border hover:bg-accent/50 transition-colors"
+      className="group block rounded-xl border border-border/60 bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-border"
     >
-      {/* Company Logo */}
-      <div className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border bg-muted">
-        {job.company.logo_url ? (
-          <img
-            src={job.company.logo_url}
-            alt={companyName}
-            className="h-10 w-10 rounded object-contain"
-          />
-        ) : (
-          <Building2 className="h-5 w-5 text-muted-foreground" />
-        )}
-      </div>
+      <div className="flex items-start gap-4">
+        {/* Company Logo */}
+        <div className="hidden sm:flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-muted/50">
+          {job.company.logo_url ? (
+            <img
+              src={job.company.logo_url}
+              alt={companyName}
+              className="h-9 w-9 rounded-md object-contain"
+            />
+          ) : (
+            <Building2 className="h-4.5 w-4.5 text-muted-foreground/70" />
+          )}
+        </div>
 
-      {/* Main content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          {/* Title row */}
+          <h3 className="text-[15px] font-semibold leading-snug text-foreground group-hover:text-primary transition-colors duration-200 truncate">
             {title}
           </h3>
-          <Badge variant="secondary" className="text-xs shrink-0">
-            {translations.types[job.job_type] ?? job.job_type}
-          </Badge>
-          {job.is_remote && (
-            <Badge variant="outline" className="text-xs shrink-0">
-              {translations.remote}
-            </Badge>
-          )}
-        </div>
-        <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-          <span className="flex items-center gap-1 truncate">
-            <Building2 className="h-3.5 w-3.5 shrink-0" />
-            {companyName}
-          </span>
-          {job.city && (
-            <span className="hidden sm:flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5 shrink-0" />
-              {job.city}
-            </span>
-          )}
-        </div>
-      </div>
 
-      {/* Salary + dates (right side) */}
-      <div className="hidden md:flex flex-col items-end gap-1 shrink-0 text-sm">
-        {salary && (
-          <span className="font-semibold text-foreground">{salary}</span>
-        )}
-        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" />
+          {/* Company + location */}
+          <div className="mt-1.5 flex items-center gap-3 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1.5 truncate">
+              <Building2 className="h-3.5 w-3.5 shrink-0 opacity-60" />
+              {companyName}
+            </span>
+            {job.city && (
+              <span className="hidden sm:flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 shrink-0 opacity-60" />
+                {job.city}
+              </span>
+            )}
+          </div>
+
+          {/* Badges */}
+          <div className="mt-2.5 flex items-center gap-2 flex-wrap">
+            <Badge variant="secondary" className="rounded-md text-xs font-normal px-2.5 py-0.5">
+              {translations.types[job.job_type] ?? job.job_type}
+            </Badge>
+            {job.is_remote && (
+              <Badge variant="outline" className="rounded-md text-xs font-normal px-2.5 py-0.5 border-primary/30 text-primary">
+                {translations.remote}
+              </Badge>
+            )}
+          </div>
+        </div>
+
+        {/* Right column: Salary + dates */}
+        <div className="hidden md:flex flex-col items-end gap-2 shrink-0">
+          {salary && (
+            <span className="text-sm font-semibold text-foreground">{salary}</span>
+          )}
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Calendar className="h-3 w-3 opacity-60" />
+              {formatDate(job.created_at, locale)}
+            </span>
+            {job.application_deadline && (
+              <span className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
+                <Clock className="h-3 w-3" />
+                {formatDate(job.application_deadline, locale)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile: salary + date */}
+        <div className="flex md:hidden flex-col items-end gap-1.5 shrink-0">
+          {salary && (
+            <span className="text-xs font-semibold text-foreground">{salary}</span>
+          )}
+          <span className="text-xs text-muted-foreground">
             {formatDate(job.created_at, locale)}
           </span>
-          {job.application_deadline && (
-            <span className="flex items-center gap-1 text-orange-600 dark:text-orange-400">
-              <Clock className="h-3 w-3" />
-              {formatDate(job.application_deadline, locale)}
-            </span>
-          )}
         </div>
-      </div>
-
-      {/* Mobile salary + date */}
-      <div className="flex md:hidden flex-col items-end gap-1 shrink-0 text-sm">
-        {salary && (
-          <span className="font-semibold text-foreground text-xs">{salary}</span>
-        )}
-        <span className="text-xs text-muted-foreground">
-          {formatDate(job.created_at, locale)}
-        </span>
       </div>
     </Link>
   );

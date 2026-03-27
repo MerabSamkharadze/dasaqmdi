@@ -145,7 +145,7 @@ components/
 | `profiles` | Extends auth.users | id (FK), role, full_name, full_name_ka, skills[], resume_url |
 | `categories` | Job categories (seeded) | slug, name_en, name_ka |
 | `companies` | Employer companies | owner_id (FK), name, slug, is_verified |
-| `jobs` | Job listings | company_id, category_id, title, job_type, status, salary_min/max |
+| `jobs` | Job listings | company_id, category_id, title, job_type, status, salary_min/max, expires_at, tags[] |
 | `applications` | Job applications | job_id, applicant_id, resume_url, status, is_viewed, viewed_at |
 
 ### Enums
@@ -177,6 +177,7 @@ components/
 
 - `supabase/migrations/001_initial_schema.sql` — base tables, RLS, triggers, seeds
 - `supabase/migrations/002_application_tracking.sql` — `is_viewed`/`viewed_at` fields, deadline index, seeker delete policy
+- `supabase/migrations/003_job_freshness_and_tags.sql` — `expires_at` (30-day rule), `tags[]`, GIN indexes, auto-set trigger
 
 ---
 
@@ -200,6 +201,22 @@ components/
 - **Detection**: `isJobExpired()` checks `application_deadline < now()` OR `job.status !== 'active'`
 - **Visual**: Expired rows have red left-border + red background tint + "Expired" badge
 - **Cleanup**: "Delete" button appears on expired rows — calls `deleteApplicationAction()` (RLS enforces `applicant_id = auth.uid()`)
+
+### 4. 30-Day Freshness Rule
+
+- **DB field**: `jobs.expires_at` (TIMESTAMPTZ, defaults to `created_at + 30 days`)
+- **Auto-set trigger**: `jobs_set_expires_at` — on INSERT, sets `expires_at = created_at + 30 days` if not provided
+- **Feed filter**: `lib/queries/jobs.ts` adds `.gte("expires_at", now())` — expired jobs disappear from public feed
+- **Employer dashboard**: Jobs past `expires_at` show red "Expired" state + "Renew for 30 days" button
+- **Renew action** (to build): Server Action sets `expires_at = now() + 30 days`, `status = 'active'`
+- **No auto-archive in DB**: Status stays `active` — visibility is controlled by the query filter. Employer can manually archive or renew.
+
+### 5. Structured Tags (Matching Foundation)
+
+- **DB fields**: `jobs.tags TEXT[]` (skills/keywords per job) + `profiles.skills TEXT[]` (already exists)
+- **GIN indexes**: On both `jobs.tags` and future queries using `@>` containment
+- **Validation**: `tags` field in `createJobSchema` — array of up to 20 strings, max 50 chars each
+- **Purpose**: Foundation for Phase 5 Smart Matching Engine. Employers tag jobs with skills; seekers have skills in profile. Matching = array intersection score.
 
 ---
 
@@ -280,6 +297,26 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 ### Phase 4: Admin & Polish
 - [ ] Admin dashboard (stats, moderation)
 - [ ] Admin: manage users, jobs, companies
+- [ ] 30-Day Freshness: "Renew for 30 days" button in employer dashboard
+- [ ] Employer dashboard: expired jobs red indicator (expires_at < now)
 - [ ] Loading states (Skeleton) + error boundaries
 - [ ] SEO: generateMetadata on key pages
 - [ ] Responsive design pass (mobile-first)
+
+### Phase 5: Intelligence (Long-term)
+
+**Smart Matching Engine**
+- [ ] Matching algorithm: compare `profiles.skills[]` vs `jobs.tags[]` via array intersection
+- [ ] Compatibility score: `(matched_tags / total_job_tags) * 100` → percentage
+- [ ] Seeker UI: "85% Match" badge on job cards when logged in
+- [ ] Job detail: "Your matching skills: React, TypeScript" highlight
+- [ ] Employer UI: sort applicants by match % in applicant review page
+- [ ] Future: weight by experience_years, category preference, location proximity
+
+**AI Job Assistant**
+- [ ] Integration: Vercel AI SDK (`ai` package) with Claude/OpenAI provider
+- [ ] Employer UX: "Draft with AI" button on job creation form
+- [ ] Input: job title, seniority level, 3-5 core skills
+- [ ] Output: structured job description (responsibilities, requirements, benefits) in both EN and KA
+- [ ] Streaming: use `useChat()` or `useCompletion()` for real-time text generation
+- [ ] Guard: AI-generated text is always editable before publishing

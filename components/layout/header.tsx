@@ -9,26 +9,34 @@ export async function Header() {
   const t = await getTranslations("nav");
 
   return (
-    <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-      <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-        <div className="flex gap-5 items-center font-semibold">
-          <Link href="/" className="text-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-lg">
+      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
+        {/* Logo + Nav */}
+        <div className="flex items-center gap-8">
+          <Link
+            href="/"
+            className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
+          >
             დასაქმდი
           </Link>
-          <Link
-            href="/jobs"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t("jobs")}
-          </Link>
-          <Link
-            href="/companies"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t("companies")}
-          </Link>
+          <nav className="hidden sm:flex items-center gap-6">
+            <Link
+              href="/jobs"
+              className="text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+            >
+              {t("jobs")}
+            </Link>
+            <Link
+              href="/companies"
+              className="text-sm font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"
+            >
+              {t("companies")}
+            </Link>
+          </nav>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Actions */}
+        <div className="flex items-center gap-1">
           <LanguageSwitcher />
           <ThemeSwitcher />
           <Suspense>
@@ -36,6 +44,6 @@ export async function Header() {
           </Suspense>
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

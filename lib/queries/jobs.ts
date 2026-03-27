@@ -41,6 +41,7 @@ export async function getJobs({
       { count: "exact" },
     )
     .eq("status", "active")
+    .gte("expires_at", new Date().toISOString())
     .or(`application_deadline.is.null,application_deadline.gte.${new Date().toISOString()}`)
     .order("created_at", { ascending: false })
     .range(from, to);

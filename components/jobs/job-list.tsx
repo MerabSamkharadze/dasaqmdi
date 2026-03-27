@@ -15,21 +15,26 @@ type JobListProps = {
 export function JobList({ jobs, locale, translations }: JobListProps) {
   if (jobs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-        <p className="text-lg">{translations.noJobs}</p>
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-20 text-muted-foreground">
+        <p className="text-base">{translations.noJobs}</p>
       </div>
     );
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden divide-y divide-border">
-      {jobs.map((job) => (
-        <JobCard
+    <div className="flex flex-col gap-3">
+      {jobs.map((job, i) => (
+        <div
           key={job.id}
-          job={job}
-          locale={locale}
-          translations={translations}
-        />
+          className="animate-fade-in"
+          style={{ animationDelay: `${i * 50}ms` }}
+        >
+          <JobCard
+            job={job}
+            locale={locale}
+            translations={translations}
+          />
+        </div>
       ))}
     </div>
   );

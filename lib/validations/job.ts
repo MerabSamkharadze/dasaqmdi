@@ -19,6 +19,7 @@ const jobFieldsSchema = z.object({
   salary_max: z.coerce.number().int().min(0).optional(),
   salary_currency: z.enum(SALARY_CURRENCIES).default("GEL"),
   application_deadline: z.string().datetime().optional().or(z.literal("")),
+  tags: z.array(z.string().max(50)).max(20).default([]),
 });
 
 export const createJobSchema = jobFieldsSchema.refine(

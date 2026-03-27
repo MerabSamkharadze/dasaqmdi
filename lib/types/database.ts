@@ -161,6 +161,8 @@ export type Database = {
           salary_currency: "GEL" | "USD" | "EUR";
           status: "draft" | "active" | "closed" | "archived";
           application_deadline: string | null;
+          expires_at: string;
+          tags: string[];
           views_count: number;
           created_at: string;
           updated_at: string;
@@ -184,6 +186,8 @@ export type Database = {
           salary_currency?: "GEL" | "USD" | "EUR";
           status?: "draft" | "active" | "closed" | "archived";
           application_deadline?: string | null;
+          expires_at?: string;
+          tags?: string[];
           views_count?: number;
           created_at?: string;
           updated_at?: string;
@@ -207,6 +211,8 @@ export type Database = {
           salary_currency?: "GEL" | "USD" | "EUR";
           status?: "draft" | "active" | "closed" | "archived";
           application_deadline?: string | null;
+          expires_at?: string;
+          tags?: string[];
           views_count?: number;
           created_at?: string;
           updated_at?: string;
