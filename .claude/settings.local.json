@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /c/Users/msamkharadze/Desktop/personal/my-app -not -path */node_modules/* -not -path */.next/* -not -path */.idea/* -type f)",
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(npm run:*)",
+      "Bash(npm ls:*)"
+    ]
+  }
+}

@@ -2,53 +2,61 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import {
+  loginSchema,
+  signUpSchema,
+  forgotPasswordSchema,
+  updatePasswordSchema,
+} from "@/lib/validations/auth";
+import type { ActionResult } from "@/lib/types";
 
-export type AuthActionResult = {
-  error: string | null;
-};
+export async function loginAction(
+  _prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const raw = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
 
-export async function loginAction(formData: FormData): Promise<AuthActionResult> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-
-  if (!email || !password) {
-    return { error: "Email and password are required." };
+  const parsed = loginSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect("/protected");
+  redirect("/dashboard");
 }
 
-export async function signUpAction(formData: FormData): Promise<AuthActionResult> {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+export async function signUpAction(
+  _prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const raw = {
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+    role: formData.get("role"),
+  };
 
-  if (!email || !password) {
-    return { error: "Email and password are required." };
+  const parsed = signUpSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
   }
 
-  if (password !== confirmPassword) {
-    return { error: "Passwords do not match." };
-  }
-
-  const supabase = createClient();
-
+  const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
-    email,
-    password,
+    email: parsed.data.email,
+    password: parsed.data.password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "" : "http://localhost:3000"}/auth/confirm`,
+      data: { role: parsed.data.role },
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/confirm`,
     },
   });
 
@@ -60,23 +68,29 @@ export async function signUpAction(formData: FormData): Promise<AuthActionResult
 }
 
 export async function logoutAction(): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/auth/login");
 }
 
-export async function forgotPasswordAction(formData: FormData): Promise<AuthActionResult> {
-  const email = formData.get("email") as string;
+export async function forgotPasswordAction(
+  _prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const raw = { email: formData.get("email") };
 
-  if (!email) {
-    return { error: "Email is required." };
+  const parsed = forgotPasswordSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "" : "http://localhost:3000"}/auth/update-password`,
-  });
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.email,
+    {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/auth/update-password`,
+    },
+  );
 
   if (error) {
     return { error: error.message };
@@ -85,20 +99,25 @@ export async function forgotPasswordAction(formData: FormData): Promise<AuthActi
   return { error: null };
 }
 
-export async function updatePasswordAction(formData: FormData): Promise<AuthActionResult> {
-  const password = formData.get("password") as string;
+export async function updatePasswordAction(
+  _prevState: ActionResult,
+  formData: FormData,
+): Promise<ActionResult> {
+  const raw = { password: formData.get("password") };
 
-  if (!password) {
-    return { error: "Password is required." };
+  const parsed = updatePasswordSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = createClient();
-
-  const { error } = await supabase.auth.updateUser({ password });
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
 
   if (error) {
     return { error: error.message };
   }
 
-  redirect("/protected");
+  redirect("/dashboard");
 }

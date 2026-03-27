@@ -1,7 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { signUpAction } from "@/lib/actions/auth";
+import type { ActionResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,103 +14,127 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useFormState, useFormStatus } from "react-dom";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+const initialState: ActionResult = { error: null };
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  const t = useTranslations("auth");
+
+  return (
+    <Button type="submit" className="w-full" disabled={pending}>
+      {pending ? "..." : t("signUp")}
+    </Button>
+  );
+}
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const supabase = createClient();
-    setIsLoading(true);
-    setError(null);
-
-    if (password !== repeatPassword) {
-      setError("Passwords do not match");
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
-        },
-      });
-      if (error) throw error;
-      router.push("/auth/sign-up-success");
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [state, formAction] = useFormState(signUpAction, initialState);
+  const [selectedRole, setSelectedRole] = useState<"seeker" | "employer">(
+    "seeker",
+  );
+  const t = useTranslations("auth");
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Sign up</CardTitle>
-          <CardDescription>Create a new account</CardDescription>
+          <CardTitle className="text-2xl">{t("signUp")}</CardTitle>
+          <CardDescription>{t("signUpDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignUp}>
+          <form action={formAction}>
             <div className="flex flex-col gap-6">
+              {/* Role selection */}
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label>{t("selectRole")}</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("seeker")}
+                    className={cn(
+                      "flex flex-col items-center gap-1 rounded-lg border p-3 text-sm transition-colors",
+                      selectedRole === "seeker"
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-accent",
+                    )}
+                  >
+                    <span className="font-medium">
+                      {t("roleSeekerLabel")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {t("roleSeekerDescription")}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRole("employer")}
+                    className={cn(
+                      "flex flex-col items-center gap-1 rounded-lg border p-3 text-sm transition-colors",
+                      selectedRole === "employer"
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:bg-accent",
+                    )}
+                  >
+                    <span className="font-medium">
+                      {t("roleEmployerLabel")}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {t("roleEmployerDescription")}
+                    </span>
+                  </button>
+                </div>
+                <input type="hidden" name="role" value={selectedRole} />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="email">{t("email")}</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+                <Label htmlFor="password">{t("password")}</Label>
                 <Input
                   id="password"
+                  name="password"
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="repeat-password">Repeat Password</Label>
-                </div>
+                <Label htmlFor="confirmPassword">
+                  {t("confirmPassword")}
+                </Label>
                 <Input
-                  id="repeat-password"
+                  id="confirmPassword"
+                  name="confirmPassword"
                   type="password"
                   required
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
                 />
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating an account..." : "Sign up"}
-              </Button>
+              {state.error && (
+                <p className="text-sm text-red-500">{state.error}</p>
+              )}
+              <SubmitButton />
             </div>
             <div className="mt-4 text-center text-sm">
-              Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
-                Login
+              {t("hasAccount")}{" "}
+              <Link
+                href="/auth/login"
+                className="underline underline-offset-4"
+              >
+                {t("login")}
               </Link>
             </div>
           </form>
