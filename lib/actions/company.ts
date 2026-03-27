@@ -40,6 +40,8 @@ export async function createCompanyAction(
     employee_count: formData.get("employee_count") as string || undefined,
   };
 
+  const logoUrl = formData.get("logo_url") as string;
+
   const parsed = createCompanySchema.safeParse(raw);
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
@@ -51,6 +53,7 @@ export async function createCompanyAction(
     ...parsed.data,
     owner_id: user.id,
     slug,
+    logo_url: logoUrl || null,
   });
 
   if (error) {
@@ -91,6 +94,8 @@ export async function updateCompanyAction(
     employee_count: formData.get("employee_count") as string || undefined,
   };
 
+  const logoUrl = formData.get("logo_url") as string;
+
   const parsed = updateCompanySchema.safeParse(raw);
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message };
@@ -98,7 +103,7 @@ export async function updateCompanyAction(
 
   const { error } = await supabase
     .from("companies")
-    .update(parsed.data)
+    .update({ ...parsed.data, logo_url: logoUrl || null })
     .eq("id", companyId)
     .eq("owner_id", user.id);
 

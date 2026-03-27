@@ -28,7 +28,11 @@
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add separator sheet avatar tooltip scroll-area textarea select --yes)",
       "Bash(ls \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/profile/\")",
       "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/company/new\")",
-      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs\")"
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(public\\)/jobs/[id]\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(public\\)/companies/[slug]\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs/new\")",
+      "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/employer/jobs/[id]\")"
     ]
   }
 }

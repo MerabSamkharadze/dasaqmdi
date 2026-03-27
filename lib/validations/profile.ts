@@ -11,6 +11,8 @@ export const updateProfileSchema = z.object({
   skills: z.array(z.string().max(50)).max(20).default([]),
   experience_years: z.coerce.number().int().min(0).max(50).optional(),
   preferred_language: z.enum(LOCALES).default("ka"),
+  avatar_url: z.string().url().optional().or(z.literal("")),
+  resume_url: z.string().url().optional().or(z.literal("")),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

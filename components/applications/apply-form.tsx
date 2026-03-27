@@ -1,0 +1,76 @@
+"use client";
+
+import { useState } from "react";
+import { useFormState } from "react-dom";
+import { useTranslations } from "next-intl";
+import { applyToJobAction } from "@/lib/actions/applications";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { SubmitButton } from "@/components/shared/submit-button";
+import { FileUpload } from "@/components/shared/file-upload";
+import type { ActionResult } from "@/lib/types";
+
+const initialState: ActionResult = { error: null };
+
+type ApplyFormProps = {
+  jobId: string;
+  userId: string;
+  existingResumeUrl?: string | null;
+};
+
+export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) {
+  const [state, formAction] = useFormState(applyToJobAction, initialState);
+  const t = useTranslations("applications");
+  const [resumeUrl, setResumeUrl] = useState(existingResumeUrl ?? "");
+
+  return (
+    <form action={formAction} className="space-y-6">
+      <input type="hidden" name="job_id" value={jobId} />
+      <input type="hidden" name="resume_url" value={resumeUrl} />
+
+      {state.error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {state.error}
+        </div>
+      )}
+
+      {/* Resume Upload */}
+      <div className="space-y-2">
+        <Label>{t("resume")}</Label>
+        <FileUpload
+          bucket="resumes"
+          userId={userId}
+          accept=".pdf,.doc,.docx"
+          maxSizeMB={10}
+          currentUrl={existingResumeUrl}
+          onUploadComplete={setResumeUrl}
+          onRemove={() => setResumeUrl("")}
+          label={t("resume")}
+          prefix="application"
+        />
+        {!resumeUrl && (
+          <p className="text-xs text-muted-foreground">
+            Resume is required
+          </p>
+        )}
+      </div>
+
+      {/* Cover Letter */}
+      <div className="space-y-2">
+        <Label htmlFor="cover_letter">{t("coverLetter")}</Label>
+        <Textarea
+          id="cover_letter"
+          name="cover_letter"
+          rows={6}
+          placeholder={t("coverLetterPlaceholder")}
+        />
+      </div>
+
+      <div className="flex justify-end">
+        <SubmitButton pendingText="..." disabled={!resumeUrl}>
+          {t("submitApplication")}
+        </SubmitButton>
+      </div>
+    </form>
+  );
+}

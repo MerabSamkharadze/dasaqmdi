@@ -44,7 +44,7 @@ export default async function EmployerCompanyPage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-semibold tracking-tight">{t("editCompany")}</h1>
       <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
-        <CompanyForm company={company} mode="edit" />
+        <CompanyForm company={company} mode="edit" userId={user.id} />
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ export default async function CreateCompanyPage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-xl font-semibold tracking-tight">{t("createCompany")}</h1>
       <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-sm">
-        <CompanyForm mode="create" />
+        <CompanyForm mode="create" userId={user.id} />
       </div>
     </div>
   );

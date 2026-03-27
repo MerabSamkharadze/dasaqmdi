@@ -76,6 +76,28 @@ export async function getJobs({
   };
 }
 
+export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("jobs")
+    .select(
+      `
+      *,
+      company:companies!inner(id, name, name_ka, slug, logo_url),
+      category:categories!inner(id, slug, name_en, name_ka)
+    `
+    )
+    .eq("posted_by", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to fetch employer jobs:", error.message);
+    return [];
+  }
+
+  return (data ?? []) as unknown as JobWithCompany[];
+}
+
 export async function getJobById(id: string) {
   const supabase = createClient();
 

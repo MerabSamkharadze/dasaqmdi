@@ -155,12 +155,17 @@ lib/
 │   ├── server.ts                        # Sync server client: createClient() (NO await)
 │   ├── client.ts                        # Browser client
 │   └── middleware.ts                    # Session refresh for middleware
+├── storage.ts                           # Supabase Storage upload/delete helpers
 ├── actions/                             # "use server" mutations
 │   ├── auth.ts                          # Login, signup, logout, password reset
-│   └── applications.ts                  # markViewed, deleteApplication
+│   ├── applications.ts                  # markViewed, deleteApplication
+│   ├── profile.ts                       # updateProfile
+│   └── company.ts                       # createCompany, updateCompany
 ├── queries/                             # Pure reads for Server Components
 │   ├── jobs.ts                          # getJobs (paginated, filtered), getJobById
-│   └── applications.ts                  # getMyApplications
+│   ├── applications.ts                  # getMyApplications
+│   ├── profile.ts                       # getProfile
+│   └── companies.ts                     # getCompanyByOwner, getCompanyBySlug, getAll
 ├── types/
 │   ├── database.ts                      # Supabase table types (Row/Insert/Update)
 │   ├── enums.ts                         # Const arrays + inferred types
@@ -175,9 +180,10 @@ lib/
 components/
 ├── ui/                                  # shadcn/ui primitives
 ├── layout/                              # Header, Footer, LanguageSwitcher
+├── dashboard/                           # DashboardSidebar, DashboardHeader, ProfileForm, CompanyForm
 ├── jobs/                                # JobCard, JobList, Pagination
 ├── applications/                        # ApplicationStatusBadge, DeleteApplicationButton
-└── shared/                              # SubmitButton, reusable components
+└── shared/                              # SubmitButton, FileUpload
 ```
 
 ---
@@ -230,6 +236,176 @@ components/
 - `idx_jobs_expires_at` — B-tree for freshness filter
 - `idx_jobs_deadline` — partial B-tree where deadline IS NOT NULL
 - `idx_applications_viewed` — B-tree for seen-tracking queries
+
+---
+
+## TypeScript Type System (`lib/types/`)
+
+### Source Files
+
+- `lib/types/database.ts` — Supabase-generated Row/Insert/Update types (mirrors SQL schema 1:1)
+- `lib/types/enums.ts` — Const arrays + inferred union types
+- `lib/types/index.ts` — Derived types, joined types, re-exports
+
+### Enum Constants (`lib/types/enums.ts`)
+
+```ts
+USER_ROLES      = ["seeker", "employer", "admin"]          → type UserRole
+JOB_TYPES       = ["full-time", "part-time", "contract", "internship", "remote"] → type JobType
+JOB_STATUSES    = ["draft", "active", "closed", "archived"] → type JobStatus
+APPLICATION_STATUSES = ["pending", "reviewed", "shortlisted", "rejected", "accepted"] → type ApplicationStatus
+SALARY_CURRENCIES = ["GEL", "USD", "EUR"]                  → type SalaryCurrency
+EMPLOYEE_COUNTS = ["1-10", "11-50", "51-200", "201-500", "500+"] → type EmployeeCount
+LOCALES         = ["ka", "en"]                             → type Locale
+```
+
+### Row Types (what Supabase returns)
+
+```ts
+Profile {
+  id: string                          // UUID, FK to auth.users
+  role: "seeker" | "employer" | "admin"
+  full_name: string | null
+  full_name_ka: string | null
+  avatar_url: string | null
+  phone: string | null
+  city: string | null
+  bio: string | null
+  bio_ka: string | null
+  skills: string[]                    // For Smart Matching (Phase 5)
+  experience_years: number | null
+  resume_url: string | null
+  preferred_language: "ka" | "en"
+  created_at: string                  // ISO timestamp
+  updated_at: string
+}
+
+Category {
+  id: number                          // SERIAL
+  slug: string                        // "it-software", "finance", etc.
+  name_en: string
+  name_ka: string
+}
+
+Company {
+  id: string                          // UUID
+  owner_id: string                    // FK to profiles.id
+  name: string
+  name_ka: string | null
+  slug: string                        // URL-safe unique identifier
+  description: string | null
+  description_ka: string | null
+  logo_url: string | null             // Supabase Storage: company-logos bucket
+  website: string | null
+  city: string | null
+  address: string | null
+  address_ka: string | null
+  employee_count: "1-10" | "11-50" | "51-200" | "201-500" | "500+" | null
+  is_verified: boolean
+  created_at: string
+  updated_at: string
+}
+
+Job {
+  id: string                          // UUID
+  company_id: string                  // FK to companies.id
+  posted_by: string                   // FK to profiles.id
+  category_id: number                 // FK to categories.id
+  title: string
+  title_ka: string | null
+  description: string
+  description_ka: string | null
+  requirements: string | null
+  requirements_ka: string | null
+  job_type: JobType
+  city: string | null
+  is_remote: boolean
+  salary_min: number | null           // In salary_currency units
+  salary_max: number | null
+  salary_currency: "GEL" | "USD" | "EUR"
+  tags: string[]                      // For Smart Matching (Phase 5)
+  status: JobStatus
+  application_deadline: string | null // ISO timestamp
+  expires_at: string                  // Auto: created_at + 30 days
+  views_count: number
+  created_at: string
+  updated_at: string
+}
+
+Application {
+  id: string                          // UUID
+  job_id: string                      // FK to jobs.id
+  applicant_id: string                // FK to profiles.id
+  cover_letter: string | null
+  resume_url: string                  // Supabase Storage: resumes bucket
+  status: ApplicationStatus
+  employer_notes: string | null       // Private, only employer sees
+  is_viewed: boolean                  // "Seen" feature
+  viewed_at: string | null            // When employer first opened it
+  created_at: string
+  updated_at: string
+}
+```
+
+### Joined Types (for Supabase `.select()` with relations)
+
+```ts
+// Used by: getJobs(), homepage feed, job list pages
+// Select: *, company:companies!inner(id, name, name_ka, slug, logo_url),
+//         category:categories!inner(id, slug, name_en, name_ka)
+JobWithCompany = Job & {
+  company: Pick<Company, "id" | "name" | "name_ka" | "slug" | "logo_url">
+  category: Pick<Category, "id" | "slug" | "name_en" | "name_ka">
+}
+
+// Used by: getMyApplications(), seeker dashboard
+// Select: *, job:jobs!inner(id, title, title_ka, status, application_deadline,
+//                           company:companies!inner(name, name_ka, logo_url))
+ApplicationWithJob = Application & {
+  job: Pick<Job, "id" | "title" | "title_ka" | "status" | "application_deadline"> & {
+    company: Pick<Company, "name" | "name_ka" | "logo_url">
+  }
+}
+
+// Used by: employer applicant review page
+// Select: *, applicant:profiles!inner(id, full_name, full_name_ka, avatar_url, skills, experience_years)
+ApplicationWithApplicant = Application & {
+  applicant: Pick<Profile, "id" | "full_name" | "full_name_ka" | "avatar_url" | "skills" | "experience_years">
+}
+```
+
+### Utility Types
+
+```ts
+// All Server Actions return this
+ActionResult<T = null> = { error: string | null; data?: T }
+
+// Homepage/job listing search params
+JobSearchParams = { q?: string; category?: string; city?: string; type?: JobType; page?: number }
+```
+
+### Supabase Query → Type Mapping (CRITICAL for components)
+
+| Query Function | File | Returns | Used By |
+|---|---|---|---|
+| `getJobs()` | `lib/queries/jobs.ts` | `JobWithCompany[]` | Homepage, `/jobs` page |
+| `getJobById(id)` | `lib/queries/jobs.ts` | `JobWithCompany \| null` | `/jobs/[id]` detail |
+| `getMyApplications(userId)` | `lib/queries/applications.ts` | `ApplicationWithJob[]` | `/seeker/applications` |
+| `getProfile(userId)` | `lib/queries/profile.ts` | `Profile \| null` | Dashboard, profile page |
+| `getCompanyByOwner(userId)` | `lib/queries/companies.ts` | `Company \| null` | Employer dashboard |
+| `getCompanyBySlug(slug)` | `lib/queries/companies.ts` | `Company \| null` | `/companies/[slug]` |
+
+### Bilingual Field Convention
+
+Every bilingual entity has `field` (English) + `field_ka` (Georgian). Use `localized()` helper:
+
+```ts
+import { localized } from "@/lib/utils";
+// localized(job, "title", locale) → returns title_ka for "ka", title for "en"
+// localized(company, "name", locale) → same pattern
+```
+
+Entities with bilingual fields: `Profile` (full_name, bio), `Company` (name, description, address), `Job` (title, description, requirements), `Category` (name_en, name_ka — special case: no suffix pattern)
 
 ---
 
@@ -316,21 +492,21 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [x] Quiet Design system (globals.css, Slate+Indigo palette)
 - [x] Pinned to Next.js 14.2.15 (stable)
 
-### Phase 1: Profiles & Companies [TODO]
-- [ ] Dashboard layout (sidebar, header, role-aware nav)
-- [ ] Profile CRUD (queries + actions + form)
-- [ ] Company CRUD (queries + actions + form)
-- [ ] File uploads (Supabase Storage: avatars, resumes, logos)
+### Phase 1: Profiles & Companies [DONE]
+- [x] Dashboard layout (sidebar, header, role-aware nav)
+- [x] Profile CRUD (queries + actions + form)
+- [x] Company CRUD (queries + actions + form)
+- [x] File uploads (Supabase Storage: avatars, resumes, logos)
 
-### Phase 2: Jobs [IN PROGRESS]
+### Phase 2: Jobs [DONE]
 - [x] Homepage as direct job feed (20/page, sorted by created_at DESC)
 - [x] Job query layer with pagination, filters, deadline+freshness exclusion
 - [x] JobCard component (Quiet Design: logo, title, company, salary, dates)
 - [x] JobList component (staggered fade-in, dashed empty state)
 - [x] Pagination component (page numbers, prev/next, query params preserved)
-- [ ] Job detail page (`/jobs/[id]`) with SEO metadata
-- [ ] Job CRUD for employers (create/edit/close/renew)
-- [ ] Public company pages
+- [x] Job detail page (`/jobs/[id]`) with SEO metadata
+- [x] Job CRUD for employers (create/edit/close/renew)
+- [x] Public company pages (directory + profile)
 
 ### Phase 3: Applications & Tracking [IN PROGRESS]
 - [x] Smart Visibility: deadline + freshness filter on job feed
