@@ -5,7 +5,22 @@
       "Bash(npm install:*)",
       "Bash(cd:*)",
       "Bash(npm run:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(rm -f components/deploy-button.tsx components/env-var-warning.tsx components/hero.tsx components/next-logo.tsx components/supabase-logo.tsx)",
+      "Bash(rm -rf components/tutorial)",
+      "Bash(node -e \"const p = require\\(''./node_modules/next/package.json''\\); console.log\\(''next:'', p.version\\);\")",
+      "Bash(node -e \"const p = require\\(''./node_modules/react/package.json''\\); console.log\\(''react:'', p.version\\);\")",
+      "Bash(node -e \"const p = require\\(''./node_modules/next-intl/package.json''\\); console.log\\(''next-intl:'', p.version\\);\")",
+      "Bash(node -e \"const p = require\\(''./node_modules/zod/package.json''\\); console.log\\(''zod:'', p.version\\);\")",
+      "Bash(node -e \"try { require\\(''next-intl/routing''\\); console.log\\(''routing: OK''\\); } catch\\(e\\) { console.log\\(''routing: FAIL'', e.message\\); }\")",
+      "Bash(node -e \"try { require\\(''next-intl/plugin''\\); console.log\\(''plugin: OK''\\); } catch\\(e\\) { console.log\\(''plugin: FAIL'', e.message\\); }\")",
+      "Bash(node -e \"try { const m = require\\(''next-intl/server''\\); console.log\\(''server exports:'', Object.keys\\(m\\).join\\('', ''\\)\\); } catch\\(e\\) { console.log\\(''server: FAIL'', e.message\\); }\")",
+      "Bash(node -e \"const next = require\\(''''next/dist/server/config''''\\); console.log\\(''''config loaded''''\\);\")",
+      "Bash(node -e \"const z = require\\(''zod''\\); const r = z.string\\(\\).email\\(\\).safeParse\\(''bad''\\); console.log\\(''issues:'', r.error.issues[0].message\\);\")",
+      "Bash(node -e \"const z = require\\(''zod''\\); console.log\\(''coerce.boolean:'', typeof z.coerce.boolean\\); console.log\\(''nonnegative:'', typeof z.number\\(\\).nonnegative\\);\")",
+      "Bash(node -e \"const rd = require\\(''react-dom''\\); console.log\\(''useFormState:'', typeof rd.useFormState\\); console.log\\(''useFormStatus:'', typeof rd.useFormStatus\\);\")",
+      "Bash(node -e \"try { const rd = require\\(''''react-dom''''\\); console.log\\(Object.keys\\(rd\\).filter\\(k => k.includes\\(''''Form''''\\)\\)\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npm run build)"
     ]
   }
 }

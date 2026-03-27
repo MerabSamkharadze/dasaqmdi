@@ -1,4 +1,4 @@
-import { Geist } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -7,8 +7,8 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/lib/types/enums";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   display: "swap",
   subsets: ["latin"],
 });
@@ -25,9 +25,9 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
-  const { locale } = await params;
+  const { locale } = params;
 
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
@@ -38,7 +38,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

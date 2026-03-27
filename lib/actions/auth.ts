@@ -24,7 +24,7 @@ export async function loginAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
@@ -50,7 +50,7 @@ export async function signUpAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -68,7 +68,7 @@ export async function signUpAction(
 }
 
 export async function logoutAction(): Promise<void> {
-  const supabase = await createClient();
+  const supabase = createClient();
   await supabase.auth.signOut();
   redirect("/auth/login");
 }
@@ -84,7 +84,7 @@ export async function forgotPasswordAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(
     parsed.data.email,
     {
@@ -110,7 +110,7 @@ export async function updatePasswordAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const supabase = await createClient();
+  const supabase = createClient();
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.password,
   });

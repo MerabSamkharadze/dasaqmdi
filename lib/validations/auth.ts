@@ -13,7 +13,8 @@ export const signUpSchema = z
     password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
     role: z.enum(["seeker", "employer"], {
-      message: "Please select a role",
+      required_error: "Please select a role",
+      invalid_type_error: "Please select a role",
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
