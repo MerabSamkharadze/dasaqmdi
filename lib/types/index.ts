@@ -26,7 +26,7 @@ export type JobWithCompany = Job & {
 };
 
 export type ApplicationWithJob = Application & {
-  job: Pick<Job, "id" | "title" | "title_ka" | "status"> & {
+  job: Pick<Job, "id" | "title" | "title_ka" | "status" | "application_deadline"> & {
     company: Pick<Company, "name" | "name_ka" | "logo_url">;
   };
 };

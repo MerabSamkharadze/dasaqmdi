@@ -111,9 +111,11 @@ lib/
 │   ├── client.ts                        # Browser client
 │   └── middleware.ts                    # Session refresh for middleware
 ├── actions/                             # "use server" mutations
-│   └── auth.ts                          # Login, signup, logout, password reset
+│   ├── auth.ts                          # Login, signup, logout, password reset
+│   └── applications.ts                  # markViewed, deleteApplication
 ├── queries/                             # Pure reads for Server Components
-│   (to be created)
+│   ├── jobs.ts                          # getJobs (paginated), getJobById
+│   └── applications.ts                  # getMyApplications
 ├── types/
 │   ├── database.ts                      # Supabase table types (Row/Insert/Update)
 │   ├── enums.ts                         # Const arrays + inferred types
@@ -144,7 +146,7 @@ components/
 | `categories` | Job categories (seeded) | slug, name_en, name_ka |
 | `companies` | Employer companies | owner_id (FK), name, slug, is_verified |
 | `jobs` | Job listings | company_id, category_id, title, job_type, status, salary_min/max |
-| `applications` | Job applications | job_id, applicant_id, resume_url, status |
+| `applications` | Job applications | job_id, applicant_id, resume_url, status, is_viewed, viewed_at |
 
 ### Enums
 
@@ -171,9 +173,33 @@ components/
 - `on_auth_user_created` → auto-creates profile row with role from `raw_user_meta_data`
 - `*_updated_at` → auto-sets `updated_at = now()` on UPDATE
 
-### Migration File
+### Migration Files
 
-`supabase/migrations/001_initial_schema.sql` — run in Supabase SQL Editor
+- `supabase/migrations/001_initial_schema.sql` — base tables, RLS, triggers, seeds
+- `supabase/migrations/002_application_tracking.sql` — `is_viewed`/`viewed_at` fields, deadline index, seeker delete policy
+
+---
+
+## Business Rules
+
+### 1. Smart Visibility (Job Feed)
+
+- **Deadline filter**: Homepage query excludes jobs where `application_deadline < now()`. Jobs with no deadline are always shown.
+- **Auto-archive visual**: In employer dashboard, jobs past deadline show a red "Expired" badge. Status remains `active` in DB — employer manually closes it.
+- **Query location**: `lib/queries/jobs.ts` → `.or('application_deadline.is.null,application_deadline.gte.{now}')`
+
+### 2. Application Tracking ("Seen" Feature)
+
+- **DB fields**: `applications.is_viewed` (boolean, default false) + `applications.viewed_at` (timestamptz, nullable)
+- **Trigger**: When employer first opens application detail → Server Action `markApplicationViewedAction()` sets `is_viewed=true, viewed_at=now()` (only updates if `is_viewed=false`)
+- **Seeker UI**: Green dot + "Seen" label when `is_viewed=true` and status is still `pending`
+- **Status precedence**: If status is `reviewed`/`shortlisted`/`accepted`/`rejected`, show that status instead of "Seen"
+
+### 3. Expired Job Handling (Seeker Side)
+
+- **Detection**: `isJobExpired()` checks `application_deadline < now()` OR `job.status !== 'active'`
+- **Visual**: Expired rows have red left-border + red background tint + "Expired" badge
+- **Cleanup**: "Delete" button appears on expired rows — calls `deleteApplicationAction()` (RLS enforces `applicant_id = auth.uid()`)
 
 ---
 
@@ -239,11 +265,17 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [ ] Job CRUD for employers (create/edit/close)
 - [ ] Public company pages
 
-### Phase 3: Applications
-- [ ] Apply to job (resume upload + cover letter)
-- [ ] Seeker: my applications view
-- [ ] Employer: review applicants per job
-- [ ] Application status workflow
+### Phase 3: Applications & Tracking
+- [x] Smart Visibility: deadline filter on job feed (expired jobs hidden)
+- [x] Application tracking schema: `is_viewed`, `viewed_at` fields + migration
+- [x] `markApplicationViewedAction()` — employer marks as seen
+- [x] `deleteApplicationAction()` — seeker cleans up expired
+- [x] Seeker dashboard (`/seeker/applications`) — full tracking UI
+- [x] ApplicationStatusBadge — green dot for "Seen", color-coded statuses
+- [x] Expired job visual: red row highlight + "Expired" badge + Delete button
+- [ ] Apply to job (resume upload + cover letter form)
+- [ ] Employer: review applicants per job (trigger markViewed)
+- [ ] Employer dashboard: expired jobs red indicator
 
 ### Phase 4: Admin & Polish
 - [ ] Admin dashboard (stats, moderation)

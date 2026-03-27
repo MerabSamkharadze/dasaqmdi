@@ -145,6 +145,13 @@
       "rejected": "უარყოფილი",
       "accepted": "მიღებული"
     },
+    "seen": "ნანახია",
+    "notSeen": "ჯერ არ ნახულა",
+    "expired": "ვადაგასული",
+    "jobActive": "აქტიური",
+    "dateSent": "გაგზავნილია",
+    "deleteApplication": "წაშლა",
+    "confirmDelete": "ნამდვილად გსურთ ამ განაცხადის წაშლა?",
     "noApplications": "ჯერ არცერთ ვაკანსიაზე არ გაგიგზავნიათ განაცხადი",
     "applicants": "კანდიდატები",
     "updateStatus": "სტატუსის განახლება"

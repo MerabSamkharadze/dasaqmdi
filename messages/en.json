@@ -145,6 +145,13 @@
       "rejected": "Rejected",
       "accepted": "Accepted"
     },
+    "seen": "Seen",
+    "notSeen": "Not seen yet",
+    "expired": "Expired",
+    "jobActive": "Active",
+    "dateSent": "Sent",
+    "deleteApplication": "Delete",
+    "confirmDelete": "Are you sure you want to delete this application?",
     "noApplications": "You haven't applied to any jobs yet",
     "applicants": "Applicants",
     "updateStatus": "Update Status"
