@@ -229,11 +229,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [ ] Company CRUD (queries + actions + form)
 - [ ] File uploads (Supabase Storage: avatars, resumes, logos)
 
-### Phase 2: Jobs
+### Phase 2: Jobs (PRIMARY GOAL)
+- [x] Homepage as direct job feed (no landing page — immediate vacancy list)
+- [x] Job query layer (`lib/queries/jobs.ts`) with pagination, filters, sorting
+- [x] JobCard component (logo, title, company, salary, dates — row layout)
+- [x] JobList component (bordered list with empty state)
+- [x] Pagination component (page numbers, prev/next, query param preservation)
+- [ ] Job detail page (`/jobs/[id]`) with SEO metadata
 - [ ] Job CRUD for employers (create/edit/close)
-- [ ] Public job listing (search, filter, pagination)
-- [ ] Job detail page with SEO metadata
-- [ ] Homepage with featured jobs + category grid
 - [ ] Public company pages
 
 ### Phase 3: Applications

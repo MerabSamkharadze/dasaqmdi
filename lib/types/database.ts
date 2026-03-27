@@ -221,6 +221,8 @@ export type Database = {
           resume_url: string;
           status: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted";
           employer_notes: string | null;
+          is_viewed: boolean;
+          viewed_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -232,6 +234,8 @@ export type Database = {
           resume_url: string;
           status?: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted";
           employer_notes?: string | null;
+          is_viewed?: boolean;
+          viewed_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -243,6 +247,8 @@ export type Database = {
           resume_url?: string;
           status?: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted";
           employer_notes?: string | null;
+          is_viewed?: boolean;
+          viewed_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
