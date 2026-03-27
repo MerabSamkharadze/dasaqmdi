@@ -15,7 +15,7 @@
 | Validation | Zod | ^3.23.8 |
 | i18n | next-intl | ^3.25.3 |
 | Theme | next-themes | ^0.4.6 |
-| Fonts | Inter (Latin) + Noto Sans Georgian | Google Fonts |
+ფა| Fonts | Geist Sans (Latin) + Noto Sans Georgian | `geist` + Google Fonts |
 
 ### Next.js 14 Conventions (CRITICAL)
 
@@ -35,13 +35,58 @@
 
 ---
 
-## Theme & Design
+## Design System — "Quiet Design"
 
-- Full **Dark/Light/System** mode via `next-themes` with `attribute="class"`
-- Every component MUST use Tailwind `dark:` classes where needed
-- Theme toggle available via `<ThemeSwitcher />` component (`components/theme-switcher.tsx`)
-- Color system uses CSS variables in HSL format (configured in `globals.css`)
-- shadcn/ui style: `new-york`, base color: `neutral`
+### Philosophy
+
+- **Less is more**: No jarring colors, no cluttered layouts. Every element earns its place.
+- **Calm & professional**: Sophisticated Slate palette with soft Indigo accent only for primary actions.
+- **Typography first**: Geist Sans for Latin, Noto Sans Georgian for Georgian. Generous `leading` and `tracking-tight`.
+- **Whitespace is a tool**: Ample padding (`p-5`, `py-8`, `gap-3`) — let content breathe.
+- **Subtle interactivity**: `shadow-sm` on cards, `rounded-xl` borders, `duration-200` transitions on hover.
+
+### Color Palette (CSS variables in HSL — `globals.css`)
+
+| Token | Light | Dark | Usage |
+|---|---|---|---|
+| `--background` | Slate 50 | Slate 900 | Page background |
+| `--card` | White | Slate 800 | Card surfaces |
+| `--primary` | Indigo 500 | Indigo 400 | CTA buttons, active links, focus rings |
+| `--muted-foreground` | Slate 500 | Slate 400 | Secondary text, metadata, icons |
+| `--border` | Slate 200 | Slate 700 | Dividers, card borders (`border-border/60` for subtlety) |
+| `--destructive` | Red 500 | Red 800 | Errors, expired badges |
+
+### Typography
+
+- **Font stack**: `font-sans` → Geist Sans → Noto Sans Georgian → system-ui
+- **Title** (Job Card): `text-[15px] font-semibold leading-snug` — stands out clearly
+- **Body/metadata**: `text-sm text-muted-foreground` — secondary, elegant
+- **Page headings**: `text-xl font-semibold tracking-tight`
+- **Badges**: `text-xs font-normal` — informational, not loud
+
+### Component Guidelines
+
+- **Cards**: `rounded-xl border border-border/60 bg-card p-5 shadow-sm` + `hover:shadow-md hover:border-border`
+- **Header**: Sticky, `backdrop-blur-lg bg-background/80` for frosted glass effect
+- **Buttons**: shadcn defaults + `rounded-lg` for consistency with `--radius: 0.75rem`
+- **Empty states**: `border-dashed rounded-xl py-20` — calm, not alarming
+- **Staggered entry**: `animate-fade-in` with per-item `animationDelay` (50ms intervals)
+
+### Visual Hierarchy (CRITICAL)
+
+When building any UI component, always enforce this priority order:
+1. **Primary**: Job title, main heading — `font-semibold text-foreground`
+2. **Secondary**: Company name, salary — `text-sm text-foreground` or `font-semibold`
+3. **Tertiary**: Location, dates, badges, metadata — `text-sm text-muted-foreground` with `opacity-60` icons
+4. **Ambient**: Borders, dividers, backgrounds — `border-border/60`, `bg-muted/50`
+
+### Dark/Light Mode
+
+- Full **Dark/Light/System** toggle via `next-themes` with `attribute="class"`
+- Theme toggle: `<ThemeSwitcher />` (`components/theme-switcher.tsx`)
+- Color system uses CSS variables in HSL (configured in `globals.css`)
+- shadcn/ui style: `new-york`, base: **Slate** with **Indigo** accent
+- Every component MUST look balanced in both modes — test both before shipping
 
 ---
 

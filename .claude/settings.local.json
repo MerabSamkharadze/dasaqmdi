@@ -20,7 +20,9 @@
       "Bash(node -e \"const z = require\\(''zod''\\); console.log\\(''coerce.boolean:'', typeof z.coerce.boolean\\); console.log\\(''nonnegative:'', typeof z.number\\(\\).nonnegative\\);\")",
       "Bash(node -e \"const rd = require\\(''react-dom''\\); console.log\\(''useFormState:'', typeof rd.useFormState\\); console.log\\(''useFormStatus:'', typeof rd.useFormStatus\\);\")",
       "Bash(node -e \"try { const rd = require\\(''''react-dom''''\\); console.log\\(Object.keys\\(rd\\).filter\\(k => k.includes\\(''''Form''''\\)\\)\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
-      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npm run build)"
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npm run build)",
+      "Bash(npx next:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
