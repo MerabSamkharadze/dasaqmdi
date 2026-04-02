@@ -34,6 +34,13 @@ export default async function LocaleLayout({
       <body
         className={`${GeistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
+        {/* L4 FIX: Skip to content link for keyboard/screen-reader users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg"
+        >
+          {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
+        </a>
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

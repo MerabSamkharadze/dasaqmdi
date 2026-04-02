@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;
@@ -10,7 +10,7 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export const signUpSchema = z
   .object({
     email: z.string().email("Invalid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     role: z.enum(["seeker", "employer"], {
       required_error: "Please select a role",
@@ -31,7 +31,7 @@ export const forgotPasswordSchema = z.object({
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 
 export const updatePasswordSchema = z.object({
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;

@@ -9,6 +9,30 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "@/lib/types";
 
+// Typed shape for application ownership check (join: applications → jobs)
+type ApplicationWithJobOwner = {
+  id: string;
+  job: { posted_by: string };
+};
+
+async function verifyApplicationOwnership(
+  supabase: ReturnType<typeof createClient>,
+  applicationId: string,
+  userId: string
+): Promise<boolean> {
+  const { data } = await supabase
+    .from("applications")
+    .select("id, job:jobs!inner(posted_by)")
+    .eq("id", applicationId)
+    .single();
+
+  if (!data) return false;
+
+  // Supabase returns single-relation joins as objects
+  const app = data as unknown as ApplicationWithJobOwner;
+  return app.job.posted_by === userId;
+}
+
 export async function applyToJobAction(
   _prevState: ActionResult,
   formData: FormData
@@ -79,13 +103,8 @@ export async function updateApplicationStatusAction(
   }
 
   // C1 FIX: Verify that the user owns the job this application belongs to
-  const { data: application } = await supabase
-    .from("applications")
-    .select("id, job:jobs!inner(posted_by)")
-    .eq("id", parsed.data.application_id)
-    .single();
-
-  if (!application || (application.job as unknown as { posted_by: string }).posted_by !== user.id) {
+  const isOwner = await verifyApplicationOwnership(supabase, parsed.data.application_id, user.id);
+  if (!isOwner) {
     return { error: "Unauthorized: you do not own this job" };
   }
 
@@ -116,13 +135,8 @@ export async function markApplicationViewedAction(
   if (!user) return { error: "Unauthorized" };
 
   // C2 FIX: Verify the user owns the job this application belongs to
-  const { data: application } = await supabase
-    .from("applications")
-    .select("id, job:jobs!inner(posted_by)")
-    .eq("id", applicationId)
-    .single();
-
-  if (!application || (application.job as unknown as { posted_by: string }).posted_by !== user.id) {
+  const isOwner = await verifyApplicationOwnership(supabase, applicationId, user.id);
+  if (!isOwner) {
     return { error: "Unauthorized: you do not own this job" };
   }
 

@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Profile, Company, Job } from "@/lib/types";
 
-// C3 FIX: Shared admin verification for query layer (defense-in-depth)
-async function requireAdmin(): Promise<void> {
+// C3 FIX: Shared admin verification — returns the same client to avoid double-creation
+async function requireAdmin(): Promise<SupabaseClient> {
   const supabase = createClient();
   const {
     data: { user },
@@ -18,12 +19,13 @@ async function requireAdmin(): Promise<void> {
     .single();
 
   if (profile?.role !== "admin") redirect("/dashboard");
+
+  return supabase;
 }
 
 export async function getAdminStats() {
-  await requireAdmin();
+  const supabase = await requireAdmin();
 
-  const supabase = createClient();
   const [users, jobs, companies, applications] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase.from("jobs").select("id", { count: "exact", head: true }),
@@ -40,9 +42,8 @@ export async function getAdminStats() {
 }
 
 export async function getAllUsers(): Promise<Profile[]> {
-  await requireAdmin();
+  const supabase = await requireAdmin();
 
-  const supabase = createClient();
   const { data } = await supabase
     .from("profiles")
     .select("*")
@@ -51,9 +52,8 @@ export async function getAllUsers(): Promise<Profile[]> {
 }
 
 export async function getAllJobs(): Promise<Job[]> {
-  await requireAdmin();
+  const supabase = await requireAdmin();
 
-  const supabase = createClient();
   const { data } = await supabase
     .from("jobs")
     .select("*")
@@ -62,9 +62,8 @@ export async function getAllJobs(): Promise<Job[]> {
 }
 
 export async function getAllCompaniesAdmin(): Promise<Company[]> {
-  await requireAdmin();
+  const supabase = await requireAdmin();
 
-  const supabase = createClient();
   const { data } = await supabase
     .from("companies")
     .select("*")

@@ -29,7 +29,7 @@ export default async function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader email={user.email ?? ""} role={role} />
 
-        <main className="flex-1 overflow-y-auto">
+        <main id="main-content" className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
             {children}
           </div>

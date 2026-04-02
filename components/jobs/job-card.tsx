@@ -92,7 +92,7 @@ export function JobCard({ job, locale, matchScore, translations }: JobCardProps)
             {matchScore != null && matchScore > 0 && (
               <Badge
                 variant="outline"
-                className="text-[11px] font-medium px-2 py-0.5 border-emerald-300/50 bg-emerald-50/80 text-emerald-700 dark:border-emerald-700/40 dark:bg-emerald-900/20 dark:text-emerald-400 gap-1"
+                className="text-[11px] font-medium px-2 py-0.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 dark:text-primary gap-1"
               >
                 <Zap className="h-2.5 w-2.5" />
                 {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
@@ -112,8 +112,8 @@ export function JobCard({ job, locale, matchScore, translations }: JobCardProps)
               {formatDate(job.created_at, locale)}
             </span>
             {job.application_deadline && (
-              <span className="flex items-center gap-1 text-orange-500/80 dark:text-orange-400/70">
-                <Clock className="h-3 w-3" />
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Clock className="h-3 w-3 opacity-60" />
                 {formatDate(job.application_deadline, locale)}
               </span>
             )}

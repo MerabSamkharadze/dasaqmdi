@@ -572,21 +572,21 @@ ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 
 | # | პრობლემა | ფაილი | სტატუსი |
 |---|----------|-------|---------|
-| M1 | მრავალი `as unknown as Type` cast — Supabase-ის დაბრუნებული ტიპები არ ემთხვევა განსაზღვრულ ინტერფეისებს (4 შემთხვევა) | `lib/queries/jobs.ts`, `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
-| M2 | AI draft ღილაკი — ჩუმად ყლაპავს შეცდომებს (`catch { }` ცარიელი); მომხმარებელი ვერ ხვდება რა მოხდა | `components/dashboard/ai-draft-button.tsx` | ❌ არ არის გამოსწორებული |
-| M3 | `not-found.tsx` — ინგლისური ტექსტი ჩაშენებულია, i18n არ გამოიყენება | `app/[locale]/not-found.tsx` | ❌ არ არის გამოსწორებული |
-| M4 | შეცდომების ლოგირება არსად არის — error boundary-ები არ იჭერს დიაგნოსტიკას, არც სერვერზე იგზავნება | `app/[locale]/error.tsx`, `app/[locale]/(dashboard)/error.tsx` | ❌ არ არის გამოსწორებული |
-| M5 | `renewJobAction` — არ ამოწმებს ვაკანსია უკვე დახურულია თუ არა; დახურული ვაკანსიის განახლება არ უნდა იყოს შესაძლებელი | `lib/actions/jobs.ts` | ❌ არ არის გამოსწორებული |
+| M1 | `as unknown as Type` cast-ები queries-ში | `lib/queries/jobs.ts`, `lib/queries/applications.ts` | ✅ გამოსწორებული — `.returns<T>()` Supabase ოფიციალური API |
+| M2 | AI draft ღილაკი — ჩუმი catch | `components/dashboard/ai-draft-button.tsx` | ✅ გამოსწორებული — error state, HTTP სტატუს კოდების დამუშავება, console.error |
+| M3 | `not-found.tsx` — hardcoded English | `app/[locale]/not-found.tsx` | ✅ გამოსწორებული — `getTranslations("errors")` + ახალი translation keys |
+| M4 | შეცდომების ლოგირება — error boundary-ებში | `app/[locale]/error.tsx`, `app/[locale]/(dashboard)/error.tsx` | ✅ გამოსწორებული — `useEffect` + `console.error` + digest + i18n |
+| M5 | `renewJobAction` — დახურული ვაკანსიის განახლება | `lib/actions/jobs.ts` | ✅ გამოსწორებული — status check (closed/archived) განახლებამდე |
 
 ### LOW — დაბალი პრიორიტეტი
 
 | # | პრობლემა | ფაილი | სტატუსი |
 |---|----------|-------|---------|
-| L1 | პაროლის მინიმალური სიგრძე 6 სიმბოლოა (რეკომენდებულია 8+) | `lib/validations/auth.ts` | ❌ არ არის გამოსწორებული |
-| L2 | Job card იყენებს ჩაშენებულ ფერებს (`text-orange-500`, `border-emerald-300`) CSS ცვლადების ნაცვლად — დიზაინ სისტემის დარღვევა | `components/jobs/job-card.tsx` | ❌ არ არის გამოსწორებული |
-| L3 | Logo SVG — `width="26"` მაგრამ `viewBox="0 0 28 28"` (შეუსაბამობა) | `components/brand/logo.tsx` | ❌ არ არის გამოსწორებული |
-| L4 | Accessibility ხარვეზები — ARIA ლენდმარკები აკლია, skip-to-content ბმული არ არის, `aria-live` რეგიონები არ არის | მრავალ ფაილში | ❌ არ არის გამოსწორებული |
-| L5 | `localized()` ფუნქცია — unsafe type assertions (`as string`) რეალური ვალიდაციის გარეშე | `lib/utils.ts` | ❌ არ არის გამოსწორებული |
+| L1 | პაროლის მინიმუმი 6 → 8 სიმბოლო | `lib/validations/auth.ts` | ✅ გამოსწორებული — login, signup, updatePassword სქემებში |
+| L2 | Job card hardcoded ფერები | `components/jobs/job-card.tsx`, `app/[locale]/(public)/jobs/[id]/page.tsx` | ✅ გამოსწორებული — `text-primary`, `border-primary/30`, `text-muted-foreground` |
+| L3 | Logo SVG width/viewBox შეუსაბამობა | `components/brand/logo.tsx` | ✅ გამოსწორებული — `width="28"` = `viewBox="0 0 28 28"` |
+| L4 | Accessibility ხარვეზები | მრავალ ფაილში | ✅ გამოსწორებული — skip-to-content, `aria-label` nav-ზე, `id="main-content"` |
+| L5 | `localized()` unsafe cast | `lib/utils.ts` | ✅ გამოსწორებული — `typeof` runtime check `as string` cast-ის ნაცვლად |
 
 ### შენიშვნა
 

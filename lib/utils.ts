@@ -14,11 +14,18 @@ export function localized<T extends Record<string, unknown>>(
   field: string,
   locale: string,
 ): string {
-  const kaField = `${field}_ka` as keyof T;
-  const enField = field as keyof T;
+  const kaField = `${field}_ka`;
+  const enField = field;
+
+  const kaValue = obj[kaField];
+  const enValue = obj[enField];
+
+  // L5 FIX: Runtime type check instead of blind `as string` cast
+  const ka = typeof kaValue === "string" ? kaValue : "";
+  const en = typeof enValue === "string" ? enValue : "";
 
   if (locale === "ka") {
-    return (obj[kaField] as string) || (obj[enField] as string) || "";
+    return ka || en;
   }
-  return (obj[enField] as string) || (obj[kaField] as string) || "";
+  return en || ka;
 }

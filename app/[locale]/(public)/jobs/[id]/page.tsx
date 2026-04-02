@@ -125,7 +125,7 @@ export default async function JobDetailPage({ params }: PageProps) {
           {matchResult && (
             <Badge
               variant="outline"
-              className="text-[12px] font-medium gap-1.5 border-emerald-300/50 bg-emerald-50/80 text-emerald-700 dark:border-emerald-700/40 dark:bg-emerald-900/20 dark:text-emerald-400"
+              className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 dark:text-primary"
             >
               <Zap className="h-3 w-3" />
               {t("match", { score: matchResult.score })}

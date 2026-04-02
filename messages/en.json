@@ -185,8 +185,13 @@
     "verifyCompany": "Verify Company"
   },
   "errors": {
-    "generic": "Something went wrong. Please try again.",
+    "generic": "Something went wrong",
+    "genericDescription": "An unexpected error occurred. Please try again.",
     "notFound": "Page not found",
+    "notFoundDescription": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go home",
+    "tryAgain": "Try again",
+    "dashboardError": "An error occurred while loading this page.",
     "unauthorized": "You don't have permission to access this page",
     "authError": "Authentication error"
   }

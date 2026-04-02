@@ -3,16 +3,22 @@ import { streamText, createTextStreamResponse } from "ai";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-const VALID_SENIORITY = ["Junior", "Mid-level", "Senior", "Lead"] as const;
 const VALID_LANGUAGES = ["en", "ka"] as const;
 
+// Maps client seniority values to display labels
+const SENIORITY_MAP: Record<string, string> = {
+  junior: "Junior",
+  mid: "Mid-level",
+  senior: "Senior",
+  lead: "Lead",
+};
 // H1 FIX: Strict input validation schema
 const draftJobInputSchema = z.object({
   title: z
     .string()
     .min(2, "Title too short")
     .max(120, "Title too long")
-    .regex(/^[a-zA-Z0-9\s\-\/&,.()ა-ჰ]+$/, "Title contains invalid characters"),
+    .regex(/^[a-zA-Z0-9\s\-\/&,.()#+ა-ჰ]+$/, "Title contains invalid characters"),
   skills: z
     .union([
       z.string().min(1).max(500),
@@ -20,13 +26,17 @@ const draftJobInputSchema = z.object({
     ])
     .transform((val) => {
       const arr = Array.isArray(val) ? val : val.split(",").map((s) => s.trim()).filter(Boolean);
-      // Sanitize each skill: only allow alphanumeric, spaces, hyphens, dots, Georgian
+      // Sanitize each skill: only allow alphanumeric, spaces, hyphens, dots, +, #, Georgian
       return arr
-        .map((s) => s.replace(/[^\w\s\-./ა-ჰ]/g, "").trim())
+        .map((s) => s.replace(/[^\w\s\-./#+ა-ჰ]/g, "").trim())
         .filter((s) => s.length > 0)
         .slice(0, 20);
     }),
-  seniority: z.enum(VALID_SENIORITY).optional().default("Mid-level"),
+  seniority: z
+    .string()
+    .optional()
+    .default("mid")
+    .transform((val) => SENIORITY_MAP[val] ?? "Mid-level"),
   language: z.enum(VALID_LANGUAGES).optional().default("en"),
 });
 

@@ -23,19 +23,23 @@ export async function getMyApplications(): Promise<ApplicationWithJob[]> {
     `,
     )
     .eq("applicant_id", user.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<ApplicationWithJob[]>();
 
   if (error) {
     console.error("Failed to fetch applications:", error.message);
     return [];
   }
 
-  return (data ?? []) as unknown as ApplicationWithJob[];
+  return data ?? [];
 }
 
 // H3 FIX: Auth-enforced — verifies the caller owns the job before returning applications
+// When caller has already verified ownership (e.g. page checked job.posted_by === user.id),
+// pass verifiedOwnerId to skip the redundant job query
 export async function getApplicationsByJob(
-  jobId: string
+  jobId: string,
+  verifiedOwnerId?: string
 ): Promise<ApplicationWithApplicant[]> {
   const supabase = createClient();
   const {
@@ -44,15 +48,20 @@ export async function getApplicationsByJob(
 
   if (!user) redirect("/auth/login");
 
-  // Verify the user owns the job
-  const { data: job } = await supabase
-    .from("jobs")
-    .select("id, posted_by")
-    .eq("id", jobId)
-    .single();
+  // If caller already verified ownership, just confirm user matches
+  if (verifiedOwnerId) {
+    if (verifiedOwnerId !== user.id) return [];
+  } else {
+    // Otherwise verify ownership via DB query
+    const { data: job } = await supabase
+      .from("jobs")
+      .select("id, posted_by")
+      .eq("id", jobId)
+      .single();
 
-  if (!job || job.posted_by !== user.id) {
-    return [];
+    if (!job || job.posted_by !== user.id) {
+      return [];
+    }
   }
 
   const { data, error } = await supabase
@@ -66,12 +75,13 @@ export async function getApplicationsByJob(
     `
     )
     .eq("job_id", jobId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<ApplicationWithApplicant[]>();
 
   if (error) {
     console.error("Failed to fetch job applications:", error.message);
     return [];
   }
 
-  return (data ?? []) as unknown as ApplicationWithApplicant[];
+  return data ?? [];
 }

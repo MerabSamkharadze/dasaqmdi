@@ -25,12 +25,14 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
   const [seniority, setSeniority] = useState("mid");
   const [isLoading, setIsLoading] = useState(false);
   const [completion, setCompletion] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = useCallback(async () => {
     if (!title.trim() || !skills.trim()) return;
 
     setIsLoading(true);
     setCompletion("");
+    setError(null);
 
     try {
       const response = await fetch("/api/ai/draft-job", {
@@ -44,7 +46,19 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
         }),
       });
 
-      if (!response.ok || !response.body) {
+      if (!response.ok) {
+        const errorText = response.status === 401
+          ? "Authentication required. Please log in again."
+          : response.status === 400
+            ? "Invalid input. Please check your title and skills."
+            : `Generation failed (${response.status}). Please try again.`;
+        setError(errorText);
+        setIsLoading(false);
+        return;
+      }
+
+      if (!response.body) {
+        setError("No response received. Please try again.");
         setIsLoading(false);
         return;
       }
@@ -61,9 +75,15 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
         setCompletion(fullText);
       }
 
+      if (fullText.length === 0) {
+        setError("Empty response received. Please try again.");
+        return;
+      }
+
       onDraftComplete(fullText);
-    } catch {
-      // Silently fail
+    } catch (err) {
+      console.error("AI draft generation failed:", err);
+      setError("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -149,6 +169,10 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
         )}
         {isLoading ? "Generating..." : "Generate"}
       </Button>
+
+      {error && (
+        <p className="text-[12px] text-destructive/80">{error}</p>
+      )}
 
       {completion && (
         <div className="rounded-xl border border-border/30 bg-card p-4 max-h-64 overflow-y-auto">

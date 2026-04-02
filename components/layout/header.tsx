@@ -20,7 +20,7 @@ export async function Header() {
           >
             <Logo />
           </Link>
-          <nav className="hidden sm:flex items-center gap-6">
+          <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-6">
             <Link
               href="/jobs"
               className="text-[13px] font-medium text-muted-foreground transition-colors duration-200 hover:text-foreground"

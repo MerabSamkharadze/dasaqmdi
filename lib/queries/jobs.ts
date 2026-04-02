@@ -59,7 +59,7 @@ export async function getJobs({
     query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
   }
 
-  const { data, count, error } = await query;
+  const { data, count, error } = await query.returns<JobWithCompany[]>();
 
   if (error) {
     console.error("Failed to fetch jobs:", error.message);
@@ -69,7 +69,7 @@ export async function getJobs({
   const totalCount = count ?? 0;
 
   return {
-    jobs: (data ?? []) as unknown as JobWithCompany[],
+    jobs: data ?? [],
     totalCount,
     totalPages: Math.ceil(totalCount / JOBS_PER_PAGE),
     currentPage,
@@ -88,17 +88,21 @@ export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[
     `
     )
     .eq("posted_by", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .returns<JobWithCompany[]>();
 
   if (error) {
     console.error("Failed to fetch employer jobs:", error.message);
     return [];
   }
 
-  return (data ?? []) as unknown as JobWithCompany[];
+  return data ?? [];
 }
 
-export async function getJobById(id: string) {
+// Note: Job detail page selects extended company fields (city, website, description).
+// The return type uses JobWithCompany but the actual data includes extra company fields
+// accessible at runtime. This is safe because TypeScript's structural typing allows it.
+export async function getJobById(id: string): Promise<JobWithCompany | null> {
   const supabase = createClient();
 
   const { data, error } = await supabase
@@ -111,8 +115,9 @@ export async function getJobById(id: string) {
     `,
     )
     .eq("id", id)
+    .returns<JobWithCompany[]>()
     .single();
 
   if (error) return null;
-  return data as unknown as JobWithCompany;
+  return data;
 }

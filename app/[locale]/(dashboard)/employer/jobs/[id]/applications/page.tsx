@@ -39,7 +39,7 @@ export default async function JobApplicationsPage({
 
   const locale = await getLocale();
   const t = await getTranslations("applications");
-  const applications = await getApplicationsByJob(job.id);
+  const applications = await getApplicationsByJob(job.id, user.id);
 
   for (const app of applications) {
     if (!app.is_viewed) {

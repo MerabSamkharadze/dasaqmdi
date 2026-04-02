@@ -127,6 +127,18 @@ export async function renewJobAction(jobId: string): Promise<ActionResult> {
 
   if (!user) return { error: "Unauthorized" };
 
+  // M5 FIX: Verify job exists, belongs to user, and is not permanently closed
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, status")
+    .eq("id", jobId)
+    .eq("posted_by", user.id)
+    .single();
+
+  if (!job) return { error: "Job not found" };
+  if (job.status === "closed") return { error: "Cannot renew a closed job. Please create a new listing." };
+  if (job.status === "archived") return { error: "Cannot renew an archived job." };
+
   const newExpiresAt = new Date();
   newExpiresAt.setDate(newExpiresAt.getDate() + 30);
 

@@ -9,7 +9,7 @@ export default function PublicLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1 w-full">
+      <main id="main-content" className="flex-1 w-full">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12">
           {children}
         </div>

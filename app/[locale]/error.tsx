@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 
@@ -10,6 +12,17 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("errors");
+
+  // M4 FIX: Log error with digest for server-side correlation
+  useEffect(() => {
+    console.error(
+      `[GlobalError] ${error.message}`,
+      error.digest ? `(digest: ${error.digest})` : "",
+      error
+    );
+  }, [error]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="flex flex-col items-center gap-6 max-w-md text-center">
@@ -18,14 +31,14 @@ export default function GlobalError({
         </div>
         <div className="space-y-1.5">
           <h1 className="text-base font-semibold tracking-tight text-foreground">
-            Something went wrong
+            {t("generic")}
           </h1>
           <p className="text-[13px] text-muted-foreground/70 leading-relaxed">
-            An unexpected error occurred. Please try again.
+            {t("genericDescription")}
           </p>
         </div>
         <Button onClick={reset} variant="outline">
-          Try again
+          {t("tryAgain")}
         </Button>
       </div>
     </div>
