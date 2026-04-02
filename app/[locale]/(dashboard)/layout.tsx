@@ -22,10 +22,11 @@ export default async function DashboardLayout({
   const profile = await getProfile(user.id);
   const role: UserRole = profile?.role ?? "seeker";
   const fullName = profile?.full_name || profile?.full_name_ka || null;
+  const avatarUrl = profile?.avatar_url ?? null;
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <DashboardSidebar role={role} fullName={fullName} />
+      <DashboardSidebar role={role} fullName={fullName} avatarUrl={avatarUrl} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader

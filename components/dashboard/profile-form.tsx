@@ -57,6 +57,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           onUploadComplete={setAvatarUrl}
           onRemove={() => setAvatarUrl("")}
           label={t("uploadAvatar")}
+          prefix="avatar"
         />
       </div>
 

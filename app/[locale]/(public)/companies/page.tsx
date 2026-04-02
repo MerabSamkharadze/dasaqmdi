@@ -49,7 +49,7 @@ export default async function CompaniesPage() {
             <Link
               key={company.id}
               href={`/companies/${company.slug}`}
-              className="group rounded-xl border border-border/30 bg-card p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-border/50 hover:-translate-y-[1px] animate-fade-in"
+              className="group rounded-xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border hover:-translate-y-0.5 animate-fade-in"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-3">

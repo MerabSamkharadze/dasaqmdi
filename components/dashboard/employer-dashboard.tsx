@@ -89,7 +89,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
               return (
                 <div
                   key={job.id}
-                  className="flex items-center gap-4 rounded-xl border border-border/30 bg-card px-5 py-3.5 shadow-sm hover:shadow-md hover:border-border transition-all duration-200 animate-fade-in"
+                  className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft hover:shadow-soft-md hover:border-border transition-all duration-200 animate-fade-in"
                   style={{ animationDelay: `${i * 50}ms` }}
                 >
                   <Link href={`/employer/jobs/${job.id}`} className="flex-1 min-w-0">
@@ -132,7 +132,7 @@ function StatCard({
   highlight?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-border/30 bg-card p-5 shadow-sm">
+    <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/6">
           <Icon className="h-4 w-4 text-primary/70" />

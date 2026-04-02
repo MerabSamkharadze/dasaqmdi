@@ -54,7 +54,7 @@ function StatCard({
   value: number;
 }) {
   return (
-    <div className="rounded-xl border border-border/30 bg-card p-5 shadow-sm">
+    <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/6">
           <Icon className="h-4 w-4 text-primary/70" />
@@ -82,7 +82,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-xl border border-border/30 bg-card px-5 py-4 shadow-sm hover:shadow-md hover:border-border transition-all duration-200"
+      className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-5 py-4 shadow-soft hover:shadow-soft-md hover:border-border transition-all duration-200"
     >
       <Icon className="h-4 w-4 text-muted-foreground/50" />
       <span className="text-[13px] font-medium text-foreground">{label}</span>

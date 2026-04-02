@@ -60,6 +60,12 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
       },
+      boxShadow: {
+        soft: "0 2px 15px rgb(0 0 0 / 0.03), 0 1px 3px rgb(0 0 0 / 0.02)",
+        "soft-md": "0 4px 20px rgb(0 0 0 / 0.05), 0 2px 6px rgb(0 0 0 / 0.03)",
+        "soft-lg": "0 8px 30px rgb(0 0 0 / 0.04), 0 4px 10px rgb(0 0 0 / 0.02)",
+        "primary-glow": "0 4px 14px hsl(var(--primary) / 0.25)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

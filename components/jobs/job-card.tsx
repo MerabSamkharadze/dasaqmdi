@@ -42,7 +42,7 @@ export function JobCard({ job, locale, matchScore, translations }: JobCardProps)
   return (
     <Link
       href={`/jobs/${job.id}`}
-      className="group block rounded-xl border border-border/40 bg-card px-5 py-5 sm:px-6 sm:py-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-border/60 hover:-translate-y-[1px]"
+      className="group block rounded-xl border border-border/60 bg-card px-5 py-5 sm:px-6 sm:py-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border hover:-translate-y-0.5"
     >
       <div className="flex items-start gap-4 sm:gap-5">
         {/* Company Logo */}
