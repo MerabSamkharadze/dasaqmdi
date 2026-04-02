@@ -1,4 +1,5 @@
 import { AuthButton } from "@/components/auth-button";
+import { Logo } from "@/components/brand/logo";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { getTranslations } from "next-intl/server";
@@ -15,9 +16,9 @@ export async function Header() {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="text-base font-semibold tracking-tight text-foreground transition-colors duration-200 hover:text-primary"
+            className="transition-opacity duration-200 hover:opacity-80"
           >
-            დასაქმდი
+            <Logo />
           </Link>
           <nav className="hidden sm:flex items-center gap-6">
             <Link

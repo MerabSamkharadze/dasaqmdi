@@ -451,6 +451,7 @@ Entities with bilingual fields: `Profile` (full_name, bio), `Company` (name, des
 ```
 NEXT_PUBLIC_SUPABASE_URL=<your-project-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 ```
 
 ---
@@ -520,27 +521,143 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
 - [x] Employer: review applicants per job (trigger markViewed, update status)
 - [x] Employer dashboard: expired jobs red indicator + renew/close buttons
 
-### Phase 4: Admin & Polish [IN PROGRESS]
+### Phase 4: Admin & Polish [DONE]
 - [x] Admin dashboard (stats: users, jobs, companies, applications)
 - [x] Admin: manage users (role select), jobs (delete), companies (verify)
 - [x] Admin layout guard (role check, redirect non-admins)
 - [x] 30-Day Freshness: "Renew for 30 days" button in employer dashboard
 - [x] SEO: generateMetadata on job detail, company pages
-- [ ] Loading states (Skeleton) + error boundaries
-- [ ] Responsive design pass (mobile-first)
+- [x] Loading states: Skeleton screens for homepage, job detail, dashboard
+- [x] Error boundaries: error.tsx + not-found.tsx with Quiet Design aesthetic
 
-### Phase 5: Intelligence [FUTURE]
+### Phase 5: Intelligence [IN PROGRESS]
 
 **Smart Matching Engine**
-- [ ] Matching algorithm: compare `profiles.skills[]` vs `jobs.tags[]` via array intersection
-- [ ] Compatibility score: `(matched_tags / total_job_tags) * 100` → percentage
-- [ ] Seeker UI: "85% Match" badge on job cards when logged in
-- [ ] Job detail: "Your matching skills: React, TypeScript" highlight
+- [x] Matching algorithm: `lib/matching.ts` — array intersection with case-insensitive comparison
+- [x] Compatibility score: `(matched_tags / total_job_tags) * 100` → percentage
+- [x] Seeker UI: emerald "85% Match" badge on job cards when logged in
+- [x] Job detail: "Your matching skills" section with highlighted tags
 - [ ] Employer UI: sort applicants by match % in applicant review page
 
 **AI Job Assistant**
-- [ ] Integration: Vercel AI SDK (`ai` package) with Claude/OpenAI provider
-- [ ] Employer UX: "Draft with AI" button on job creation form
-- [ ] Input: job title, seniority level, 3-5 core skills
-- [ ] Output: structured job description in both EN and KA
-- [ ] Streaming: `useCompletion()` for real-time text generation
+- [x] Integration: Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic`) with Claude Sonnet
+- [x] Employer UX: "Draft with AI" button on job creation form
+- [x] Input: job title, seniority level, core skills
+- [x] Output: structured job description (responsibilities, requirements, benefits)
+- [x] Streaming: fetch + ReadableStream for real-time text generation
+- [ ] Dual-language: generate in both EN and KA simultaneously
+
+---
+
+## Known Issues & Technical Debt (აუდიტი: 2026-04-02)
+
+### CRITICAL — დაუყოვნებლივ გამოსასწორებელი
+
+| # | პრობლემა | ფაილი | სტატუსი |
+|---|----------|-------|---------|
+| C1 | `updateApplicationStatusAction` — არ ამოწმებდა ვაკანსიის მფლობელობას | `lib/actions/applications.ts` | ✅ გამოსწორებული — ვაკანსიის `posted_by` შემოწმება დამატებულია |
+| C2 | `markApplicationViewedAction` — ავთენტიფიკაციის შემოწმება არ ჰქონდა | `lib/actions/applications.ts` | ✅ გამოსწორებული — auth + ვაკანსიის მფლობელობის ვერიფიკაცია დამატებულია |
+| C3 | ადმინის query ფუნქციები — წვდომის კონტროლი query ფენაზე არ იყო | `lib/queries/admin.ts` | ✅ გამოსწორებული — `requireAdmin()` guard დამატებულია ყველა query-ზე |
+
+### HIGH — მაღალი პრიორიტეტი
+
+| # | პრობლემა | ფაილი | სტატუსი |
+|---|----------|-------|---------|
+| H1 | AI draft route — შეყვანის ვალიდაცია არ არის, prompt injection-ის რისკი (title/skills პირდაპირ ინტერპოლირდება prompt-ში) | `app/api/ai/draft-job/route.ts` | ❌ არ არის გამოსწორებული |
+| H2 | `getMyApplications(userId)` — userId პარამეტრით მიიღება; ნებისმიერს შეუძლია ნებისმიერი მომხმარებლის განაცხადების მოტანა (კონფიდენციალურობის დარღვევა) | `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
+| H3 | `getApplicationsByJob(jobId)` — არ ამოწმებს რომ მომხმარებელი ვაკანსიის მფლობელია; ნებისმიერს შეუძლია ნახოს ვაკანსიაზე შემოსული განაცხადები | `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
+| H4 | Storage ფუნქციები (`uploadFile`, `deleteFile`) — შეყვანის ვალიდაცია და ნებართვების შემოწმება არ არის; path traversal-ის რისკი | `lib/storage.ts` | ❌ არ არის გამოსწორებული |
+
+### MEDIUM — საშუალო პრიორიტეტი
+
+| # | პრობლემა | ფაილი | სტატუსი |
+|---|----------|-------|---------|
+| M1 | მრავალი `as unknown as Type` cast — Supabase-ის დაბრუნებული ტიპები არ ემთხვევა განსაზღვრულ ინტერფეისებს (4 შემთხვევა) | `lib/queries/jobs.ts`, `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
+| M2 | AI draft ღილაკი — ჩუმად ყლაპავს შეცდომებს (`catch { }` ცარიელი); მომხმარებელი ვერ ხვდება რა მოხდა | `components/dashboard/ai-draft-button.tsx` | ❌ არ არის გამოსწორებული |
+| M3 | `not-found.tsx` — ინგლისური ტექსტი ჩაშენებულია, i18n არ გამოიყენება | `app/[locale]/not-found.tsx` | ❌ არ არის გამოსწორებული |
+| M4 | შეცდომების ლოგირება არსად არის — error boundary-ები არ იჭერს დიაგნოსტიკას, არც სერვერზე იგზავნება | `app/[locale]/error.tsx`, `app/[locale]/(dashboard)/error.tsx` | ❌ არ არის გამოსწორებული |
+| M5 | `renewJobAction` — არ ამოწმებს ვაკანსია უკვე დახურულია თუ არა; დახურული ვაკანსიის განახლება არ უნდა იყოს შესაძლებელი | `lib/actions/jobs.ts` | ❌ არ არის გამოსწორებული |
+
+### LOW — დაბალი პრიორიტეტი
+
+| # | პრობლემა | ფაილი | სტატუსი |
+|---|----------|-------|---------|
+| L1 | პაროლის მინიმალური სიგრძე 6 სიმბოლოა (რეკომენდებულია 8+) | `lib/validations/auth.ts` | ❌ არ არის გამოსწორებული |
+| L2 | Job card იყენებს ჩაშენებულ ფერებს (`text-orange-500`, `border-emerald-300`) CSS ცვლადების ნაცვლად — დიზაინ სისტემის დარღვევა | `components/jobs/job-card.tsx` | ❌ არ არის გამოსწორებული |
+| L3 | Logo SVG — `width="26"` მაგრამ `viewBox="0 0 28 28"` (შეუსაბამობა) | `components/brand/logo.tsx` | ❌ არ არის გამოსწორებული |
+| L4 | Accessibility ხარვეზები — ARIA ლენდმარკები აკლია, skip-to-content ბმული არ არის, `aria-live` რეგიონები არ არის | მრავალ ფაილში | ❌ არ არის გამოსწორებული |
+| L5 | `localized()` ფუნქცია — unsafe type assertions (`as string`) რეალური ვალიდაციის გარეშე | `lib/utils.ts` | ❌ არ არის გამოსწორებული |
+
+### შენიშვნა
+
+- **RLS (Row Level Security)** იცავს მონაცემთა ბაზის დონეზე — კრიტიკული ხარვეზები ექსპლუატირებადია მხოლოდ იმ შემთხვევაში, თუ RLS პოლიტიკებიც გატეხილია. თუმცა, defense-in-depth პრინციპით, აპლიკაციის ფენაზეც უნდა იყოს დაცვა.
+- სტატუსის აღნიშვნები: ❌ არ არის გამოსწორებული | ⚠️ ნაწილობრივ | ✅ გამოსწორებული
+
+---
+
+## SVG Assets & Iconography
+
+### Logo (`components/brand/logo.tsx`)
+
+**Concept**: Minimalist briefcase with an integrated check mark. The briefcase represents employment; the check mark (rendered in `--primary` / Indigo) signals success and trust.
+
+**Variants**:
+- `<Logo />` or `<Logo variant="full" />` — icon + "დასაქმდი" wordmark
+- `<Logo variant="icon" />` — symbol only (favicons, compact spaces)
+
+**SVG Structure** (28×28 viewBox):
+```
+Briefcase body:  <rect x="3" y="9" width="22" height="15" rx="3" />   stroke: foreground, 1.8
+Handle:          <path d="M10 9V7a4 4 0 0 1 8 0v2" />                 stroke: foreground, 1.8
+Check accent:    <path d="M9.5 17l3 3 6.5-7" />                       stroke: primary, 2.0
+```
+
+**Color rules**:
+- Briefcase + handle use `className="stroke-foreground"` (Slate 950 light / Slate 50 dark)
+- Check accent uses `className="stroke-primary"` (Indigo 500 light / Indigo 400 dark)
+- No fills — line art only
+
+### Icon Library (`components/brand/icons.tsx`)
+
+**Grid**: 24×24, `stroke-width: 1.5`, `stroke-linecap: round`, `stroke-linejoin: round`
+**Color**: `stroke="currentColor"` — inherits from parent's `text-*` class
+**Accessibility**: All icons render with `aria-hidden="true"`
+
+| Icon | Component | Purpose | SVG Key Path |
+|---|---|---|---|
+| **Job Categories** | | | |
+| Code brackets | `IconCode` | IT & Software | `polyline 16,18→22,12→16,6` + `8,6→2,12→8,18` |
+| Shopping cart | `IconCart` | Sales & Marketing | Circle r=1 at (9,21) (20,21) + cart path |
+| Wrench | `IconTools` | Construction | Wrench body with rotation pivot |
+| Bar chart | `IconFinance` | Finance & Accounting | 3 vertical lines at x=6,12,18 |
+| Heart pulse | `IconHealth` | Healthcare | Activity line `M22 12h-4l-3 9L9 3l-3 9H2` |
+| Grad cap | `IconEducation` | Education | Diamond + hanging drape |
+| **Dashboard** | | | |
+| Grid layout | `IconDashboard` | Overview | 4 rounded rects, asymmetric |
+| Document | `IconDocument` | Applications | Page fold + text lines |
+| Person | `IconProfile` | User profile | Circle head + torso arc |
+| Gear | `IconSettings` | Settings | Circle + cog teeth path |
+| Building | `IconCompany` | Company | Rect + window dots + door |
+| Briefcase | `IconBriefcase` | Jobs | Rect + handle path |
+| **Status** | | | |
+| Eye | `IconEye` | Seen/Viewed | Lens + pupil circle |
+| Clock | `IconClock` | Expired | Circle + clock hands |
+| Loader | `IconPending` | Pending | Circle + partial hand |
+| Check circle | `IconCheckCircle` | Accepted | Arc + check polyline |
+| X circle | `IconXCircle` | Rejected | Circle + X lines |
+| Star | `IconStar` | Shortlisted | 5-point polygon |
+| **Utility** | | | |
+| Magnifier | `IconSearch` | Search | Circle r=8 + diagonal line |
+| Funnel | `IconFilter` | Filter | Triangle polygon |
+| Plus | `IconPlus` | Add new | Cross lines |
+| Trash | `IconTrash` | Delete | Can body + lid |
+| Pin | `IconMapPin` | Location | Teardrop + inner circle |
+
+### Design Rules
+
+1. **No fills** — all icons are line-art (`fill="none"`)
+2. **Consistent weight** — `strokeWidth: 1.5` for icons, `1.8` for logo
+3. **Round caps** — `strokeLinecap: round`, `strokeLinejoin: round` everywhere
+4. **Color via inheritance** — icons use `currentColor`, logo uses Tailwind classes (`stroke-foreground`, `stroke-primary`)
+5. **Accessible** — every SVG has `aria-hidden="true"`; wrap with `<span role="img" aria-label="...">` when the icon carries meaning without adjacent text
+6. **Dark/Light safe** — no hardcoded hex values; all colors flow from CSS variables

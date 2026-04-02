@@ -78,6 +78,17 @@ export async function updateApplicationStatusAction(
     return { error: parsed.error.issues[0].message };
   }
 
+  // C1 FIX: Verify that the user owns the job this application belongs to
+  const { data: application } = await supabase
+    .from("applications")
+    .select("id, job:jobs!inner(posted_by)")
+    .eq("id", parsed.data.application_id)
+    .single();
+
+  if (!application || (application.job as unknown as { posted_by: string }).posted_by !== user.id) {
+    return { error: "Unauthorized: you do not own this job" };
+  }
+
   const { error } = await supabase
     .from("applications")
     .update({
@@ -96,6 +107,24 @@ export async function markApplicationViewedAction(
   applicationId: string,
 ): Promise<ActionResult> {
   const supabase = createClient();
+
+  // C2 FIX: Verify authentication
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // C2 FIX: Verify the user owns the job this application belongs to
+  const { data: application } = await supabase
+    .from("applications")
+    .select("id, job:jobs!inner(posted_by)")
+    .eq("id", applicationId)
+    .single();
+
+  if (!application || (application.job as unknown as { posted_by: string }).posted_by !== user.id) {
+    return { error: "Unauthorized: you do not own this job" };
+  }
 
   const { error } = await supabase
     .from("applications")

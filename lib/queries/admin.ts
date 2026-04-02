@@ -1,9 +1,29 @@
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import type { Profile, Company, Job } from "@/lib/types";
 
-export async function getAdminStats() {
+// C3 FIX: Shared admin verification for query layer (defense-in-depth)
+async function requireAdmin(): Promise<void> {
   const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") redirect("/dashboard");
+}
+
+export async function getAdminStats() {
+  await requireAdmin();
+
+  const supabase = createClient();
   const [users, jobs, companies, applications] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase.from("jobs").select("id", { count: "exact", head: true }),
@@ -20,6 +40,8 @@ export async function getAdminStats() {
 }
 
 export async function getAllUsers(): Promise<Profile[]> {
+  await requireAdmin();
+
   const supabase = createClient();
   const { data } = await supabase
     .from("profiles")
@@ -29,6 +51,8 @@ export async function getAllUsers(): Promise<Profile[]> {
 }
 
 export async function getAllJobs(): Promise<Job[]> {
+  await requireAdmin();
+
   const supabase = createClient();
   const { data } = await supabase
     .from("jobs")
@@ -38,6 +62,8 @@ export async function getAllJobs(): Promise<Job[]> {
 }
 
 export async function getAllCompaniesAdmin(): Promise<Company[]> {
+  await requireAdmin();
+
   const supabase = createClient();
   const { data } = await supabase
     .from("companies")

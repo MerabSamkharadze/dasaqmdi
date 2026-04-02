@@ -1,5 +1,5 @@
 import { anthropic } from "@ai-sdk/anthropic";
-import { streamText } from "ai";
+import { streamText, createTextStreamResponse } from "ai";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: Request) {
@@ -28,18 +28,18 @@ Generate a structured job description based on:
 
 ${language === "ka" ? "Write the entire response in Georgian (ქართული)." : "Write the entire response in English."}
 
-Output format (use markdown headers):
+Output format (plain text, no markdown headers — just use line breaks):
 
-## Responsibilities
+Responsibilities:
 - 5-7 specific, actionable bullet points
 
-## Requirements
+Requirements:
 - 5-7 bullet points covering skills, experience, and qualifications
 
-## Nice to Have
+Nice to Have:
 - 3-4 optional qualifications
 
-## Benefits
+Benefits:
 - 4-5 company benefits and perks
 
 Keep the tone professional but approachable. Be specific to the role, not generic.`;
@@ -47,8 +47,7 @@ Keep the tone professional but approachable. Be specific to the role, not generi
   const result = streamText({
     model: anthropic("claude-sonnet-4-20250514"),
     prompt,
-    maxTokens: 1500,
   });
 
-  return result.toDataStreamResponse();
+  return createTextStreamResponse({ textStream: result.textStream });
 }
