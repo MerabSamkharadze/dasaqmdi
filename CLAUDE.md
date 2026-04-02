@@ -563,10 +563,10 @@ ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 
 | # | პრობლემა | ფაილი | სტატუსი |
 |---|----------|-------|---------|
-| H1 | AI draft route — შეყვანის ვალიდაცია არ არის, prompt injection-ის რისკი (title/skills პირდაპირ ინტერპოლირდება prompt-ში) | `app/api/ai/draft-job/route.ts` | ❌ არ არის გამოსწორებული |
-| H2 | `getMyApplications(userId)` — userId პარამეტრით მიიღება; ნებისმიერს შეუძლია ნებისმიერი მომხმარებლის განაცხადების მოტანა (კონფიდენციალურობის დარღვევა) | `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
-| H3 | `getApplicationsByJob(jobId)` — არ ამოწმებს რომ მომხმარებელი ვაკანსიის მფლობელია; ნებისმიერს შეუძლია ნახოს ვაკანსიაზე შემოსული განაცხადები | `lib/queries/applications.ts` | ❌ არ არის გამოსწორებული |
-| H4 | Storage ფუნქციები (`uploadFile`, `deleteFile`) — შეყვანის ვალიდაცია და ნებართვების შემოწმება არ არის; path traversal-ის რისკი | `lib/storage.ts` | ❌ არ არის გამოსწორებული |
+| H1 | AI draft route — prompt injection-ის რისკი | `app/api/ai/draft-job/route.ts` | ✅ გამოსწორებული — Zod ვალიდაცია, სიმბოლოთა whitelist, system prompt injection guard |
+| H2 | `getMyApplications` — userId პარამეტრით გადაეცემოდა | `lib/queries/applications.ts` | ✅ გამოსწორებული — userId ამოღებულია auth-დან, პარამეტრი მოხსნილია |
+| H3 | `getApplicationsByJob` — მფლობელობის ვერიფიკაცია არ იყო | `lib/queries/applications.ts` | ✅ გამოსწორებული — `posted_by` შემოწმება დამატებულია |
+| H4 | Storage ფუნქციები — ვალიდაცია და path traversal რისკი | `lib/storage.ts` | ✅ გამოსწორებული — bucket whitelist, extension/size validation, path sanitization |
 
 ### MEDIUM — საშუალო პრიორიტეტი
 

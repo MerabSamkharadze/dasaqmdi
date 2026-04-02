@@ -38,7 +38,7 @@ export default async function SeekerApplicationsPage() {
 
   const locale = await getLocale();
   const t = await getTranslations("applications");
-  const applications = await getMyApplications(user.id);
+  const applications = await getMyApplications();
 
   if (applications.length === 0) {
     return (
