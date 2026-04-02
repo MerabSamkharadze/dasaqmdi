@@ -18,8 +18,10 @@ export function DeleteApplicationButton({
     if (!confirm(t("confirmDelete"))) return;
 
     setPending(true);
+    // revalidatePath in the action will re-render the page,
+    // so this component may unmount before we reach setPending(false).
+    // That's fine — React ignores state updates on unmounted components.
     await deleteApplicationAction(applicationId);
-    setPending(false);
   }
 
   return (

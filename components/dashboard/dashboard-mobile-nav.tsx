@@ -13,58 +13,17 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import {
-  LayoutDashboard,
-  User,
-  FileText,
-  Building2,
-  Briefcase,
-  PlusCircle,
-  Users,
-  ArrowLeft,
-  Menu,
-} from "lucide-react";
+import { ArrowLeft, LogOut, Menu } from "lucide-react";
+import { logoutAction } from "@/lib/actions/auth";
+import { getNavItems } from "./nav-items";
+import { RoleLabel } from "./role-label";
 
-type NavItem = {
-  href: string;
-  labelKey: string;
-  icon: React.ComponentType<{ className?: string }>;
+type DashboardMobileNavProps = {
+  role: UserRole;
+  fullName: string | null;
 };
 
-const seekerNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/seeker/applications", labelKey: "myApplications", icon: FileText },
-];
-
-const employerNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/employer/company", labelKey: "myCompany", icon: Building2 },
-  { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase },
-  { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle },
-];
-
-const adminNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/admin/users", labelKey: "manageUsers", icon: Users },
-  { href: "/admin/jobs", labelKey: "manageJobs", icon: Briefcase },
-  { href: "/admin/companies", labelKey: "manageCompanies", icon: Building2 },
-];
-
-function getNavItems(role: UserRole): NavItem[] {
-  switch (role) {
-    case "employer":
-      return employerNav;
-    case "admin":
-      return adminNav;
-    default:
-      return seekerNav;
-  }
-}
-
-export function DashboardMobileNav({ role }: { role: UserRole }) {
+export function DashboardMobileNav({ role, fullName }: DashboardMobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("nav");
@@ -79,7 +38,7 @@ export function DashboardMobileNav({ role }: { role: UserRole }) {
           <span className="sr-only">Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 p-0">
+      <SheetContent side="left" className="w-64 p-0 flex flex-col">
         <SheetTitle className="flex h-14 items-center border-b border-border/30 px-5">
           <Link
             href="/"
@@ -116,7 +75,7 @@ export function DashboardMobileNav({ role }: { role: UserRole }) {
           })}
         </nav>
 
-        <div className="border-t border-border/30 p-3">
+        <div className="border-t border-border/30 p-3 space-y-0.5">
           <Link
             href="/"
             onClick={() => setOpen(false)}
@@ -125,6 +84,24 @@ export function DashboardMobileNav({ role }: { role: UserRole }) {
             <ArrowLeft className="h-4 w-4 shrink-0 opacity-60" />
             {t("backToSite")}
           </Link>
+
+          <form action={logoutAction}>
+            <button
+              type="submit"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
+            >
+              <LogOut className="h-4 w-4 shrink-0 opacity-60" />
+              {t("logout")}
+            </button>
+          </form>
+        </div>
+
+        {/* User identity */}
+        <div className="border-t border-border/30 px-5 py-3.5">
+          <p className="text-[13px] font-medium text-foreground truncate">
+            {fullName ?? t("profile")}
+          </p>
+          <RoleLabel role={role} />
         </div>
       </SheetContent>
     </Sheet>

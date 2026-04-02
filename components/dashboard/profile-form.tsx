@@ -19,7 +19,7 @@ import { FileUpload } from "@/components/shared/file-upload";
 import type { Profile } from "@/lib/types";
 import type { ActionResult } from "@/lib/types";
 
-const initialState: ActionResult = { error: null };
+const initialState: ActionResult<string> = { error: null };
 
 export function ProfileForm({ profile }: { profile: Profile }) {
   const [state, formAction] = useFormState(updateProfileAction, initialState);
@@ -34,20 +34,20 @@ export function ProfileForm({ profile }: { profile: Profile }) {
       <input type="hidden" name="resume_url" value={resumeUrl} />
 
       {state.error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        <div className="rounded-xl border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
           {state.error}
         </div>
       )}
 
-      {state.error === null && state.data === undefined && state !== initialState && (
-        <div className="rounded-lg border border-green-500/50 bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400">
+      {state.data === "success" && !state.error && (
+        <div className="rounded-xl border border-green-500/50 bg-green-500/10 px-4 py-3 text-sm text-green-700 dark:text-green-400">
           {t("updateSuccess")}
         </div>
       )}
 
       {/* Avatar Upload */}
       <div className="space-y-2">
-        <Label>Avatar</Label>
+        <Label>{t("avatar")}</Label>
         <FileUpload
           bucket="avatars"
           userId={profile.id}
@@ -56,7 +56,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           currentUrl={profile.avatar_url}
           onUploadComplete={setAvatarUrl}
           onRemove={() => setAvatarUrl("")}
-          label="Upload Avatar"
+          label={t("uploadAvatar")}
         />
       </div>
 

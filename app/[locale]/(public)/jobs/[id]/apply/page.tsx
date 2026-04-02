@@ -31,6 +31,17 @@ export default async function ApplyPage({
   const t = await getTranslations("applications");
   const profile = await getProfile(user.id);
 
+  // Only seekers can apply
+  if (profile?.role && profile.role !== "seeker") {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24">
+        <p className="text-sm text-muted-foreground/60">
+          {t("seekerOnly")}
+        </p>
+      </div>
+    );
+  }
+
   const isExpired =
     job.status !== "active" ||
     (job.application_deadline && new Date(job.application_deadline) < new Date()) ||

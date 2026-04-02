@@ -4,58 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { ArrowLeft, LogOut } from "lucide-react";
+import { logoutAction } from "@/lib/actions/auth";
+import { getNavItems } from "./nav-items";
+import { RoleLabel } from "./role-label";
 import type { UserRole } from "@/lib/types/enums";
-import {
-  LayoutDashboard,
-  User,
-  FileText,
-  Building2,
-  Briefcase,
-  PlusCircle,
-  Users,
-  ArrowLeft,
-} from "lucide-react";
 
-type NavItem = {
-  href: string;
-  labelKey: string;
-  icon: React.ComponentType<{ className?: string }>;
+type DashboardSidebarProps = {
+  role: UserRole;
+  fullName: string | null;
 };
 
-const seekerNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/seeker/applications", labelKey: "myApplications", icon: FileText },
-];
-
-const employerNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/employer/company", labelKey: "myCompany", icon: Building2 },
-  { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase },
-  { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle },
-];
-
-const adminNav: NavItem[] = [
-  { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
-  { href: "/admin/users", labelKey: "manageUsers", icon: Users },
-  { href: "/admin/jobs", labelKey: "manageJobs", icon: Briefcase },
-  { href: "/admin/companies", labelKey: "manageCompanies", icon: Building2 },
-];
-
-function getNavItems(role: UserRole): NavItem[] {
-  switch (role) {
-    case "employer":
-      return employerNav;
-    case "admin":
-      return adminNav;
-    default:
-      return seekerNav;
-  }
-}
-
-export function DashboardSidebar({ role }: { role: UserRole }) {
+export function DashboardSidebar({ role, fullName }: DashboardSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const navItems = getNavItems(role);
@@ -98,7 +58,7 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
         })}
       </nav>
 
-      <div className="border-t border-border/30 p-3">
+      <div className="border-t border-border/30 p-3 space-y-0.5">
         <Link
           href="/"
           className="flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
@@ -106,6 +66,24 @@ export function DashboardSidebar({ role }: { role: UserRole }) {
           <ArrowLeft className="h-4 w-4 shrink-0 opacity-60" />
           {t("backToSite")}
         </Link>
+
+        <form action={logoutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
+          >
+            <LogOut className="h-4 w-4 shrink-0 opacity-60" />
+            {t("logout")}
+          </button>
+        </form>
+      </div>
+
+      {/* User identity */}
+      <div className="border-t border-border/30 px-5 py-3.5">
+        <p className="text-[13px] font-medium text-foreground truncate">
+          {fullName ?? t("profile")}
+        </p>
+        <RoleLabel role={role} />
       </div>
     </aside>
   );

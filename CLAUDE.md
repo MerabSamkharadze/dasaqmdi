@@ -588,6 +588,21 @@ ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 | L4 | Accessibility ხარვეზები | მრავალ ფაილში | ✅ გამოსწორებული — skip-to-content, `aria-label` nav-ზე, `id="main-content"` |
 | L5 | `localized()` unsafe cast | `lib/utils.ts` | ✅ გამოსწორებული — `typeof` runtime check `as string` cast-ის ნაცვლად |
 
+### Seeker Dashboard — ხარვეზები (აუდიტი: 2026-04-02)
+
+| # | პრობლემა | ფაილი | სტატუსი |
+|---|----------|-------|---------|
+| SD1 | Dashboard StatCard-ები "—" აჩვენებდა seeker-ისთვის | `app/[locale]/(dashboard)/dashboard/page.tsx` | ✅ გამოსწორებული — `getSeekerStats` query + რეალური მონაცემები |
+| SD2 | "Active" badge emerald ფერებით | `app/[locale]/(dashboard)/seeker/applications/page.tsx` | ✅ გამოსწორებული — `bg-primary/5 text-primary` |
+| SD3 | ProfileForm "Avatar" hardcoded English | `components/dashboard/profile-form.tsx` | ✅ გამოსწორებული — `t("avatar")`, `t("uploadAvatar")` |
+| SD4 | ProfileForm მყიფე success detection | `components/dashboard/profile-form.tsx`, `lib/actions/profile.ts` | ✅ გამოსწორებული — `data: "success"` explicit signal |
+| SD5 | ApplyForm "Resume is required" hardcoded | `components/applications/apply-form.tsx` | ✅ გამოსწორებული — `t("resumeRequired")` |
+| SD6 | ProfileForm `rounded-lg` ნაცვლად `rounded-xl` | `components/dashboard/profile-form.tsx` | ✅ გამოსწორებული |
+| SD7 | DeleteApplicationButton unmounted state update | `components/applications/delete-application-button.tsx` | ✅ გამოსწორებული — `setPending(false)` მოხსნილი |
+| SD8 | metadata.title hardcoded English | `app/[locale]/(dashboard)/seeker/applications/page.tsx` | ✅ გამოსწორებული — `generateMetadata()` + i18n |
+| SD9 | Seeker stats query აკლდა | `lib/queries/seeker-stats.ts` | ✅ გამოსწორებული — ახალი query შექმნილია |
+| SD10 | Nav items DRY დარღვევა | `components/dashboard/nav-items.ts` | ✅ გამოსწორებული — საერთო ფაილში გატანილია |
+
 ### შენიშვნა
 
 - **RLS (Row Level Security)** იცავს მონაცემთა ბაზის დონეზე — კრიტიკული ხარვეზები ექსპლუატირებადია მხოლოდ იმ შემთხვევაში, თუ RLS პოლიტიკებიც გატეხილია. თუმცა, defense-in-depth პრინციპით, აპლიკაციის ფენაზეც უნდა იყოს დაცვა.

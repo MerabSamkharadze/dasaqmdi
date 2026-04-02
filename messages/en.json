@@ -123,7 +123,10 @@
     "resume": "Resume",
     "uploadResume": "Upload Resume",
     "language": "Preferred Language",
-    "updateSuccess": "Profile updated successfully"
+    "avatar": "Profile Photo",
+    "uploadAvatar": "Upload Photo",
+    "updateSuccess": "Profile updated successfully",
+    "notFound": "Profile not found"
   },
   "company": {
     "title": "Company Profile",
@@ -164,7 +167,10 @@
     "confirmDelete": "Are you sure you want to delete this application?",
     "noApplications": "You haven't applied to any jobs yet",
     "applicants": "Applicants",
-    "updateStatus": "Update Status"
+    "updateStatus": "Update Status",
+    "resumeRequired": "Resume is required",
+    "alreadyApplied": "Applied",
+    "seekerOnly": "Only job seekers can apply to jobs"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -173,15 +179,38 @@
     "totalJobs": "Total Jobs",
     "totalApplications": "Total Applications",
     "activeJobs": "Active Jobs",
-    "recentApplications": "Recent Applications"
+    "recentApplications": "Recent Applications",
+    "viewedApplications": "Viewed by Employer",
+    "pendingApplications": "Pending Review",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "profileStrength": "Profile Strength",
+    "completeProfile": "Complete your profile to improve visibility",
+    "viewAll": "View all",
+    "noApplications": "No applications yet",
+    "browseJobs": "Browse jobs",
+    "newApplications": "Unread Applications",
+    "postFirstJob": "Post your first job",
+    "yourJobs": "Your Jobs",
+    "noJobs": "No jobs posted yet",
+    "applicants": "Applicants",
+    "roles": {
+      "seeker": "Job Seeker",
+      "employer": "Employer",
+      "admin": "Administrator"
+    }
   },
   "admin": {
     "title": "Admin Dashboard",
     "users": "Users",
+    "manageUsers": "Manage Users",
     "manageJobs": "Manage Jobs",
     "manageCompanies": "Manage Companies",
     "analytics": "Analytics",
     "totalUsers": "Total Users",
+    "totalJobs": "Total Jobs",
+    "totalCompanies": "Companies",
+    "totalApplications": "Applications",
     "verifyCompany": "Verify Company"
   },
   "errors": {

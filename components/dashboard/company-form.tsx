@@ -56,7 +56,7 @@ export function CompanyForm({ company, mode, userId }: CompanyFormProps) {
       <div className="space-y-2">
         <Label>{t("logo")}</Label>
         <FileUpload
-          bucket="logos"
+          bucket="company-logos"
           userId={userId}
           accept="image/png,image/jpeg,image/webp,image/svg+xml"
           maxSizeMB={2}

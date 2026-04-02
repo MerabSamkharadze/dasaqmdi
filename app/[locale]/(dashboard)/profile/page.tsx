@@ -5,9 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { ProfileForm } from "@/components/dashboard/profile-form";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Profile",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("profile");
+  return { title: t("title") };
+}
 
 export default async function ProfilePage() {
   const supabase = createClient();
@@ -18,12 +19,18 @@ export default async function ProfilePage() {
   if (!user) redirect("/auth/login");
 
   const profile = await getProfile(user.id);
+
+  // Profile page is only for seekers — employer has company page, admin doesn't need one
+  if (profile?.role === "employer" || profile?.role === "admin") {
+    redirect("/dashboard");
+  }
+
   const t = await getTranslations("profile");
 
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 text-muted-foreground/60">
-        <p className="text-sm">Profile not found</p>
+        <p className="text-sm">{t("notFound")}</p>
       </div>
     );
   }

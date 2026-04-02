@@ -123,7 +123,10 @@
     "resume": "რეზიუმე",
     "uploadResume": "რეზიუმეს ატვირთვა",
     "language": "სასურველი ენა",
-    "updateSuccess": "პროფილი წარმატებით განახლდა"
+    "avatar": "პროფილის ფოტო",
+    "uploadAvatar": "ფოტოს ატვირთვა",
+    "updateSuccess": "პროფილი წარმატებით განახლდა",
+    "notFound": "პროფილი ვერ მოიძებნა"
   },
   "company": {
     "title": "კომპანიის პროფილი",
@@ -164,7 +167,10 @@
     "confirmDelete": "ნამდვილად გსურთ ამ განაცხადის წაშლა?",
     "noApplications": "ჯერ არცერთ ვაკანსიაზე არ გაგიგზავნიათ განაცხადი",
     "applicants": "კანდიდატები",
-    "updateStatus": "სტატუსის განახლება"
+    "updateStatus": "სტატუსის განახლება",
+    "resumeRequired": "რეზიუმე აუცილებელია",
+    "alreadyApplied": "გაგზავნილია",
+    "seekerOnly": "ვაკანსიაზე განაცხადის გაგზავნა მხოლოდ კანდიდატებს შეუძლიათ"
   },
   "dashboard": {
     "title": "პანელი",
@@ -173,15 +179,38 @@
     "totalJobs": "სულ ვაკანსიები",
     "totalApplications": "სულ განაცხადები",
     "activeJobs": "აქტიური ვაკანსიები",
-    "recentApplications": "ბოლო განაცხადები"
+    "recentApplications": "ბოლო განაცხადები",
+    "viewedApplications": "ნანახი დამსაქმებლის მიერ",
+    "pendingApplications": "განხილვის მოლოდინში",
+    "pending": "მოლოდინში",
+    "accepted": "მიღებული",
+    "profileStrength": "პროფილის სრულყოფა",
+    "completeProfile": "შეავსეთ პროფილი ხილვადობის გასაუმჯობესებლად",
+    "viewAll": "ყველას ნახვა",
+    "noApplications": "განაცხადები ჯერ არ გაქვთ",
+    "browseJobs": "ვაკანსიების ნახვა",
+    "newApplications": "წაუკითხავი განაცხადები",
+    "postFirstJob": "გამოაქვეყნეთ პირველი ვაკანსია",
+    "yourJobs": "თქვენი ვაკანსიები",
+    "noJobs": "ვაკანსიები ჯერ არ გაქვთ",
+    "applicants": "კანდიდატები",
+    "roles": {
+      "seeker": "კანდიდატი",
+      "employer": "დამსაქმებელი",
+      "admin": "ადმინისტრატორი"
+    }
   },
   "admin": {
     "title": "ადმინ პანელი",
     "users": "მომხმარებლები",
+    "manageUsers": "მომხმარებლების მართვა",
     "manageJobs": "ვაკანსიების მართვა",
     "manageCompanies": "კომპანიების მართვა",
     "analytics": "ანალიტიკა",
     "totalUsers": "სულ მომხმარებლები",
+    "totalJobs": "სულ ვაკანსიები",
+    "totalCompanies": "კომპანიები",
+    "totalApplications": "განაცხადები",
     "verifyCompany": "კომპანიის ვერიფიკაცია"
   },
   "errors": {

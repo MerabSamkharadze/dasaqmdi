@@ -6,9 +6,9 @@ import { revalidatePath } from "next/cache";
 import type { ActionResult } from "@/lib/types";
 
 export async function updateProfileAction(
-  _prevState: ActionResult,
+  _prevState: ActionResult<string>,
   formData: FormData
-): Promise<ActionResult> {
+): Promise<ActionResult<string>> {
   const supabase = createClient();
   const {
     data: { user },
@@ -50,5 +50,5 @@ export async function updateProfileAction(
   }
 
   revalidatePath("/profile");
-  return { error: null };
+  return { error: null, data: "success" };
 }

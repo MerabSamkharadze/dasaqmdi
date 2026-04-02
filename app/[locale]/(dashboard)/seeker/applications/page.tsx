@@ -10,9 +10,10 @@ import { Building2, Calendar } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "My Applications",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("applications");
+  return { title: t("myApplications") };
+}
 
 function isJobExpired(deadline: string | null, status: string): boolean {
   if (status !== "active") return true;
@@ -117,7 +118,7 @@ export default async function SeekerApplicationsPage() {
                         {t("expired")}
                       </Badge>
                     ) : (
-                      <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400/90">
+                      <Badge variant="secondary" className="text-[11px] bg-primary/5 text-primary dark:bg-primary/10 dark:text-primary">
                         {t("jobActive")}
                       </Badge>
                     )}

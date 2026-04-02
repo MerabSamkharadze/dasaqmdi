@@ -2,6 +2,36 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import type { ApplicationWithJob, ApplicationWithApplicant } from "@/lib/types";
 
+/**
+ * Generate a signed URL for a private storage file (e.g. resumes).
+ * Returns the signed URL or null if the path is empty/invalid.
+ * Signed URLs expire after 1 hour.
+ */
+export async function getSignedResumeUrl(
+  storagePath: string
+): Promise<string | null> {
+  if (!storagePath) return null;
+
+  // If it's already a full URL (legacy data), extract the path
+  const path = storagePath.includes("/storage/v1/object/public/resumes/")
+    ? storagePath.split("/storage/v1/object/public/resumes/")[1]
+    : storagePath;
+
+  if (!path) return null;
+
+  const supabase = createClient();
+  const { data, error } = await supabase.storage
+    .from("resumes")
+    .createSignedUrl(path, 3600); // 1 hour
+
+  if (error) {
+    console.error("Failed to create signed URL:", error.message);
+    return null;
+  }
+
+  return data.signedUrl;
+}
+
 // H2 FIX: Auth-enforced — only returns the authenticated user's own applications
 export async function getMyApplications(): Promise<ApplicationWithJob[]> {
   const supabase = createClient();

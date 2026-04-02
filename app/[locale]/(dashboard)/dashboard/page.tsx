@@ -1,10 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/queries/profile";
-import { getTranslations } from "next-intl/server";
+import { getSeekerDashboardData, getEmployerDashboardData } from "@/lib/queries/dashboard";
+import { getAdminStats } from "@/lib/queries/admin";
+import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
-import { getLocale } from "next-intl/server";
-import { Briefcase, FileText, Building2, Users } from "lucide-react";
+import { SeekerDashboard } from "@/components/dashboard/seeker-dashboard";
+import { EmployerDashboard } from "@/components/dashboard/employer-dashboard";
+import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
+import type { UserRole } from "@/lib/types/enums";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -17,6 +21,7 @@ export default async function DashboardPage() {
   const locale = await getLocale();
   const profile = await getProfile(user.id);
   const t = await getTranslations("dashboard");
+  const role: UserRole = profile?.role ?? "seeker";
 
   const displayName = profile
     ? localized(profile, "full_name", locale) || user.email?.split("@")[0]
@@ -28,39 +33,46 @@ export default async function DashboardPage() {
         <h1 className="text-lg font-semibold tracking-tight">
           {t("welcome", { name: displayName ?? "" })}
         </h1>
-        <p className="text-[13px] text-muted-foreground/70 mt-1">{t("overview")}</p>
+        <p className="text-[13px] text-muted-foreground/70 mt-1">
+          {t("overview")}
+        </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard icon={Briefcase} label={t("activeJobs")} value="—" />
-        <StatCard icon={FileText} label={t("totalApplications")} value="—" />
-        <StatCard icon={Building2} label={t("totalJobs")} value="—" />
-        <StatCard icon={Users} label={t("recentApplications")} value="—" />
-      </div>
+      <RoleDashboard role={role} userId={user.id} locale={locale} />
     </div>
   );
 }
 
-function StatCard({
-  icon: Icon,
-  label,
-  value,
+async function RoleDashboard({
+  role,
+  userId,
+  locale,
 }: {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: string;
+  role: UserRole;
+  userId: string;
+  locale: string;
 }) {
-  return (
-    <div className="rounded-xl border border-border/30 bg-card p-5 shadow-sm">
-      <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/6">
-          <Icon className="h-4 w-4 text-primary/70" />
-        </div>
-        <div>
-          <p className="text-2xl font-semibold tracking-tight text-foreground">{value}</p>
-          <p className="text-[12px] text-muted-foreground/60">{label}</p>
-        </div>
-      </div>
-    </div>
-  );
+  switch (role) {
+    case "employer": {
+      const [data, t] = await Promise.all([
+        getEmployerDashboardData(userId),
+        getTranslations("dashboard"),
+      ]);
+      return <EmployerDashboard data={data} locale={locale} t={t} />;
+    }
+    case "admin": {
+      const [data, t] = await Promise.all([
+        getAdminStats(),
+        getTranslations("admin"),
+      ]);
+      return <AdminDashboard data={data} t={t} />;
+    }
+    default: {
+      const [data, t] = await Promise.all([
+        getSeekerDashboardData(userId),
+        getTranslations("dashboard"),
+      ]);
+      return <SeekerDashboard data={data} locale={locale} t={t} />;
+    }
+  }
 }

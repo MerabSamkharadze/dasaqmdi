@@ -50,7 +50,7 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
         />
         {!resumeUrl && (
           <p className="text-[11px] text-muted-foreground/60">
-            Resume is required
+            {t("resumeRequired")}
           </p>
         )}
       </div>

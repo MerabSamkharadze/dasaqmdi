@@ -119,6 +119,12 @@ export async function closeJobAction(jobId: string): Promise<ActionResult> {
   return { error: null };
 }
 
+export async function incrementJobViewAction(jobId: string): Promise<void> {
+  const supabase = createClient();
+
+  await supabase.rpc("increment_job_views", { job_id_input: jobId });
+}
+
 export async function renewJobAction(jobId: string): Promise<ActionResult> {
   const supabase = createClient();
   const {

@@ -19,6 +19,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { ViewTracker } from "@/components/jobs/view-tracker";
 import type { Metadata } from "next";
 
 type PageProps = {
@@ -75,24 +76,42 @@ export default async function JobDetailPage({ params }: PageProps) {
 
   // Smart Matching for logged-in seekers
   let matchResult: { score: number; matchedSkills: string[] } | null = null;
+  let hasApplied = false;
+  let isSeeker = false;
 
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (user && job.tags?.length > 0) {
+  if (user) {
     const profile = await getProfile(user.id);
-    if (profile?.role === "seeker" && profile.skills?.length > 0) {
-      const result = calculateMatch(profile.skills, job.tags);
-      if (result.score > 0) {
-        matchResult = result;
+    isSeeker = profile?.role === "seeker";
+
+    if (isSeeker) {
+      // Check if already applied
+      const { data: existing } = await supabase
+        .from("applications")
+        .select("id")
+        .eq("job_id", job.id)
+        .eq("applicant_id", user.id)
+        .single();
+
+      hasApplied = !!existing;
+
+      // Smart matching
+      if (job.tags?.length > 0 && profile?.skills?.length) {
+        const result = calculateMatch(profile.skills, job.tags);
+        if (result.score > 0) {
+          matchResult = result;
+        }
       }
     }
   }
 
   return (
     <div className="flex flex-col gap-8">
+      <ViewTracker jobId={job.id} />
       {/* Header section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex gap-4">
@@ -133,11 +152,19 @@ export default async function JobDetailPage({ params }: PageProps) {
           )}
           {isExpired ? (
             <Badge variant="destructive" className="text-[12px]">{t("jobClosed")}</Badge>
-          ) : (
+          ) : hasApplied ? (
+            <Badge
+              variant="outline"
+              className="text-[12px] font-medium gap-1.5 border-emerald-300/60 bg-emerald-50/50 text-emerald-700 dark:border-emerald-700/40 dark:bg-emerald-950/20 dark:text-emerald-400"
+            >
+              <CheckCircle className="h-3 w-3" />
+              {t("alreadyApplied")}
+            </Badge>
+          ) : isSeeker ? (
             <Button asChild size="lg" className="rounded-xl">
               <Link href={`/jobs/${job.id}/apply`}>{t("applyNow")}</Link>
             </Button>
-          )}
+          ) : null}
         </div>
       </div>
 

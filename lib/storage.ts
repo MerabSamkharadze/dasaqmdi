@@ -6,21 +6,24 @@ type UploadResult = {
 };
 
 // H4 FIX: Whitelist of allowed storage buckets (must match Supabase bucket names)
-const ALLOWED_BUCKETS = ["avatars", "resumes", "logos"] as const;
+const ALLOWED_BUCKETS = ["avatars", "resumes", "company-logos"] as const;
 type AllowedBucket = (typeof ALLOWED_BUCKETS)[number];
+
+// Private buckets store paths instead of public URLs — use getSignedUrl() to access
+const PRIVATE_BUCKETS: ReadonlySet<string> = new Set(["resumes"]);
 
 // H4 FIX: Allowed file extensions per bucket
 const ALLOWED_EXTENSIONS: Record<AllowedBucket, string[]> = {
   avatars: ["jpg", "jpeg", "png", "webp"],
   resumes: ["pdf", "doc", "docx"],
-  logos: ["jpg", "jpeg", "png", "webp", "svg"],
+  "company-logos": ["jpg", "jpeg", "png", "webp", "svg"],
 };
 
 // H4 FIX: Max file sizes per bucket (in bytes)
 const MAX_FILE_SIZES: Record<AllowedBucket, number> = {
   avatars: 5 * 1024 * 1024,       // 5MB
   resumes: 10 * 1024 * 1024,      // 10MB
-  logos: 5 * 1024 * 1024,         // 5MB
+  "company-logos": 5 * 1024 * 1024,         // 5MB
 };
 
 // H4 FIX: Validate bucket name against whitelist
@@ -43,7 +46,8 @@ function sanitizePath(path: string): string | null {
 
 /**
  * Upload a file to Supabase Storage.
- * Returns the public URL on success.
+ * Public buckets: returns the public URL.
+ * Private buckets (resumes): returns the storage path — use getSignedUrl() to access.
  */
 export async function uploadFile(
   bucket: string,
@@ -87,6 +91,11 @@ export async function uploadFile(
 
   if (error) {
     return { url: null, error: error.message };
+  }
+
+  // Private buckets: return storage path (not public URL)
+  if (PRIVATE_BUCKETS.has(bucket)) {
+    return { url: safePath, error: null };
   }
 
   const { data: urlData } = supabase.storage

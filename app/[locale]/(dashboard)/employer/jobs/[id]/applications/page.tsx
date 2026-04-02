@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { getJobById } from "@/lib/queries/jobs";
-import { getApplicationsByJob } from "@/lib/queries/applications";
+import { getApplicationsByJob, getSignedResumeUrl } from "@/lib/queries/applications";
 import { markApplicationViewedAction } from "@/lib/actions/applications";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
@@ -46,6 +46,15 @@ export default async function JobApplicationsPage({
       await markApplicationViewedAction(app.id);
     }
   }
+
+  // Generate signed URLs for resumes (private bucket)
+  const resumeUrls = new Map<string, string | null>();
+  await Promise.all(
+    applications.map(async (app) => {
+      const signedUrl = await getSignedResumeUrl(app.resume_url);
+      resumeUrls.set(app.id, signedUrl);
+    })
+  );
 
   const title = localized(job, "title", locale);
 
@@ -130,17 +139,19 @@ export default async function JobApplicationsPage({
                   </div>
                 </div>
 
-                {/* Resume link */}
-                <div className="shrink-0">
-                  <a
-                    href={app.resume_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[12px] text-primary/80 hover:text-primary hover:underline transition-colors duration-200"
-                  >
-                    Resume <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
+                {/* Resume link (signed URL for private bucket) */}
+                {resumeUrls.get(app.id) && (
+                  <div className="shrink-0">
+                    <a
+                      href={resumeUrls.get(app.id)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[12px] text-primary/80 hover:text-primary hover:underline transition-colors duration-200"
+                    >
+                      Resume <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
 
                 {/* Status update */}
                 <div className="shrink-0">

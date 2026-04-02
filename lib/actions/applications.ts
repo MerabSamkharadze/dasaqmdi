@@ -9,28 +9,29 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "@/lib/types";
 
-// Typed shape for application ownership check (join: applications → jobs)
-type ApplicationWithJobOwner = {
-  id: string;
-  job: { posted_by: string };
-};
-
 async function verifyApplicationOwnership(
   supabase: ReturnType<typeof createClient>,
   applicationId: string,
   userId: string
 ): Promise<boolean> {
-  const { data } = await supabase
+  // Fetch the application's job to check posted_by
+  const { data: application } = await supabase
     .from("applications")
-    .select("id, job:jobs!inner(posted_by)")
+    .select("id, job_id")
     .eq("id", applicationId)
     .single();
 
-  if (!data) return false;
+  if (!application) return false;
 
-  // Supabase returns single-relation joins as objects
-  const app = data as unknown as ApplicationWithJobOwner;
-  return app.job.posted_by === userId;
+  // Direct job lookup — avoids fragile join typing
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("posted_by")
+    .eq("id", application.job_id)
+    .single();
+
+  if (!job) return false;
+  return job.posted_by === userId;
 }
 
 export async function applyToJobAction(
@@ -43,6 +44,17 @@ export async function applyToJobAction(
   } = await supabase.auth.getUser();
 
   if (!user) return { error: "Unauthorized" };
+
+  // Role check: only seekers can apply
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "seeker") {
+    return { error: "Only job seekers can apply to jobs" };
+  }
 
   const raw = {
     job_id: formData.get("job_id") as string,
@@ -94,7 +106,7 @@ export async function updateApplicationStatusAction(
   const raw = {
     application_id: formData.get("application_id") as string,
     status: formData.get("status") as string,
-    employer_notes: formData.get("employer_notes") as string,
+    employer_notes: (formData.get("employer_notes") as string) ?? "",
   };
 
   const parsed = updateApplicationStatusSchema.safeParse(raw);
