@@ -155,7 +155,7 @@ export default async function JobDetailPage({ params }: PageProps) {
           ) : hasApplied ? (
             <Badge
               variant="outline"
-              className="text-[12px] font-medium gap-1.5 border-emerald-300/60 bg-emerald-50/50 text-emerald-700 dark:border-emerald-700/40 dark:bg-emerald-950/20 dark:text-emerald-400"
+              className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 dark:text-primary"
             >
               <CheckCircle className="h-3 w-3" />
               {t("alreadyApplied")}
@@ -170,8 +170,8 @@ export default async function JobDetailPage({ params }: PageProps) {
 
       {/* Match highlights */}
       {matchResult && matchResult.matchedSkills.length > 0 && (
-        <div className="rounded-xl border border-emerald-200/50 dark:border-emerald-800/30 bg-emerald-50/50 dark:bg-emerald-950/20 p-4 sm:p-5">
-          <p className="text-[13px] font-medium text-emerald-800 dark:text-emerald-300 mb-2.5 flex items-center gap-1.5">
+        <div className="rounded-xl border border-primary/20 dark:border-primary/15 bg-primary/[0.03] dark:bg-primary/[0.06] p-4 sm:p-5">
+          <p className="text-[13px] font-medium text-primary dark:text-primary mb-2.5 flex items-center gap-1.5">
             <CheckCircle className="h-3.5 w-3.5" />
             {t("matchingSkills")}
           </p>
@@ -180,7 +180,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               <Badge
                 key={skill}
                 variant="outline"
-                className="text-[11px] font-normal border-emerald-300/60 text-emerald-700 dark:border-emerald-700/50 dark:text-emerald-400 bg-white/60 dark:bg-emerald-900/30"
+                className="text-[11px] font-normal border-primary/30 text-primary dark:border-primary/25 dark:text-primary bg-primary/5 dark:bg-primary/10"
               >
                 {skill}
               </Badge>
@@ -240,7 +240,7 @@ export default async function JobDetailPage({ params }: PageProps) {
       {/* Requirements */}
       {requirements && (
         <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
-          <h2 className="text-sm font-semibold tracking-tight mb-4">Requirements</h2>
+          <h2 className="text-sm font-semibold tracking-tight mb-4">{t("requirements")}</h2>
           <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {requirements}
           </div>
@@ -260,7 +260,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                 variant="secondary"
                 className={`font-normal text-[11px] ${
                   isMatched
-                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                    ? "bg-primary/10 text-primary dark:bg-primary/15"
                     : ""
                 }`}
               >

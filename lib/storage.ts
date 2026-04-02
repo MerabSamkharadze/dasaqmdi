@@ -133,25 +133,26 @@ export async function deleteFile(
 }
 
 /**
- * Generate a unique file path with user ID prefix.
+ * Generate a deterministic file path per user.
+ *
+ * Each user gets ONE file per prefix: {userId}/{prefix}.{ext}
+ * With upsert: true, re-uploading the same slot overwrites the old file —
+ * no orphaned files, no storage bloat.
+ *
+ * Examples:
+ *   avatars:       {userId}/avatar.png
+ *   resumes:       {userId}/resume.pdf
+ *   company logos:  {userId}/logo.webp
+ *   apply resumes: {userId}/application.pdf
  */
 export function getFilePath(
   userId: string,
   fileName: string,
   prefix?: string
 ): string {
-  // H4 FIX: Sanitize userId and prefix to prevent path injection
   const safeUserId = userId.replace(/[^\w\-]/g, "");
-  const safePrefix = prefix?.replace(/[^\w\-]/g, "");
-
+  const safePrefix = prefix?.replace(/[^\w\-]/g, "") ?? "file";
   const ext = fileName.split(".").pop()?.toLowerCase() ?? "bin";
-  // H4 FIX: Use crypto-safe random when available, fallback to timestamp + Math.random
-  const random = typeof crypto !== "undefined"
-    ? crypto.randomUUID().slice(0, 8)
-    : Math.random().toString(36).slice(2, 10);
-  const uniqueName = `${Date.now()}-${random}.${ext}`;
 
-  return safePrefix
-    ? `${safeUserId}/${safePrefix}/${uniqueName}`
-    : `${safeUserId}/${uniqueName}`;
+  return `${safeUserId}/${safePrefix}.${ext}`;
 }

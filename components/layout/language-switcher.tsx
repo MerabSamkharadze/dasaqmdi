@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale } from "next-intl";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
 export function LanguageSwitcher() {
@@ -11,12 +11,7 @@ export function LanguageSwitcher() {
 
   function switchLocale() {
     const nextLocale = locale === "ka" ? "en" : "ka";
-
-    const pathWithoutLocale = pathname.replace(/^\/(ka|en)/, "") || "/";
-    const newPath =
-      nextLocale === "ka" ? pathWithoutLocale : `/en${pathWithoutLocale}`;
-
-    router.push(newPath);
+    router.replace(pathname, { locale: nextLocale });
   }
 
   return (

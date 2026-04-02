@@ -39,7 +39,9 @@
       "Bash(mkdir -p \"C:/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\(dashboard\\)/admin/companies\")",
       "Bash(curl:*)",
       "Bash(node:*)",
-      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add skeleton --yes)"
+      "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add skeleton --yes)",
+      "Bash(grep -v \"^$\")",
+      "Bash(xargs grep:*)"
     ]
   }
 }

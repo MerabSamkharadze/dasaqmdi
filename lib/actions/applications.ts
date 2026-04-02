@@ -181,11 +181,26 @@ export async function deleteApplicationAction(
     return { error: "Not authenticated" };
   }
 
+  // Fetch resume_url before deleting so we can clean up storage
+  const { data: application } = await supabase
+    .from("applications")
+    .select("resume_url")
+    .eq("id", applicationId)
+    .eq("applicant_id", user.id)
+    .single();
+
   const { error } = await supabase
     .from("applications")
     .delete()
     .eq("id", applicationId)
     .eq("applicant_id", user.id);
+
+  // Clean up resume file from storage (best-effort, don't block on failure)
+  if (!error && application?.resume_url) {
+    await supabase.storage
+      .from("resumes")
+      .remove([application.resume_url]);
+  }
 
   if (error) {
     return { error: error.message };

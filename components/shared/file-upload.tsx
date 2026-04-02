@@ -2,8 +2,25 @@
 
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { uploadFile, getFilePath } from "@/lib/storage";
+import { uploadFile, deleteFile, getFilePath } from "@/lib/storage";
 import { Upload, X, Loader2 } from "lucide-react";
+
+/**
+ * Extract storage path from a public URL or return path as-is for private buckets.
+ * Public URLs look like: https://xxx.supabase.co/storage/v1/object/public/avatars/userId/file.png
+ * Private paths are already storage paths: userId/resume/file.pdf
+ */
+function extractStoragePath(urlOrPath: string): string {
+  try {
+    const url = new URL(urlOrPath);
+    // Extract path after /object/public/{bucket}/
+    const match = url.pathname.match(/\/object\/public\/[^/]+\/(.+)/);
+    return match ? match[1] : urlOrPath;
+  } catch {
+    // Not a URL — already a storage path
+    return urlOrPath;
+  }
+}
 
 type FileUploadProps = {
   bucket: string;
@@ -45,6 +62,12 @@ export function FileUpload({
     setError(null);
     setUploading(true);
 
+    // Delete old file before uploading new one (prevents storage bloat)
+    if (previewUrl) {
+      const oldPath = extractStoragePath(previewUrl);
+      await deleteFile(bucket, oldPath);
+    }
+
     const path = getFilePath(userId, file.name, prefix);
     const result = await uploadFile(bucket, path, file);
 
@@ -61,7 +84,12 @@ export function FileUpload({
     }
   }
 
-  function handleRemove() {
+  async function handleRemove() {
+    // Delete file from storage when user removes it
+    if (previewUrl) {
+      const oldPath = extractStoragePath(previewUrl);
+      await deleteFile(bucket, oldPath);
+    }
     setPreviewUrl(null);
     setError(null);
     if (inputRef.current) inputRef.current.value = "";

@@ -3,11 +3,12 @@ import { redirect, notFound } from "next/navigation";
 import { getJobById } from "@/lib/queries/jobs";
 import { getApplicationsByJob, getSignedResumeUrl } from "@/lib/queries/applications";
 import { markApplicationViewedAction } from "@/lib/actions/applications";
+import { calculateMatch } from "@/lib/matching";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
-import { User, Calendar, ExternalLink } from "lucide-react";
+import { User, Calendar, ExternalLink, Zap } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -56,9 +57,30 @@ export default async function JobApplicationsPage({
     })
   );
 
+  // T2: Calculate match scores and sort by best match
+  const matchScores = new Map<string, number>();
+  if (job.tags && job.tags.length > 0) {
+    for (const app of applications) {
+      if (app.applicant.skills && app.applicant.skills.length > 0) {
+        const result = calculateMatch(app.applicant.skills, job.tags);
+        if (result.score > 0) {
+          matchScores.set(app.id, result.score);
+        }
+      }
+    }
+  }
+
+  // Sort: highest match first, then by date
+  const sortedApplications = [...applications].sort((a, b) => {
+    const scoreA = matchScores.get(a.id) ?? 0;
+    const scoreB = matchScores.get(b.id) ?? 0;
+    if (scoreA !== scoreB) return scoreB - scoreA;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
   const title = localized(job, "title", locale);
 
-  if (applications.length === 0) {
+  if (sortedApplications.length === 0) {
     return (
       <div className="flex flex-col gap-6">
         <h1 className="text-lg font-semibold tracking-tight">
@@ -84,9 +106,10 @@ export default async function JobApplicationsPage({
       </div>
 
       <div className="flex flex-col gap-2.5">
-        {applications.map((app, i) => {
+        {sortedApplications.map((app, i) => {
           const applicantName =
             localized(app.applicant, "full_name", locale) || "Anonymous";
+          const matchScore = matchScores.get(app.id);
 
           return (
             <div
@@ -110,9 +133,12 @@ export default async function JobApplicationsPage({
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-[15px] font-semibold tracking-tight text-foreground truncate">
+                    <Link
+                      href={`/seekers/${app.applicant.id}`}
+                      className="text-[15px] font-semibold tracking-tight text-foreground truncate hover:text-primary transition-colors duration-200 block"
+                    >
                       {applicantName}
-                    </p>
+                    </Link>
                     <div className="flex items-center gap-3 mt-0.5 text-[12px] text-muted-foreground/70">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3 opacity-50" />
@@ -120,6 +146,12 @@ export default async function JobApplicationsPage({
                       </span>
                       {app.applicant.experience_years != null && (
                         <span>{app.applicant.experience_years}y exp</span>
+                      )}
+                      {matchScore != null && (
+                        <span className="inline-flex items-center gap-0.5 text-primary font-medium">
+                          <Zap className="h-2.5 w-2.5" />
+                          {matchScore}%
+                        </span>
                       )}
                     </div>
                     {app.applicant.skills && app.applicant.skills.length > 0 && (

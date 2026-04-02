@@ -74,7 +74,9 @@
     "jobClosed": "This job is no longer accepting applications",
     "match": "{score}% Match",
     "matchingSkills": "Your matching skills",
-    "noMatchData": "Add skills to your profile to see match scores"
+    "noMatchData": "Add skills to your profile to see match scores",
+    "requirements": "Requirements",
+    "descriptionLabel": "Description"
   },
   "categories": {
     "it-software": "IT & Software",
@@ -126,7 +128,9 @@
     "avatar": "Profile Photo",
     "uploadAvatar": "Upload Photo",
     "updateSuccess": "Profile updated successfully",
-    "notFound": "Profile not found"
+    "notFound": "Profile not found",
+    "anonymous": "Anonymous User",
+    "memberSince": "Member since {date}"
   },
   "company": {
     "title": "Company Profile",

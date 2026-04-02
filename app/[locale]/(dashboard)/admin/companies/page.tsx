@@ -49,7 +49,7 @@ export default async function AdminCompaniesPage() {
             </div>
 
             {company.is_verified ? (
-              <Badge variant="secondary" className="gap-1 text-[11px] bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400/90">
+              <Badge variant="secondary" className="gap-1 text-[11px] bg-primary/10 text-primary dark:bg-primary/15">
                 <CheckCircle className="h-3 w-3" />
                 Verified
               </Badge>

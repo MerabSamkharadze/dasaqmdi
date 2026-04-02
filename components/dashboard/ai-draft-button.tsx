@@ -15,7 +15,7 @@ import { Sparkles, Loader2, X } from "lucide-react";
 
 type AIDraftButtonProps = {
   onDraftComplete: (text: string) => void;
-  language: "en" | "ka";
+  language: "en" | "ka" | "both";
 };
 
 export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps) {

@@ -58,7 +58,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
             {company.is_verified && (
-              <Badge variant="secondary" className="gap-1 text-[12px] bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400/90">
+              <Badge variant="secondary" className="gap-1 text-[12px] bg-primary/10 text-primary dark:bg-primary/15">
                 <CheckCircle className="h-3 w-3" />
                 {t("verified")}
               </Badge>

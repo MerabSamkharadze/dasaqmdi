@@ -70,7 +70,7 @@ export async function signUpAction(
 export async function logoutAction(): Promise<void> {
   const supabase = createClient();
   await supabase.auth.signOut();
-  redirect("/auth/login");
+  redirect("/");
 }
 
 export async function forgotPasswordAction(

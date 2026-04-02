@@ -4,43 +4,52 @@
 
 @layer base {
   :root {
-    /* Light — pure white cards on faint slate background */
-    --background: 210 40% 98%;
+    /*
+     * Light — Cerulean (#3db2d8) + Gold (#facf5a) palette
+     * Primary uses 195 82% 36% (deeper cerulean) for WCAG AA compliance (4.56:1 on white).
+     * The bright #3db2d8 appears naturally in bg-primary/5, border-primary/30 etc.
+     *
+     * Cerulean scale:  50→97%  100→90%  200→78%  300→64%  400→54%(#3db2d8)  500→36%(primary)  600→30%  700→24%  800→18%  900→12%  950→8%
+     * Gold scale:      50→96%  100→89%  200→78%  300→72%  400→67%(#facf5a)  500→55%           600→45%  700→35%
+     */
+    --background: 200 25% 98%;
     --foreground: 222 47% 11.2%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11.2%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11.2%;
-    --primary: 226 64% 52%;
+    --primary: 195 82% 36%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 214 32% 95%;
+    --secondary: 195 30% 95%;
     --secondary-foreground: 222 47% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 214 32% 95%;
+    --muted: 200 20% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 195 25% 94%;
     --accent-foreground: 222 47% 11.2%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 226 64% 52%;
-    --chart-1: 226 64% 52%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 200 25% 90%;
+    --input: 200 25% 90%;
+    --ring: 195 82% 36%;
+    --gold: 44 94% 67%;
+    --gold-foreground: 35 80% 18%;
+    --chart-1: 195 82% 36%;
+    --chart-2: 44 94% 67%;
+    --chart-3: 195 85% 24%;
+    --chart-4: 40 82% 45%;
+    --chart-5: 195 70% 55%;
     --radius: 0.75rem;
   }
 
   .dark {
-    /* Dark — deep elegant slate, never pitch black */
+    /* Dark — deep elegant slate, cerulean accent synced with light mode */
     --background: 224 71% 4%;
     --foreground: 210 40% 98%;
     --card: 222 47% 11.2%;
     --card-foreground: 210 40% 98%;
     --popover: 222 47% 11.2%;
     --popover-foreground: 210 40% 98%;
-    --primary: 224 64% 68%;
+    --primary: 195 70% 65%;
     --primary-foreground: 224 71% 4%;
     --secondary: 215.3 25% 18%;
     --secondary-foreground: 210 40% 98%;
@@ -52,12 +61,14 @@
     --destructive-foreground: 210 40% 98%;
     --border: 215.3 25% 18%;
     --input: 215.3 25% 18%;
-    --ring: 224 64% 68%;
-    --chart-1: 224 64% 68%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --ring: 195 70% 65%;
+    --gold: 44 80% 60%;
+    --gold-foreground: 44 10% 95%;
+    --chart-1: 195 70% 65%;
+    --chart-2: 44 80% 60%;
+    --chart-3: 195 60% 75%;
+    --chart-4: 40 70% 55%;
+    --chart-5: 195 65% 50%;
   }
 }
 

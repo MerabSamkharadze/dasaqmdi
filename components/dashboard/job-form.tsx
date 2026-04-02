@@ -62,7 +62,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       )}
 
       {mode === "edit" && state.error === null && state !== initialState && (
-        <div className="rounded-xl border border-green-500/30 bg-green-500/5 px-4 py-3 text-[13px] text-green-700 dark:text-green-400">
+        <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-[13px] text-primary">
           Saved
         </div>
       )}

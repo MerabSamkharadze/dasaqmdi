@@ -530,14 +530,14 @@ ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 - [x] Loading states: Skeleton screens for homepage, job detail, dashboard
 - [x] Error boundaries: error.tsx + not-found.tsx with Quiet Design aesthetic
 
-### Phase 5: Intelligence [IN PROGRESS]
+### Phase 5: Intelligence [DONE]
 
 **Smart Matching Engine**
 - [x] Matching algorithm: `lib/matching.ts` — array intersection with case-insensitive comparison
 - [x] Compatibility score: `(matched_tags / total_job_tags) * 100` → percentage
-- [x] Seeker UI: emerald "85% Match" badge on job cards when logged in
+- [x] Seeker UI: "Match" badge on job cards when logged in (primary/Indigo palette)
 - [x] Job detail: "Your matching skills" section with highlighted tags
-- [ ] Employer UI: sort applicants by match % in applicant review page
+- [x] Employer UI: sort applicants by match % in applicant review page + Zap score badge
 
 **AI Job Assistant**
 - [x] Integration: Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic`) with Claude Sonnet
@@ -545,68 +545,53 @@ ANTHROPIC_API_KEY=<your-anthropic-api-key>   # Required for AI Job Draft feature
 - [x] Input: job title, seniority level, core skills
 - [x] Output: structured job description (responsibilities, requirements, benefits)
 - [x] Streaming: fetch + ReadableStream for real-time text generation
-- [ ] Dual-language: generate in both EN and KA simultaneously
+- [x] Dual-language: `language: "both"` option — generates EN + KA with `---` separator
 
 ---
 
-## Known Issues & Technical Debt (აუდიტი: 2026-04-02)
+## ცვლილებების ჟურნალი (2026-04-02)
 
-### CRITICAL — დაუყოვნებლივ გამოსასწორებელი
+1. **უსაფრთხოება**: Application actions-ში ownership verification, admin queries-ში `requireAdmin()` guard, AI route-ში Zod validation + prompt injection დაცვა, storage-ში bucket whitelist + path sanitization
+2. **ტიპები**: `as unknown as` cast-ები ჩანაცვლდა Supabase `.returns<T>()` API-ით; `localized()` ფუნქციაში runtime type check
+3. **i18n**: not-found, error boundaries, ProfileForm ველები, ApplyForm, metadata titles — ყველა ორენოვანი გახდა
+4. **Seeker Dashboard**: `getSeekerStats()` query შეიქმნა, StatCard-ები რეალური მონაცემებით; profile page მხოლოდ seeker-ისთვის
+5. **Jobs Page**: `/jobs` გვერდი შეიქმნა ძიებით, კატეგორიის/ტიპის/ქალაქის ფილტრებით, match scores-ით და პაგინაციით
+6. **Nav DRY**: sidebar/mobile nav-ის მასივები გატანილია `nav-items.ts`-ში; employer/admin nav-იდან profile ლინკი მოიხსნა
+7. **ბაგფიქსები**: profile validation `url()` → `max(500)`, application status `employer_notes` null handling, `renewJobAction` closed/archived guard, seniority client↔server mismatch
+8. **დიზაინი**: hardcoded emerald/orange ფერები → CSS variable (`primary`, `muted-foreground`); `rounded-lg` → `rounded-xl`; Logo viewBox fix
+9. **Error handling**: error boundaries-ში `useEffect` + `console.error` + digest logging; AI draft button-ში HTTP error messages
+10. **პაროლი**: მინიმუმი 6 → 8 სიმბოლო
 
-| # | პრობლემა | ფაილი | სტატუსი |
-|---|----------|-------|---------|
-| C1 | `updateApplicationStatusAction` — არ ამოწმებდა ვაკანსიის მფლობელობას | `lib/actions/applications.ts` | ✅ გამოსწორებული — ვაკანსიის `posted_by` შემოწმება დამატებულია |
-| C2 | `markApplicationViewedAction` — ავთენტიფიკაციის შემოწმება არ ჰქონდა | `lib/actions/applications.ts` | ✅ გამოსწორებული — auth + ვაკანსიის მფლობელობის ვერიფიკაცია დამატებულია |
-| C3 | ადმინის query ფუნქციები — წვდომის კონტროლი query ფენაზე არ იყო | `lib/queries/admin.ts` | ✅ გამოსწორებული — `requireAdmin()` guard დამატებულია ყველა query-ზე |
+---
 
-### HIGH — მაღალი პრიორიტეტი
+## დარჩენილი ამოცანები (პრიორიტეტით)
 
-| # | პრობლემა | ფაილი | სტატუსი |
-|---|----------|-------|---------|
-| H1 | AI draft route — prompt injection-ის რისკი | `app/api/ai/draft-job/route.ts` | ✅ გამოსწორებული — Zod ვალიდაცია, სიმბოლოთა whitelist, system prompt injection guard |
-| H2 | `getMyApplications` — userId პარამეტრით გადაეცემოდა | `lib/queries/applications.ts` | ✅ გამოსწორებული — userId ამოღებულია auth-დან, პარამეტრი მოხსნილია |
-| H3 | `getApplicationsByJob` — მფლობელობის ვერიფიკაცია არ იყო | `lib/queries/applications.ts` | ✅ გამოსწორებული — `posted_by` შემოწმება დამატებულია |
-| H4 | Storage ფუნქციები — ვალიდაცია და path traversal რისკი | `lib/storage.ts` | ✅ გამოსწორებული — bucket whitelist, extension/size validation, path sanitization |
+### HIGH
 
-### MEDIUM — საშუალო პრიორიტეტი
+| # | ამოცანა | ფაილი | სტატუსი |
+|---|---------|-------|---------|
+| T1 | Employer dashboard სტატისტიკა | `lib/queries/dashboard.ts` | ✅ (user-ის მიერ) |
+| T2 | კანდიდატების სორტირება match %-ით | `employer/jobs/[id]/applications/page.tsx` | ✅ |
+| T3 | AI dual-language EN+KA | `app/api/ai/draft-job/route.ts` | ✅ — `"both"` ოფცია |
+| T4 | Bucket naming consistency | `lib/storage.ts`, `company-form.tsx` | ✅ — `"company-logos"` ყველგან |
 
-| # | პრობლემა | ფაილი | სტატუსი |
-|---|----------|-------|---------|
-| M1 | `as unknown as Type` cast-ები queries-ში | `lib/queries/jobs.ts`, `lib/queries/applications.ts` | ✅ გამოსწორებული — `.returns<T>()` Supabase ოფიციალური API |
-| M2 | AI draft ღილაკი — ჩუმი catch | `components/dashboard/ai-draft-button.tsx` | ✅ გამოსწორებული — error state, HTTP სტატუს კოდების დამუშავება, console.error |
-| M3 | `not-found.tsx` — hardcoded English | `app/[locale]/not-found.tsx` | ✅ გამოსწორებული — `getTranslations("errors")` + ახალი translation keys |
-| M4 | შეცდომების ლოგირება — error boundary-ებში | `app/[locale]/error.tsx`, `app/[locale]/(dashboard)/error.tsx` | ✅ გამოსწორებული — `useEffect` + `console.error` + digest + i18n |
-| M5 | `renewJobAction` — დახურული ვაკანსიის განახლება | `lib/actions/jobs.ts` | ✅ გამოსწორებული — status check (closed/archived) განახლებამდე |
+### MEDIUM
 
-### LOW — დაბალი პრიორიტეტი
+| # | ამოცანა | ფაილი | სტატუსი |
+|---|---------|-------|---------|
+| T5 | `/jobs` loading skeleton | `app/[locale]/(public)/jobs/loading.tsx` | ✅ |
+| T6 | Employer jobs — emerald badge | `employer/jobs/page.tsx` | ✅ → `primary` |
+| T7 | Admin jobs — emerald badge | `admin/jobs/page.tsx` | ✅ → `primary` |
+| T8 | Job detail — match section ფერები | `jobs/[id]/page.tsx` | ✅ → `primary` |
+| T9 | `auth/error` build error | Next.js 14 route group bug | ⚠️ skip — framework ბაგი |
 
-| # | პრობლემა | ფაილი | სტატუსი |
-|---|----------|-------|---------|
-| L1 | პაროლის მინიმუმი 6 → 8 სიმბოლო | `lib/validations/auth.ts` | ✅ გამოსწორებული — login, signup, updatePassword სქემებში |
-| L2 | Job card hardcoded ფერები | `components/jobs/job-card.tsx`, `app/[locale]/(public)/jobs/[id]/page.tsx` | ✅ გამოსწორებული — `text-primary`, `border-primary/30`, `text-muted-foreground` |
-| L3 | Logo SVG width/viewBox შეუსაბამობა | `components/brand/logo.tsx` | ✅ გამოსწორებული — `width="28"` = `viewBox="0 0 28 28"` |
-| L4 | Accessibility ხარვეზები | მრავალ ფაილში | ✅ გამოსწორებული — skip-to-content, `aria-label` nav-ზე, `id="main-content"` |
-| L5 | `localized()` unsafe cast | `lib/utils.ts` | ✅ გამოსწორებული — `typeof` runtime check `as string` cast-ის ნაცვლად |
+### LOW
 
-### Seeker Dashboard — ხარვეზები (აუდიტი: 2026-04-02)
-
-| # | პრობლემა | ფაილი | სტატუსი |
-|---|----------|-------|---------|
-| SD1 | Dashboard StatCard-ები "—" აჩვენებდა seeker-ისთვის | `app/[locale]/(dashboard)/dashboard/page.tsx` | ✅ გამოსწორებული — `getSeekerStats` query + რეალური მონაცემები |
-| SD2 | "Active" badge emerald ფერებით | `app/[locale]/(dashboard)/seeker/applications/page.tsx` | ✅ გამოსწორებული — `bg-primary/5 text-primary` |
-| SD3 | ProfileForm "Avatar" hardcoded English | `components/dashboard/profile-form.tsx` | ✅ გამოსწორებული — `t("avatar")`, `t("uploadAvatar")` |
-| SD4 | ProfileForm მყიფე success detection | `components/dashboard/profile-form.tsx`, `lib/actions/profile.ts` | ✅ გამოსწორებული — `data: "success"` explicit signal |
-| SD5 | ApplyForm "Resume is required" hardcoded | `components/applications/apply-form.tsx` | ✅ გამოსწორებული — `t("resumeRequired")` |
-| SD6 | ProfileForm `rounded-lg` ნაცვლად `rounded-xl` | `components/dashboard/profile-form.tsx` | ✅ გამოსწორებული |
-| SD7 | DeleteApplicationButton unmounted state update | `components/applications/delete-application-button.tsx` | ✅ გამოსწორებული — `setPending(false)` მოხსნილი |
-| SD8 | metadata.title hardcoded English | `app/[locale]/(dashboard)/seeker/applications/page.tsx` | ✅ გამოსწორებული — `generateMetadata()` + i18n |
-| SD9 | Seeker stats query აკლდა | `lib/queries/seeker-stats.ts` | ✅ გამოსწორებული — ახალი query შექმნილია |
-| SD10 | Nav items DRY დარღვევა | `components/dashboard/nav-items.ts` | ✅ გამოსწორებული — საერთო ფაილში გატანილია |
-
-### შენიშვნა
-
-- **RLS (Row Level Security)** იცავს მონაცემთა ბაზის დონეზე — კრიტიკული ხარვეზები ექსპლუატირებადია მხოლოდ იმ შემთხვევაში, თუ RLS პოლიტიკებიც გატეხილია. თუმცა, defense-in-depth პრინციპით, აპლიკაციის ფენაზეც უნდა იყოს დაცვა.
-- სტატუსის აღნიშვნები: ❌ არ არის გამოსწორებული | ⚠️ ნაწილობრივ | ✅ გამოსწორებული
+| # | ამოცანა | ფაილი | სტატუსი |
+|---|---------|-------|---------|
+| T10 | Homepage/Jobs DRY | — | ⚠️ skip — სხვადასხვა UX, საერთო კომპონენტები |
+| T11 | Status badge ფერები | `application-status-badge.tsx` | ⚠️ skip — სემანტიკური ფერები ლეგიტიმურია |
+| T12 | Profile empty state icon | `profile/page.tsx` | ✅ — `UserX` icon |
 
 ---
 

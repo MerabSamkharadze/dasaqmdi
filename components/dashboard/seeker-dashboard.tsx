@@ -177,7 +177,7 @@ function ApplicationBadge({
 }) {
   if (status === "accepted") {
     return (
-      <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-normal">
+      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
         Accepted
       </Badge>
     );
@@ -191,14 +191,14 @@ function ApplicationBadge({
   }
   if (status === "shortlisted" || status === "reviewed") {
     return (
-      <Badge className="bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 text-[10px] font-normal">
+      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
         Reviewed
       </Badge>
     );
   }
   if (isViewed) {
     return (
-      <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-normal">
+      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
         Seen
       </Badge>
     );

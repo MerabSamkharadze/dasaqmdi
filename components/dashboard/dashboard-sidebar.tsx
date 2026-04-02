@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
-import { getNavItems } from "./nav-items";
+import { getNavItems, isNavActive } from "./nav-items";
 import { RoleLabel } from "./role-label";
 import type { UserRole } from "@/lib/types/enums";
 
@@ -35,9 +35,7 @@ export function DashboardSidebar({ role, fullName }: DashboardSidebarProps) {
 
       <nav className="flex-1 space-y-0.5 p-3">
         {navItems.map((item) => {
-          const isActive =
-            normalizedPath === item.href ||
-            (item.href !== "/dashboard" && normalizedPath.startsWith(item.href));
+          const isActive = isNavActive(item, normalizedPath);
           const Icon = item.icon;
 
           return (
@@ -58,7 +56,7 @@ export function DashboardSidebar({ role, fullName }: DashboardSidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-border/30 p-3 space-y-0.5">
+      <div className="border-t border-border/30 p-3">
         <Link
           href="/"
           className="flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
@@ -66,24 +64,23 @@ export function DashboardSidebar({ role, fullName }: DashboardSidebarProps) {
           <ArrowLeft className="h-4 w-4 shrink-0 opacity-60" />
           {t("backToSite")}
         </Link>
-
-        <form action={logoutAction}>
-          <button
-            type="submit"
-            className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
-          >
-            <LogOut className="h-4 w-4 shrink-0 opacity-60" />
-            {t("logout")}
-          </button>
-        </form>
       </div>
 
-      {/* User identity */}
+      {/* User identity + logout */}
       <div className="border-t border-border/30 px-5 py-3.5">
         <p className="text-[13px] font-medium text-foreground truncate">
           {fullName ?? t("profile")}
         </p>
         <RoleLabel role={role} />
+        <form action={logoutAction} className="mt-2.5">
+          <button
+            type="submit"
+            className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[12px] font-medium text-destructive/70 transition-all duration-200 hover:bg-destructive/8 hover:text-destructive"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            {t("logout")}
+          </button>
+        </form>
       </div>
     </aside>
   );

@@ -99,7 +99,7 @@ export default async function EmployerJobsPage() {
                       <Badge variant="destructive" className="text-[11px]">Expired</Badge>
                     )}
                     {!isExpired && !isClosed && (
-                      <Badge variant="secondary" className="text-[11px] bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400/90">
+                      <Badge variant="secondary" className="text-[11px] bg-primary/5 text-primary dark:bg-primary/10 dark:text-primary">
                         Active
                       </Badge>
                     )}

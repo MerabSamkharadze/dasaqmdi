@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, LogOut, Menu } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
-import { getNavItems } from "./nav-items";
+import { getNavItems, isNavActive } from "./nav-items";
 import { RoleLabel } from "./role-label";
 
 type DashboardMobileNavProps = {
@@ -51,9 +51,7 @@ export function DashboardMobileNav({ role, fullName }: DashboardMobileNavProps) 
 
         <nav className="flex-1 space-y-0.5 p-3">
           {navItems.map((item) => {
-            const isActive =
-              normalizedPath === item.href ||
-              (item.href !== "/dashboard" && normalizedPath.startsWith(item.href));
+            const isActive = isNavActive(item, normalizedPath);
             const Icon = item.icon;
 
             return (

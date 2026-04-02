@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/queries/profile";
 import { getTranslations } from "next-intl/server";
 import { ProfileForm } from "@/components/dashboard/profile-form";
+import { UserX } from "lucide-react";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -30,6 +31,7 @@ export default async function ProfilePage() {
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 text-muted-foreground/60">
+        <UserX className="h-7 w-7 text-muted-foreground/30 mb-3" />
         <p className="text-sm">{t("notFound")}</p>
       </div>
     );

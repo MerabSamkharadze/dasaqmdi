@@ -13,7 +13,21 @@ export type NavItem = {
   href: string;
   labelKey: string;
   icon: React.ComponentType<{ className?: string }>;
+  exact?: boolean;
 };
+
+/**
+ * Check if a nav item is active for the given path.
+ * Items with `exact: true` only match their exact href.
+ * Dashboard always uses exact match.
+ * Other items match if the path starts with the href.
+ */
+export function isNavActive(item: NavItem, currentPath: string): boolean {
+  if (item.exact || item.href === "/dashboard") {
+    return currentPath === item.href;
+  }
+  return currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+}
 
 const seekerNav: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
@@ -24,8 +38,8 @@ const seekerNav: NavItem[] = [
 const employerNav: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
   { href: "/employer/company", labelKey: "myCompany", icon: Building2 },
-  { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase },
-  { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle },
+  { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase, exact: true },
+  { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle, exact: true },
 ];
 
 const adminNav: NavItem[] = [

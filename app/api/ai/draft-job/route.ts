@@ -3,7 +3,7 @@ import { streamText, createTextStreamResponse } from "ai";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-const VALID_LANGUAGES = ["en", "ka"] as const;
+const VALID_LANGUAGES = ["en", "ka", "both"] as const;
 
 // Maps client seniority values to display labels
 const SENIORITY_MAP: Record<string, string> = {
@@ -69,11 +69,13 @@ export async function POST(req: Request) {
 
   const { title, skills, seniority, language } = parsed.data;
 
-  // H1 FIX: Build prompt with validated/sanitized data — no raw user input interpolation
+  // Build language instruction
   const languageInstruction =
-    language === "ka"
-      ? "Write the entire response in Georgian (ქართული)."
-      : "Write the entire response in English.";
+    language === "both"
+      ? `Write the response in BOTH languages. First write the full description in English, then add a separator line "---", then write the same description in Georgian (ქართული). Label each section with [EN] and [KA].`
+      : language === "ka"
+        ? "Write the entire response in Georgian (ქართული)."
+        : "Write the entire response in English.";
 
   const result = streamText({
     model: anthropic("claude-sonnet-4-20250514"),
