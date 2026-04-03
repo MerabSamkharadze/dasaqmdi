@@ -74,6 +74,7 @@
     "applyNow": "Apply Now",
     "alreadyApplied": "Already Applied",
     "noJobs": "No jobs found matching your criteria",
+    "resultsCount": "{count} results",
     "salary": "Salary",
     "perMonth": "/month",
     "remote": "Remote",

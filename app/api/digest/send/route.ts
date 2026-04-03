@@ -3,7 +3,9 @@ import { Resend } from "resend";
 import { buildDigestData } from "@/lib/queries/digest";
 import { buildDigestEmail } from "@/lib/email/digest-template";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function POST(request: Request) {
   // Verify cron secret to prevent unauthorized access
@@ -25,7 +27,7 @@ export async function POST(request: Request) {
     for (const entry of entries) {
       const { subject, html } = buildDigestEmail(entry);
 
-      const { error } = await resend.emails.send({
+      const { error } = await getResend().emails.send({
         from: "dasakmdi.com <digest@dasakmdi.com>",
         to: entry.seeker.email,
         subject,
