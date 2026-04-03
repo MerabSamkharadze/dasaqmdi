@@ -3,9 +3,7 @@ import { Resend } from "resend";
 import { buildDigestData } from "@/lib/queries/digest";
 import { buildDigestEmail } from "@/lib/email/digest-template";
 
-function getResend() {
-  return new Resend(process.env.RESEND_API_KEY);
-}
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   // Verify cron secret to prevent unauthorized access
@@ -13,6 +11,12 @@ export async function POST(request: Request) {
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  if (!process.env.RESEND_API_KEY) {
+    return NextResponse.json({ error: "RESEND_API_KEY not configured" }, { status: 503 });
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
     const entries = await buildDigestData();
@@ -27,7 +31,7 @@ export async function POST(request: Request) {
     for (const entry of entries) {
       const { subject, html } = buildDigestEmail(entry);
 
-      const { error } = await getResend().emails.send({
+      const { error } = await resend.emails.send({
         from: "dasakmdi.com <digest@dasakmdi.com>",
         to: entry.seeker.email,
         subject,
