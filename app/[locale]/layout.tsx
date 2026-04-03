@@ -3,6 +3,7 @@ import { Noto_Sans_Georgian } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
+import NextTopLoader from "nextjs-toploader";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/lib/types/enums";
@@ -48,6 +49,12 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <NextTopLoader
+              color="hsl(195 82% 36%)"
+              height={2}
+              showSpinner={false}
+              shadow="0 0 10px hsl(195 82% 36% / 0.3), 0 0 5px hsl(195 82% 36% / 0.2)"
+            />
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>

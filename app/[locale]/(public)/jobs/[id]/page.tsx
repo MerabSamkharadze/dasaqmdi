@@ -33,12 +33,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const job = await getJobById(params.id);
   if (!job) return { title: "Job Not Found" };
 
+  const title = localized(job, "title", params.locale);
+  const companyName = localized(job.company, "name", params.locale);
+  const description = localized(job, "description", params.locale)?.slice(0, 160);
+
   return {
-    title: `${job.title} — ${job.company.name} | dasakmdi.com`,
-    description: job.description?.slice(0, 160),
+    title: `${title} — ${companyName} | dasakmdi.com`,
+    description,
     openGraph: {
-      title: job.title,
-      description: job.description?.slice(0, 160),
+      title,
+      description,
       type: "article",
     },
   };
@@ -155,14 +159,14 @@ export default async function JobDetailPage({ params }: PageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: job.title,
-    description: job.description,
+    title,
+    description,
     datePosted: job.created_at,
     validThrough: job.application_deadline ?? job.expires_at,
     employmentType: jobTypeMap[job.job_type] ?? "FULL_TIME",
     hiringOrganization: {
       "@type": "Organization",
-      name: job.company.name,
+      name: companyName,
       ...(job.company.logo_url && { logo: job.company.logo_url }),
     },
     jobLocation: job.is_remote

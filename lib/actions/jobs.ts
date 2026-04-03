@@ -67,14 +67,29 @@ export async function createJobAction(
     return { error: parsed.error.issues[0].message };
   }
 
-  const { error } = await supabase.from("jobs").insert({
+  const { data: newJob, error } = await supabase.from("jobs").insert({
     ...parsed.data,
     company_id: companyId,
     posted_by: user.id,
     status: "active",
-  });
+  }).select("id").single();
 
   if (error) return { error: error.message };
+
+  // TB3.3: Notify Telegram subscribers (non-blocking)
+  if (newJob?.id && process.env.CRON_SECRET) {
+    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      ? "https://dasakmdi.com"
+      : "http://localhost:3000";
+    fetch(`${baseUrl}/api/telegram/notify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CRON_SECRET}`,
+      },
+      body: JSON.stringify({ job_id: newJob.id }),
+    }).catch(() => {}); // Fire-and-forget, don't block job creation
+  }
 
   revalidatePath("/employer/jobs");
   revalidatePath("/jobs");

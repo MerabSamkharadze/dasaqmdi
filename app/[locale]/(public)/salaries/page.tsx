@@ -1,3 +1,5 @@
+export const revalidate = 300; // ISR: regenerate every 5 minutes
+
 import { getSalaryData, getSalaryCities } from "@/lib/queries/salaries";
 import { getCategories } from "@/lib/queries/categories";
 import { SalaryFilters } from "@/components/salaries/salary-filters";

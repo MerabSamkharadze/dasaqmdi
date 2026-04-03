@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { createClient } from "@/lib/supabase/server";
+import { localized } from "@/lib/utils";
 
 export const runtime = "edge";
 export const alt = "Job posting on dasakmdi.com";
@@ -9,12 +10,13 @@ export const contentType = "image/png";
 export default async function OGImage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; locale: string };
 }) {
+  const locale = params.locale ?? "ka";
   const supabase = createClient();
   const { data: job } = await supabase
     .from("jobs")
-    .select("title, city, job_type, salary_min, salary_max, salary_currency, company:companies!inner(name)")
+    .select("title, title_ka, city, job_type, salary_min, salary_max, salary_currency, company:companies!inner(name, name_ka)")
     .eq("id", params.id)
     .single();
 
@@ -29,7 +31,9 @@ export default async function OGImage({
     );
   }
 
-  const companyName = (job.company as unknown as { name: string }).name;
+  const companyObj = job.company as unknown as { name: string; name_ka: string | null };
+  const companyName = localized(companyObj, "name", locale);
+  const jobTitle = localized(job, "title", locale);
   const salary =
     job.salary_min && job.salary_max
       ? `${job.salary_min.toLocaleString()} - ${job.salary_max.toLocaleString()} ${job.salary_currency}`
@@ -57,7 +61,7 @@ export default async function OGImage({
             {companyName}
           </div>
           <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.2, maxWidth: "900px" }}>
-            {job.title}
+            {jobTitle}
           </div>
           <div style={{ display: "flex", gap: "24px", fontSize: 22, color: "#94a3b8", marginTop: "8px" }}>
             {job.city && <span>{job.city}</span>}

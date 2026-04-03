@@ -1,5 +1,6 @@
 import { getAllJobs } from "@/lib/queries/admin";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { AdminDeleteJobButton } from "@/components/dashboard/admin-delete-job-button";
 import { Calendar } from "lucide-react";
@@ -17,6 +18,7 @@ function formatDate(d: string): string {
 
 export default async function AdminJobsPage() {
   const t = await getTranslations("admin");
+  const locale = await getLocale();
   const jobs = await getAllJobs();
 
   return (

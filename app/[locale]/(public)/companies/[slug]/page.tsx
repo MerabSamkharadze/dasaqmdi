@@ -27,9 +27,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const company = await getCompanyBySlug(params.slug);
   if (!company) return { title: "Company Not Found" };
 
+  const name = localized(company, "name", params.locale);
+  const description = localized(company, "description", params.locale)?.slice(0, 160);
+
   return {
-    title: `${company.name} — dasakmdi.com`,
-    description: company.description?.slice(0, 160),
+    title: `${name} — dasakmdi.com`,
+    description,
   };
 }
 

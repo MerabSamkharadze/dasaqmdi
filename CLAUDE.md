@@ -339,44 +339,44 @@ Employer posts job → createJobAction() → /api/telegram/notify → bot.sendMe
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| TB1.1 | BotFather-ით ბოტის შექმნა | `@dasakmdi_bot`, BOT_TOKEN მიღება, env var: `TELEGRAM_BOT_TOKEN` | ❌ |
-| TB1.2 | `npm install grammy` | Grammy — ყველაზე მოდერნული TS Telegram bot framework | ❌ |
-| TB1.3 | DB მიგრაცია — `telegram_subscriptions` | `telegram_id BIGINT`, `chat_id BIGINT`, `username TEXT`, `categories TEXT[]`, `locale VARCHAR(2)`, `is_active BOOLEAN DEFAULT true`, `created_at` | ❌ |
-| TB1.4 | ტიპების განახლება | `database.ts` — TelegramSubscription Row/Insert type | ❌ |
+| TB1.1 | BotFather-ით ბოტის შექმნა | `@dasakmdi_bot` — **შენ უნდა შექმნა BotFather-ში და token .env.local-ში ჩასვა** | ⏳ შენზეა |
+| TB1.2 | `npm install grammy` | Grammy TS framework | ✅ |
+| TB1.3 | DB მიგრაცია | `006_telegram_subscriptions.sql` | ✅ |
+| TB1.4 | ტიპების განახლება | `database.ts` — TelegramSubscription Row/Insert/Update | ✅ |
 
 ### TB2 — Bot Commands (Webhook Handler)
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| TB2.1 | `/api/telegram/webhook` route | POST endpoint, Grammy webhook adapter, signature verification | ❌ |
-| TB2.2 | `/start` command | მისალმება ორენოვანი + inline keyboard კატეგორიების არჩევისთვის | ❌ |
-| TB2.3 | კატეგორიის არჩევა | callback_query handler — toggle categories, DB-ში შენახვა | ❌ |
-| TB2.4 | `/categories` command | მიმდინარე გამოწერების ჩვენება + შეცვლის შესაძლებლობა | ❌ |
-| TB2.5 | `/stop` command | `is_active = false` — გამოწერის გაუქმება | ❌ |
-| TB2.6 | `/language` command | locale შეცვლა (ka/en) — შეტყობინებების ენა | ❌ |
+| TB2.1 | `/api/telegram/webhook` route | Grammy webhookCallback + service client | ✅ |
+| TB2.2 | `/start` command | მისალმება + inline keyboard კატეგორიებით | ✅ |
+| TB2.3 | კატეგორიის არჩევა | callback_query toggle + DB upsert | ✅ |
+| TB2.4 | `/categories` command | მიმდინარე გამოწერების ჩვენება | ✅ |
+| TB2.5 | `/stop` command | `is_active = false` | ✅ |
+| TB2.6 | `/language` command | ka↔en toggle | ✅ |
 
 ### TB3 — ვაკანსიის Notification
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| TB3.1 | `/api/telegram/notify` route | POST, CRON_SECRET-ით დაცული. Input: job_id → ფეჩავს ვაკანსიას → გამომწერების filter categories-ით → batch sendMessage | ❌ |
-| TB3.2 | შეტყობინების ფორმატი | `📢 ახალი ვაკანსია: {title}\n🏢 {company}\n📍 {city}\n💰 {salary}\n🔗 {url}` ორენოვანი | ❌ |
-| TB3.3 | `createJobAction` hook | ვაკანსიის შექმნის შემდეგ `/api/telegram/notify` გამოძახება (background, non-blocking) | ❌ |
-| TB3.4 | Rate limiting | Telegram API ლიმიტი: 30 msg/sec. Queue-ით batch გაგზავნა დიდ რაოდენობაზე | ❌ |
+| TB3.1 | `/api/telegram/notify` route | POST, CRON_SECRET-ით, category filter, batch send | ✅ |
+| TB3.2 | შეტყობინების ფორმატი | Markdown: title, company, city, salary, link — ორენოვანი | ✅ |
+| TB3.3 | `createJobAction` hook | fire-and-forget fetch notify endpoint | ✅ |
+| TB3.4 | Rate limiting | 25 msg/batch → 1sec pause | ✅ |
 
 ### TB4 — საიტზე ინტეგრაცია
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| TB4.1 | "გამოიწერე" ღილაკი | Header/Footer-ში + Job detail page-ზე. Telegram-ის ლოგოთი, `t.me/dasakmdi_bot` ლინკი | ❌ |
-| TB4.2 | i18n | `nav.telegramSubscribe`, `jobs.subscribeTelegram` ორივე ენაზე | ❌ |
+| TB4.1 | "გამოიწერე" ღილაკი | Header/Footer-ში `t.me/dasakmdi_bot` ლინკი — **TB1.1 შემდეგ** | ⏳ TB1.1-ზე დამოკიდებული |
+| TB4.2 | i18n | `nav.telegramSubscribe` ka/en | ✅ |
 
 ### TB5 — Telegram Channel (ბონუს)
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| TB5.1 | Public channel | `@dasakmdi_jobs` channel შექმნა, ბოტი admin-ად | ❌ |
-| TB5.2 | Auto-post channel-ში | ყოველი ახალი ვაკანსია ავტომატურად channel-ში | ❌ |
+| TB5.1 | Public channel | `@dasakmdi_jobs` channel შექმნა — **შენ უნდა შექმნა** | ⏳ შენზეა |
+| TB5.2 | Auto-post channel-ში | notify route-ში channel_id-ზე sendMessage | ⏳ TB5.1 შემდეგ |
 
 ### შესრულების თანმიმდევრობა
 
