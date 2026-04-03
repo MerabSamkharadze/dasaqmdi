@@ -1,4 +1,5 @@
 import type { DigestEntry } from "@/lib/queries/digest";
+import { localized } from "@/lib/utils";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dasakmdi.com";
 
@@ -55,8 +56,8 @@ export function buildDigestEmail(entry: DigestEntry): { subject: string; html: s
 
   const jobRows = entry.topJobs
     .map(({ job, score, matchedSkills }) => {
-      const title = lang === "ka" ? (job.title_ka || job.title) : job.title;
-      const company = lang === "ka" ? (job.company.name_ka || job.company.name) : job.company.name;
+      const title = localized(job, "title", lang);
+      const company = localized(job.company, "name", lang);
       const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency);
       const jobUrl = `${SITE_URL}/jobs/${job.id}`;
 

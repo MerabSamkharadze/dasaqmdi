@@ -39,7 +39,7 @@ export default async function AdminJobsPage() {
               style={{ animationDelay: `${i * 30}ms` }}
             >
               <div className="flex-1 min-w-0">
-                <p className="text-[13px] font-medium truncate">{job.title}</p>
+                <p className="text-[13px] font-medium truncate">{localized(job, "title", locale)}</p>
                 <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground/60">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3 w-3 opacity-50" />

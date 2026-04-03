@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { getBot, MESSAGES } from "@/lib/telegram/bot";
+import { localized } from "@/lib/utils";
 
 function getServiceClient() {
   return createClient(
@@ -68,8 +69,8 @@ export async function POST(req: Request) {
     const locale = (sub.locale ?? "ka") as "ka" | "en";
     const msg = MESSAGES[locale];
 
-    const title = locale === "ka" && job.title_ka ? job.title_ka : job.title;
-    const company = locale === "ka" && companyName.name_ka ? companyName.name_ka : companyName.name;
+    const title = localized(job, "title", locale);
+    const company = localized(companyName, "name", locale);
     const category = locale === "ka" ? categoryName.name_ka : categoryName.name_en;
     const jobUrl = locale === "ka" ? `${baseUrl}/jobs/${job.id}` : `${baseUrl}/en/jobs/${job.id}`;
 

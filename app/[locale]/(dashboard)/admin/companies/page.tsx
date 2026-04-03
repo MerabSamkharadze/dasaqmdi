@@ -1,5 +1,6 @@
 import { getAllCompaniesAdmin } from "@/lib/queries/admin";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { AdminVerifyButton } from "@/components/dashboard/admin-verify-button";
 import { Building2, CheckCircle } from "lucide-react";
@@ -10,6 +11,7 @@ export const metadata: Metadata = { title: "Manage Companies" };
 
 export default async function AdminCompaniesPage() {
   const t = await getTranslations("admin");
+  const locale = await getLocale();
   const companies = await getAllCompaniesAdmin();
 
   return (
@@ -45,7 +47,7 @@ export default async function AdminCompaniesPage() {
             </div>
 
             <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-medium truncate">{company.name}</p>
+              <p className="text-[13px] font-medium truncate">{localized(company, "name", locale)}</p>
               {company.city && (
                 <p className="text-[11px] text-muted-foreground/60">{company.city}</p>
               )}

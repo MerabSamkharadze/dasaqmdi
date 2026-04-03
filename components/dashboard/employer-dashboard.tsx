@@ -28,7 +28,7 @@ type EmployerDashboardProps = {
 
 export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
   const companyName = data.company
-    ? (locale === "ka" && data.company.name_ka ? data.company.name_ka : data.company.name)
+    ? localized(data.company, "name", locale)
     : null;
 
   return (

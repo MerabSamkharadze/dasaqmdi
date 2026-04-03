@@ -164,8 +164,8 @@ export default async function HomePage({
           {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (
             <div className="flex items-center gap-2 text-[12px] text-muted-foreground/60 mb-6">
               <span>
-                {totalCount} {totalCount === 1 ? "result" : "results"}
-                {searchParams.q && <> for &ldquo;{searchParams.q}&rdquo;</>}
+                {t("resultsCount", { count: totalCount })}
+                {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
               </span>
             </div>
           )}
