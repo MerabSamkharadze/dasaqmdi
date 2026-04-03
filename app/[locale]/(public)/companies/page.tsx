@@ -6,6 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+export const revalidate = 3600; // O4: Revalidate every hour
+
 export const metadata: Metadata = {
   title: "Companies — dasakmdi.com",
   description: "Browse companies hiring in Georgia",

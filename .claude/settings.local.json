@@ -45,7 +45,14 @@
       "Bash(grep -h \"from \\\\\"@/components\" /c/Users/msamkharadze/Desktop/personal/my-app/components/dashboard/*.tsx)",
       "Bash(grep:*)",
       "Bash(npx eslint:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(rm:*)",
+      "Bash(git diff:*)",
+      "Bash(npx kill-port:*)",
+      "WebFetch(domain:docs.lemonsqueezy.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(xargs wc:*)",
+      "Bash(ls:*)"
     ]
   }
 }

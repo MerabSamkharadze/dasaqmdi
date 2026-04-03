@@ -33,7 +33,8 @@
     "savedJobs": "Saved Jobs",
     "backToSite": "Back to Site",
     "noJobs": "No jobs posted yet",
-    "applicants": "Applicants"
+    "applicants": "Applicants",
+    "salaries": "Salaries"
   },
   "home": {
     "title": "Find Your Dream Job in Georgia",
@@ -41,7 +42,10 @@
     "searchPlaceholder": "Search by job title or keyword...",
     "featuredJobs": "Featured Jobs",
     "browseByCategory": "Browse by Category",
-    "latestJobs": "Latest Jobs"
+    "latestJobs": "Latest Jobs",
+    "topMatches": "Picked for You",
+    "noSkills": "Add skills to your profile to see matching jobs",
+    "noSkillsCta": "Complete your profile"
   },
   "jobs": {
     "title": "Job Listings",
@@ -135,7 +139,13 @@
     "updateSuccess": "Profile updated successfully",
     "notFound": "Profile not found",
     "anonymous": "Anonymous User",
-    "memberSince": "Member since {date}"
+    "memberSince": "Member since {date}",
+    "shareProfile": "Share Profile",
+    "linkCopied": "Link copied",
+    "sparseProfile": "This profile doesn't have any information yet",
+    "settingsTitle": "Settings",
+    "publicProfile": "Public profile — others can view my profile",
+    "emailDigest": "Daily jobs digest — receive matching jobs via email"
   },
   "company": {
     "title": "Company Profile",
@@ -152,7 +162,18 @@
     "verified": "Verified",
     "createCompany": "Create Company Profile",
     "editCompany": "Edit Company Profile",
-    "createFirst": "You need to create a company before posting jobs"
+    "createFirst": "You need to create a company before posting jobs",
+    "cultureTitle": "Culture & Environment",
+    "cultureDescription": "Share what makes your company a great place to work",
+    "techStack": "Tech Stack",
+    "techStackPlaceholder": "React, Node.js, PostgreSQL...",
+    "benefits": "Benefits",
+    "benefitsKa": "Benefits (Georgian)",
+    "benefitsPlaceholder": "Remote work, Health insurance...",
+    "benefitsPlaceholderKa": "Remote work, Health insurance...",
+    "whyWorkHere": "Why Work Here",
+    "whyWorkHereKa": "Why Work Here (Georgian)",
+    "commaSeparated": "Comma-separated"
   },
   "applications": {
     "title": "Applications",
@@ -231,6 +252,26 @@
     "totalCompanies": "Companies",
     "totalApplications": "Applications",
     "verifyCompany": "Verify Company"
+  },
+  "salaries": {
+    "title": "Salaries in Georgia",
+    "subtitle": "Real salary data from active job listings",
+    "avgSalary": "Average Salary",
+    "minSalary": "Minimum",
+    "maxSalary": "Maximum",
+    "jobCount": "{count} jobs",
+    "perMonth": "/mo",
+    "allCategories": "All Categories",
+    "allCities": "All Cities",
+    "allCurrencies": "All Currencies",
+    "category": "Category",
+    "city": "City",
+    "currency": "Currency",
+    "noData": "No salary data found",
+    "noDataDescription": "No jobs with salary information match these filters",
+    "basedOn": "Based on {count} listings",
+    "range": "Range",
+    "disclaimer": "Data based on job listings published on this site with specified salary ranges"
   },
   "errors": {
     "generic": "Something went wrong",

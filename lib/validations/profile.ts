@@ -13,6 +13,8 @@ export const updateProfileSchema = z.object({
   preferred_language: z.enum(LOCALES).default("ka"),
   avatar_url: z.string().max(500).optional().or(z.literal("")),
   resume_url: z.string().max(500).optional().or(z.literal("")),
+  is_public: z.boolean().default(true),
+  email_digest: z.boolean().default(true),
 });
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;

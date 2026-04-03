@@ -11,6 +11,11 @@ export const createCompanySchema = z.object({
   address: z.string().max(300).optional().or(z.literal("")),
   address_ka: z.string().max(300).optional().or(z.literal("")),
   employee_count: z.enum(EMPLOYEE_COUNTS).optional(),
+  tech_stack: z.array(z.string().max(50)).max(20).optional(),
+  why_work_here: z.string().max(3000).optional().or(z.literal("")),
+  why_work_here_ka: z.string().max(3000).optional().or(z.literal("")),
+  benefits: z.array(z.string().max(100)).max(15).optional(),
+  benefits_ka: z.array(z.string().max(100)).max(15).optional(),
 });
 
 export type CreateCompanyInput = z.infer<typeof createCompanySchema>;

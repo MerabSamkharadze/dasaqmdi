@@ -175,6 +175,75 @@ export function CompanyForm({ company, mode, userId }: CompanyFormProps) {
         />
       </div>
 
+      {/* Culture section divider */}
+      <div className="pt-4 border-t border-border/60">
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground mb-1">
+          {t("cultureTitle")}
+        </h3>
+        <p className="text-xs text-muted-foreground/60 mb-4">
+          {t("cultureDescription")}
+        </p>
+      </div>
+
+      {/* Tech Stack */}
+      <div className="space-y-2">
+        <Label htmlFor="tech_stack">{t("techStack")}</Label>
+        <Input
+          id="tech_stack"
+          name="tech_stack"
+          placeholder={t("techStackPlaceholder")}
+          defaultValue={company?.tech_stack?.join(", ") ?? ""}
+        />
+        <p className="text-[11px] text-muted-foreground/50">{t("commaSeparated")}</p>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        {/* Benefits (EN) */}
+        <div className="space-y-2">
+          <Label htmlFor="benefits">{t("benefits")}</Label>
+          <Input
+            id="benefits"
+            name="benefits"
+            placeholder={t("benefitsPlaceholder")}
+            defaultValue={company?.benefits?.join(", ") ?? ""}
+          />
+          <p className="text-[11px] text-muted-foreground/50">{t("commaSeparated")}</p>
+        </div>
+
+        {/* Benefits (KA) */}
+        <div className="space-y-2">
+          <Label htmlFor="benefits_ka">{t("benefitsKa")}</Label>
+          <Input
+            id="benefits_ka"
+            name="benefits_ka"
+            placeholder={t("benefitsPlaceholderKa")}
+            defaultValue={company?.benefits_ka?.join(", ") ?? ""}
+          />
+        </div>
+      </div>
+
+      {/* Why work here (EN) */}
+      <div className="space-y-2">
+        <Label htmlFor="why_work_here">{t("whyWorkHere")}</Label>
+        <Textarea
+          id="why_work_here"
+          name="why_work_here"
+          rows={3}
+          defaultValue={company?.why_work_here ?? ""}
+        />
+      </div>
+
+      {/* Why work here (KA) */}
+      <div className="space-y-2">
+        <Label htmlFor="why_work_here_ka">{t("whyWorkHereKa")}</Label>
+        <Textarea
+          id="why_work_here_ka"
+          name="why_work_here_ka"
+          rows={3}
+          defaultValue={company?.why_work_here_ka ?? ""}
+        />
+      </div>
+
       <div className="flex justify-end">
         <SubmitButton pendingText="...">
           {mode === "create" ? tc("create") : tc("save")}

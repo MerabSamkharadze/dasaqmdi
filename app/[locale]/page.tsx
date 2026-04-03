@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
+import { TopMatches, TopMatchesEmpty } from "@/components/jobs/top-matches";
 import { getJobs } from "@/lib/queries/jobs";
 import { getCategories } from "@/lib/queries/categories";
 import { getProfile } from "@/lib/queries/profile";
@@ -32,6 +33,7 @@ export default async function HomePage({
 }) {
   const locale = await getLocale();
   const t = await getTranslations("jobs");
+  const tHome = await getTranslations("home");
 
   const page = Number(searchParams.page) || 1;
 
@@ -51,6 +53,8 @@ export default async function HomePage({
   let matchScores: Map<string, number> | null = null;
   let savedJobIds: Set<string> | null = null;
   let isLoggedIn = false;
+  let isSeeker = false;
+  let hasSkills = false;
   const supabase = createClient();
   const {
     data: { user },
@@ -60,8 +64,10 @@ export default async function HomePage({
     isLoggedIn = true;
     const profile = await getProfile(user.id);
     if (profile?.role === "seeker") {
+      isSeeker = true;
       savedJobIds = await getSavedJobIds(user.id);
-      if (profile.skills?.length > 0) {
+      hasSkills = (profile.skills?.length ?? 0) > 0;
+      if (hasSkills) {
         const results = calculateMatchScores(
           profile.skills,
           jobs.map((j) => ({ id: j.id, tags: j.tags }))
@@ -145,6 +151,32 @@ export default async function HomePage({
                 {totalCount} {totalCount === 1 ? "result" : "results"}
                 {searchParams.q && <> for &ldquo;{searchParams.q}&rdquo;</>}
               </span>
+            </div>
+          )}
+
+          {/* Top matches for seekers — only on first page without filters */}
+          {isSeeker && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && page === 1 && (
+            <div className="mb-8">
+              {matchScores && matchScores.size > 0 ? (
+                <TopMatches
+                  jobs={jobs}
+                  matchScores={matchScores}
+                  savedJobIds={savedJobIds}
+                  locale={locale}
+                  translations={{
+                    title: tHome("topMatches"),
+                    noSkills: tHome("noSkills"),
+                    noSkillsCta: tHome("noSkillsCta"),
+                    ...jobTranslations,
+                  }}
+                />
+              ) : hasSkills ? null : (
+                <TopMatchesEmpty
+                  title={tHome("topMatches")}
+                  noSkills={tHome("noSkills")}
+                  noSkillsCta={tHome("noSkillsCta")}
+                />
+              )}
             </div>
           )}
 

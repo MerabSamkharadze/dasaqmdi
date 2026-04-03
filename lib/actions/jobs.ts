@@ -60,7 +60,7 @@ export async function createJobAction(
   if (error) return { error: error.message };
 
   revalidatePath("/employer/jobs");
-  revalidatePath("/");
+  revalidatePath("/jobs");
   redirect("/employer/jobs");
 }
 
@@ -94,7 +94,7 @@ export async function updateJobAction(
   if (error) return { error: error.message };
 
   revalidatePath("/employer/jobs");
-  revalidatePath("/");
+  revalidatePath("/jobs");
   return { error: null };
 }
 
@@ -115,7 +115,7 @@ export async function closeJobAction(jobId: string): Promise<ActionResult> {
   if (error) return { error: error.message };
 
   revalidatePath("/employer/jobs");
-  revalidatePath("/");
+  revalidatePath("/jobs");
   return { error: null };
 }
 
@@ -160,6 +160,6 @@ export async function renewJobAction(jobId: string): Promise<ActionResult> {
   if (error) return { error: error.message };
 
   revalidatePath("/employer/jobs");
-  revalidatePath("/");
+  revalidatePath("/jobs");
   return { error: null };
 }

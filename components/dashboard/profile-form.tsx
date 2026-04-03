@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { FileUpload } from "@/components/shared/file-upload";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Profile } from "@/lib/types";
 import type { ActionResult } from "@/lib/types";
 
@@ -181,6 +182,35 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           label={t("uploadResume")}
           prefix="resume"
         />
+      </div>
+
+      {/* Privacy & Notifications */}
+      <div className="pt-4 border-t border-border/60 space-y-4">
+        <h3 className="text-[15px] font-semibold tracking-tight text-foreground">
+          {t("settingsTitle")}
+        </h3>
+
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="is_public"
+            name="is_public"
+            defaultChecked={profile.is_public ?? true}
+          />
+          <Label htmlFor="is_public" className="font-normal text-sm">
+            {t("publicProfile")}
+          </Label>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="email_digest"
+            name="email_digest"
+            defaultChecked={profile.email_digest ?? true}
+          />
+          <Label htmlFor="email_digest" className="font-normal text-sm">
+            {t("emailDigest")}
+          </Label>
+        </div>
       </div>
 
       <div className="flex justify-end">

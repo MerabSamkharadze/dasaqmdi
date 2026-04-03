@@ -167,7 +167,11 @@ Supabase join queries use `.returns<T>()` for type safety (not `as unknown as`).
 ```
 NEXT_PUBLIC_SUPABASE_URL=<project-url>
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-ANTHROPIC_API_KEY=<api-key>   # AI Job Draft
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>  # Email digest (server-only)
+ANTHROPIC_API_KEY=<api-key>                   # AI Job Draft
+RESEND_API_KEY=<resend-api-key>               # Email digest
+CRON_SECRET=<random-secret>                   # Digest API auth
+NEXT_PUBLIC_SITE_URL=https://dasakmdi.com     # Email links
 ```
 
 ---
@@ -193,51 +197,39 @@ ANTHROPIC_API_KEY=<api-key>   # AI Job Draft
 | # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
 |---|---------|---------|--------|---------|
 | O1 | `next/image` — 18 `<img>` ჩანაცვლდა, Supabase domain config | 16 ფაილი + `next.config.mjs` | LCP -40-60% | ✅ |
-| O2 | Query deduplication — layout + page ორჯერ ფეჩავს `getProfile`-ს | `(dashboard)/layout.tsx`, `dashboard/page.tsx` | DB load -50% | ❌ |
+| O2 | Query dedup — `React.cache()` on `getProfile` | `lib/queries/profile.ts` | DB load -50% | ✅ |
 | O3 | Parallel fetching — `Promise.all` | `apply/page.tsx` | Page load -200ms | ✅ |
-| O4 | Static generation — `revalidate: 3600` იშვიათად ცვლად გვერდებზე | `/companies/page.tsx`, `/companies/[slug]/page.tsx` | TTFB -80% | ❌ |
+| O4 | Static generation — `revalidate: 3600` | companies pages | TTFB -80% | ✅ |
 
-### P2 — SEO (ხილვადობა)
+### P2 — SEO (ხილვადობა) — ✅ ALL DONE
 
 | # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
 |---|---------|---------|--------|---------|
 | O5 | Sitemap — jobs + companies + static, ორენოვანი | `app/sitemap.ts` | Google ინდექსაცია | ✅ |
 | O6 | robots.txt — dashboard/admin/profile დაბლოკილი | `app/robots.ts` | Crawl control | ✅ |
-| O7 | JSON-LD JobPosting — title, salary, location, employmentType | `jobs/[id]/page.tsx` | Google Jobs | ✅ |
-| O8 | Dynamic OG images — სოციალური sharing | `app/[locale]/(public)/jobs/[id]/opengraph-image.tsx` (ახალი) | Social CTR | ❌ |
+| O7 | JSON-LD JobPosting | `jobs/[id]/page.tsx` | Google Jobs | ✅ |
+| O8 | Dynamic OG images — Indigo gradient | `jobs/[id]/opengraph-image.tsx` | Social CTR | ✅ |
 
-### P3 — Database (მოთხოვნები)
-
-| # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
-|---|---------|---------|--------|---------|
-| O9 | N+1 fix — `markApplicationsBatchViewedAction` | 2 employer pages + `actions/applications.ts` | N queries → 1 | ✅ |
-| O10 | Sidebar badge — `select("id")` ნაცვლად `count` with `head: true` | `(dashboard)/layout.tsx` | Data transfer -90% | ❌ |
-
-### P4 — UX (გამოცდილება)
+### P3 — Database (მოთხოვნები) — ✅ ALL DONE
 
 | # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
 |---|---------|---------|--------|---------|
-| O11 | Search debounce — realtime ძიება 300ms debounce-ით | `components/jobs/job-filters.tsx` | UX responsiveness | ❌ |
-| O12 | Optimistic updates — status/save ცვლილება server-ის მოლოდინის გარეშე | `application-status-update.tsx`, saved jobs | Snappy UX | ❌ |
+| O9 | N+1 fix — batch viewed | 2 employer pages | N queries → 1 | ✅ |
+| O10 | Sidebar badge — `head: true` count | `layout.tsx` | Data transfer -90% | ✅ |
 
-### P5 — Caching (კეშირება)
+### P4 — UX (გამოცდილება) — ✅ ALL DONE
 
 | # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
 |---|---------|---------|--------|---------|
-| O13 | `unstable_cache` — categories, public companies | `lib/queries/categories.ts`, `lib/queries/companies.ts` | DB calls -80% | ❌ |
-| O14 | `revalidatePath` granularity — ზუსტი path-ები ფართოს ნაცვლად | `lib/actions/*.ts` | Cache hit rate ↑ | ❌ |
+| O11 | Search debounce 350ms | `job-filters.tsx` | UX responsiveness | ✅ |
+| O12 | Auto-submit status — select change → instant save | `application-status-update.tsx` | Snappy UX | ✅ |
 
-### შესრულების თანმიმდევრობა
+### P5 — Caching (კეშირება) — ✅ ALL DONE
 
-```
-P1 (Performance): O1 → O3 → O2 → O4
-P2 (SEO):         O5+O6 → O7 → O8
-P3 (Database):    O9 → O10
-P4 (UX):          O11 → O12
-P5 (Caching):     O13 → O14
-```
-
-რეკომენდებული სტარტი: **O1 → O5+O6 → O7 → O9 → O3** (მაქსიმალური ეფექტი, მინიმალური რისკი)
+| # | ამოცანა | ფაილები | ეფექტი | სტატუსი |
+|---|---------|---------|--------|---------|
+| O13 | `unstable_cache` — categories 1hr | `lib/queries/categories.ts` | DB calls -80% | ✅ |
+| O14 | `revalidatePath("/")` → `"/jobs"` | `lib/actions/jobs.ts` | Cache hit rate ↑ | ✅ |
 
 ---
 
@@ -249,23 +241,23 @@ P5 (Caching):     O13 → O14
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| T1.1 | Supabase query — ხელფასების აგრეგაცია | `AVG(salary_min)`, `AVG(salary_max)` გროუპირებული `category_id`, `city`-ით. მხოლოდ `status='active'` ვაკანსიები. `salary_min IS NOT NULL` ფილტრი | ❌ არ დაწყებულა |
-| T1.2 | `/salaries` გვერდი — UI | ფილტრები: კატეგორია, ქალაქი. ბარათები: საშუალო, მინიმუმი, მაქსიმუმი ხელფასი. ვალუტის გათვალისწინება (GEL/USD/EUR). Quiet Design ესთეტიკა | ❌ არ დაწყებულა |
-| T1.3 | i18n — ტექსტები | `messages/ka.json` + `messages/en.json` — namespace `salaries` | ❌ არ დაწყებულა |
-| T1.4 | SEO — metadata + JSON-LD | `generateMetadata()` ორენოვანი. სტრუქტურირებული მონაცემები Google-ისთვის | ❌ არ დაწყებულა |
-| T1.5 | Nav ლინკი | Header-ში "ხელფასები" ლინკის დამატება | ❌ არ დაწყებულა |
+| T1.1 | Supabase query — ხელფასების აგრეგაცია | `lib/queries/salaries.ts` — AVG/MIN/MAX გროუპირებული category+city+currency-ით | ✅ |
+| T1.2 | `/salaries` გვერდი — UI | Summary cards + category breakdown + ფილტრები + skeleton loading | ✅ |
+| T1.3 | i18n — ტექსტები | `salaries` namespace ორივე ენაზე + `nav.salaries` | ✅ |
+| T1.4 | SEO — metadata | `generateMetadata()` ორენოვანი | ✅ |
+| T1.5 | Nav ლინკი | Header-ში ვაკანსიები/კომპანიები/ხელფასები ლინკები | ✅ |
 
 ### T2 — კომპანიის კულტურის სექცია
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| T2.1 | DB მიგრაცია — ახალი ველები `companies`-ში | `tech_stack TEXT[]`, `team_size VARCHAR`, `why_work_here TEXT`, `why_work_here_ka TEXT`, `benefits TEXT[]`, `benefits_ka TEXT[]` | ❌ არ დაწყებულა |
-| T2.2 | ტიპების განახლება | `database.ts`, `index.ts` — ახალი ველები Company ტიპში | ❌ არ დაწყებულა |
-| T2.3 | Zod ვალიდაცია | `lib/validations/company.ts` — ახალი ველების სქემა | ❌ არ დაწყებულა |
-| T2.4 | კომპანიის ფორმა — ახალი ველები | `CompanyForm`-ში tech_stack (tag input), team_size (select), why_work_here (textarea), benefits (tag input) | ❌ არ დაწყებულა |
-| T2.5 | კომპანიის საჯარო გვერდი — კულტურის ბლოკი | `/companies/[slug]` — "კულტურა და გარემო" სექცია: ტექ სტეკის ბეჯები, გუნდის ზომა, ბენეფიტები, "რატომ ჩვენ" ტექსტი | ❌ არ დაწყებულა |
-| T2.6 | Server Action — განახლება | `updateCompanyAction()`-ში ახალი ველების შენახვა | ❌ არ დაწყებულა |
-| T2.7 | i18n | namespace `company` — ახალი გასაღებები ორივე ენაზე | ❌ არ დაწყებულა |
+| T2.1 | DB მიგრაცია | `supabase/migrations/002_company_culture.sql` — tech_stack, why_work_here, benefits | ✅ |
+| T2.2 | ტიპების განახლება | `database.ts` — Company Row/Insert/Update-ში ახალი ველები | ✅ |
+| T2.3 | Zod ვალიდაცია | `lib/validations/company.ts` — tech_stack, benefits, why_work_here | ✅ |
+| T2.4 | CompanyForm — ახალი ველები | "კულტურა და გარემო" სექცია: tech_stack, benefits, why_work_here | ✅ |
+| T2.5 | საჯარო გვერდი — კულტურის ბლოკი | `/companies/[slug]` — ტექ სტეკის pills, ბენეფიტები, "რატომ ჩვენ" | ✅ |
+| T2.6 | Server Action | create + update actions-ში `parseTagsFromForm()` helper | ✅ |
+| T2.7 | i18n | `company` namespace — 12 ახალი key ორივე ენაზე | ✅ |
 
 ---
 
@@ -277,20 +269,17 @@ P5 (Caching):     O13 → O14
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| T3.1 | Query — Top matches | `getTopMatchesForUser(userId, limit=5)` — `calculateMatch()` + აქტიური ვაკანსიები, სორტირება match%-ით | ❌ არ დაწყებულა |
-| T3.2 | UI — "შენთვის შერჩეული" ბლოკი | მთავარ გვერდზე, ზოგადი ფიდის ზემოთ. მხოლოდ ავტორიზებული seeker-ისთვის. 5 ბარათი ჰორიზონტალურად, match % ბეჯით | ❌ არ დაწყებულა |
-| T3.3 | Empty state | თუ skills ცარიელია → "შეავსე უნარები პროფილში უკეთესი შესატყვისებისთვის" CTA | ❌ არ დაწყებულა |
-| T3.4 | i18n | namespace `home` — ახალი გასაღებები | ❌ არ დაწყებულა |
+| T3.1 | Match logic | არსებული `calculateMatchScores()` გამოყენება, top 5 სორტირება score-ით | ✅ |
+| T3.2 | UI — `TopMatches` კომპონენტი | `components/jobs/top-matches.tsx` — ფიდის ზემოთ, seeker-ისთვის, 1-ელ გვერდზე ფილტრების გარეშე | ✅ |
+| T3.3 | Empty state — `TopMatchesEmpty` | skills ცარიელია → CTA "პროფილის შევსება" ლინკით | ✅ |
+| T3.4 | i18n | `home.topMatches`, `home.noSkills`, `home.noSkillsCta` ორივე ენაზე | ✅ |
 
-### T4 — Daily Match Digest (ელფოსტა)
+### T4 — Daily Match Digest (ელფოსტა) — ⏸️ გადავადებული
 
-| # | ამოცანა | დეტალები | სტატუსი |
-|---|---------|----------|---------|
-| T4.1 | Email provider ინტეგრაცია | Resend ან Supabase Edge Function + SMTP. გარემოს ცვლადები | ❌ არ დაწყებულა |
-| T4.2 | Email template | React Email ან HTML — "დღის 5 საუკეთესო ვაკანსია შენთვის". Quiet Design სტილი, ორენოვანი | ❌ არ დაწყებულა |
-| T4.3 | Digest logic | Cron (დღეში ერთხელ) → seeker-ები skills[]-ით → `calculateMatch()` ბოლო 24სთ ვაკანსიებზე → top 5 → email | ❌ არ დაწყებულა |
-| T4.4 | Opt-in/Opt-out | `profiles` ცხრილში `email_digest BOOLEAN DEFAULT true`. პროფილის პარამეტრებში toggle | ❌ არ დაწყებულა |
-| T4.5 | Unsubscribe link | ყოველ email-ში one-click unsubscribe (CAN-SPAM/GDPR მოთხოვნა) | ❌ არ დაწყებულა |
+**სტეკი**: Resend + Vercel Cron + `/api/digest/send` API route
+**DB**: `email_digest BOOLEAN DEFAULT true` ველი + ProfileForm checkbox — უკვე მზადაა
+**როდის გააქტიურდეს**: მომხმარებლების რაოდენობის ზრდისას (100+ seeker). Free tier = 100 email/დღეში, Pro = $20/თვე 50k-ისთვის
+**საჭირო**: Resend API key, dasakmdi.com domain verification (DNS records), `CRON_SECRET` env var
 
 ---
 
@@ -302,13 +291,13 @@ P5 (Caching):     O13 → O14
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| T5.1 | `/seekers/[id]` გვერდის რედიზაინი | Read.cv ესთეტიკა: ავატარი, სახელი, bio, ქალაქი — hero სექცია. Quiet Design | ❌ არ დაწყებულა |
-| T5.2 | უნარების ვიზუალიზაცია | skills[] → სტილიზებული tag cloud ან ჰორიზონტალური pill badges, კატეგორიებით დაჯგუფებული | ❌ არ დაწყებულა |
-| T5.3 | გამოცდილების სექცია | `experience_years` + bio-ს სტრუქტურირებული ჩვენება. timeline სტილი თუ მონაცემები საკმარისია | ❌ არ დაწყებულა |
-| T5.4 | გაზიარების ღილაკი | "პროფილის გაზიარება" → clipboard copy + toast. Social share (Facebook, LinkedIn) | ❌ არ დაწყებულა |
-| T5.5 | OG Meta + generateMetadata | სოციალურ ქსელებში გაზიარებისას: სახელი, უნარები, ავატარი. Dynamic OG image (სურვილისამებრ) | ❌ არ დაწყებულა |
-| T5.6 | Privacy toggle | პროფილში "საჯარო პროფილი" checkbox. `profiles.is_public BOOLEAN DEFAULT true`. გამორთვისას → 404 | ❌ არ დაწყებულა |
-| T5.7 | DB მიგრაცია | `is_public` ველი `profiles`-ში | ❌ არ დაწყებულა |
+| T5.1 | გვერდის რედიზაინი | Read.cv ესთეტიკა: hero card, gradient avatar ring, staggered animations | ✅ |
+| T5.2 | უნარების ვიზუალიზაცია | skills[] → primary-colored pill badges, per-item animation delay | ✅ |
+| T5.3 | გამოცდილების სექცია | experience_years + bio hero card-ში ინტეგრირებული | ✅ |
+| T5.4 | გაზიარების ღილაკი | `ShareButton` კომპონენტი — clipboard copy + "ლინკი დაკოპირდა" feedback | ✅ |
+| T5.5 | OG Meta | `generateMetadata` — name, skills, openGraph type: "profile" | ✅ |
+| T5.6 | Privacy toggle | `getPublicProfile()` — `is_public=false` → null (404) | ✅ |
+| T5.7 | DB მიგრაცია | `003_profile_public.sql` — `is_public BOOLEAN DEFAULT true` | ✅ |
 
 ---
 

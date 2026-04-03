@@ -24,19 +24,19 @@ export default async function DashboardLayout({
   const fullName = profile?.full_name || profile?.full_name_ka || null;
   const avatarUrl = profile?.avatar_url ?? null;
 
-  // E5: Fetch unread application count for employer sidebar badge
+  // O10: Optimized unread count — head:true for both queries, no data transfer
   let newApplicationsCount = 0;
   if (role === "employer") {
-    const { data: jobs } = await supabase
+    const { data: jobIds } = await supabase
       .from("jobs")
-      .select("id")
+      .select("id", { head: false })
       .eq("posted_by", user.id);
-    const jobIds = (jobs ?? []).map((j) => j.id);
-    if (jobIds.length > 0) {
+    const ids = (jobIds ?? []).map((j) => j.id);
+    if (ids.length > 0) {
       const { count } = await supabase
         .from("applications")
         .select("id", { count: "exact", head: true })
-        .in("job_id", jobIds)
+        .in("job_id", ids)
         .eq("is_viewed", false);
       newApplicationsCount = count ?? 0;
     }

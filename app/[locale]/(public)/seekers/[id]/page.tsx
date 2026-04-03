@@ -2,8 +2,8 @@ import { getPublicProfile } from "@/lib/queries/profile";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
-import { User, MapPin, Calendar, Briefcase } from "lucide-react";
+import { ShareButton } from "@/components/shared/share-button";
+import { User, MapPin, Calendar, Briefcase, Code2 } from "lucide-react";
 import Image from "next/image";
 import type { Metadata } from "next";
 
@@ -16,14 +16,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!profile) return { title: "Profile Not Found" };
 
   const name = profile.full_name || profile.full_name_ka || "User";
+  const skills = profile.skills?.slice(0, 5).join(", ") ?? "";
+
   return {
     title: `${name} — dasakmdi.com`,
+    description: skills ? `${name} — ${skills}` : `${name} on dasakmdi.com`,
+    openGraph: {
+      title: `${name} — dasakmdi.com`,
+      description: skills ? `Skills: ${skills}` : `View ${name}'s profile`,
+      type: "profile",
+    },
   };
 }
 
 export default async function PublicProfilePage({ params }: PageProps) {
   const profile = await getPublicProfile(params.id);
-  if (!profile) notFound();
+  if (!profile || profile.role !== "seeker") notFound();
 
   const locale = await getLocale();
   const t = await getTranslations("profile");
@@ -31,57 +39,73 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const fullName = localized(profile, "full_name", locale) || t("anonymous");
   const bio = localized(profile, "bio", locale);
 
+  const profileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "https://dasakmdi.com" : "http://localhost:3000"}/seekers/${params.id}`;
+
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-muted/60">
-          {profile.avatar_url ? (
-            <Image
-              src={profile.avatar_url}
-              alt={fullName}
-              width={64}
-              height={64}
-              className="h-16 w-16 rounded-full object-cover"
-            />
-          ) : (
-            <User className="h-7 w-7 text-muted-foreground/40" />
-          )}
-        </div>
+      {/* Hero card */}
+      <div className="rounded-xl border border-border/60 bg-card p-6 sm:p-8 shadow-soft">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+          {/* Avatar */}
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-primary/5 ring-2 ring-border/40">
+            {profile.avatar_url ? (
+              <Image
+                src={profile.avatar_url}
+                alt={fullName}
+                width={80}
+                height={80}
+                className="h-20 w-20 rounded-full object-cover"
+              />
+            ) : (
+              <User className="h-8 w-8 text-primary/40" />
+            )}
+          </div>
 
-        <div>
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">
-            {fullName}
-          </h1>
-          <div className="flex flex-wrap items-center gap-3 mt-1 text-[13px] text-muted-foreground/70">
-            {profile.city && (
+          {/* Info */}
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground">
+              {fullName}
+            </h1>
+
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-2 text-[13px] text-muted-foreground">
+              {profile.city && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="h-3 w-3 opacity-50" />
+                  {profile.city}
+                </span>
+              )}
+              {profile.experience_years != null && profile.experience_years > 0 && (
+                <span className="flex items-center gap-1">
+                  <Briefcase className="h-3 w-3 opacity-50" />
+                  {profile.experience_years} {t("experienceYears").toLowerCase()}
+                </span>
+              )}
               <span className="flex items-center gap-1">
-                <MapPin className="h-3 w-3 opacity-50" />
-                {profile.city}
+                <Calendar className="h-3 w-3 opacity-50" />
+                {t("memberSince", {
+                  date: new Date(profile.created_at).toLocaleDateString(
+                    locale === "ka" ? "ka-GE" : "en-US",
+                    { month: "long", year: "numeric" }
+                  ),
+                })}
               </span>
-            )}
-            {profile.experience_years != null && (
-              <span className="flex items-center gap-1">
-                <Briefcase className="h-3 w-3 opacity-50" />
-                {t("experienceYears")}: {profile.experience_years}
-              </span>
-            )}
-            <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 opacity-50" />
-              {t("memberSince", {
-                date: new Date(profile.created_at).toLocaleDateString(
-                  locale === "ka" ? "ka-GE" : "en-US",
-                  { month: "long", year: "numeric" }
-                ),
-              })}
-            </span>
+            </div>
+
+            {/* Share */}
+            <div className="mt-4">
+              <ShareButton
+                url={profileUrl}
+                label={t("shareProfile")}
+                copiedLabel={t("linkCopied")}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bio */}
       {bio && (
-        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft animate-fade-in" style={{ animationDelay: "50ms" }}>
           <h2 className="text-[15px] font-semibold tracking-tight mb-3">
             {t("bio")}
           </h2>
@@ -93,21 +117,32 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
       {/* Skills */}
       {profile.skills && profile.skills.length > 0 && (
-        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
-          <h2 className="text-[15px] font-semibold tracking-tight mb-3">
-            {t("skills")}
-          </h2>
-          <div className="flex flex-wrap gap-1.5">
-            {profile.skills.map((skill) => (
-              <Badge
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <div className="flex items-center gap-2 mb-4">
+            <Code2 className="h-4 w-4 text-primary/60" />
+            <h2 className="text-[15px] font-semibold tracking-tight">
+              {t("skills")}
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {profile.skills.map((skill, i) => (
+              <span
                 key={skill}
-                variant="secondary"
-                className="text-[12px] font-normal"
+                className="inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium bg-primary/8 text-primary dark:bg-primary/15 animate-fade-in"
+                style={{ animationDelay: `${150 + i * 30}ms` }}
               >
                 {skill}
-              </Badge>
+              </span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Empty state for sparse profiles */}
+      {!bio && (!profile.skills || profile.skills.length === 0) && (
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/60 py-16 text-center animate-fade-in">
+          <User className="h-8 w-8 text-muted-foreground/30 mb-3" />
+          <p className="text-sm text-muted-foreground/60">{t("sparseProfile")}</p>
         </div>
       )}
     </div>

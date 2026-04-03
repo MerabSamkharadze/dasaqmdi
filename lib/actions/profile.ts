@@ -33,6 +33,8 @@ export async function updateProfileAction(
     preferred_language: formData.get("preferred_language") as string,
     avatar_url: formData.get("avatar_url") as string,
     resume_url: formData.get("resume_url") as string,
+    is_public: formData.get("is_public") === "on",
+    email_digest: formData.get("email_digest") === "on",
   };
 
   const parsed = updateProfileSchema.safeParse(raw);

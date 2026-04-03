@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,6 +36,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const updateParams = useCallback(
     (key: string, value: string) => {
@@ -52,28 +53,23 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
     [router, pathname, searchParams]
   );
 
-  const handleSearch = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      const formData = new FormData(e.currentTarget);
-      const q = (formData.get("q") as string)?.trim();
-      updateParams("q", q);
-    },
-    [updateParams]
-  );
-
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      {/* Search */}
-      <form onSubmit={handleSearch} className="relative flex-1">
+      {/* Search — O11: debounced realtime search */}
+      <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
         <Input
-          name="q"
           defaultValue={searchParams.get("q") ?? ""}
           placeholder={translations.searchPlaceholder}
           className="pl-9 h-9 text-[13px]"
+          onChange={(e) => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(() => {
+              updateParams("q", e.target.value.trim());
+            }, 350);
+          }}
         />
-      </form>
+      </div>
 
       {/* Category */}
       <Select

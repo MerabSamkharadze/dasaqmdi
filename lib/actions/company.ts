@@ -6,6 +6,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "@/lib/types";
 
+function parseTagsFromForm(value: string | null): string[] {
+  if (!value) return [];
+  return value
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function slugify(text: string): string {
   return text
     .toLowerCase()
@@ -38,6 +46,11 @@ export async function createCompanyAction(
     address: formData.get("address") as string,
     address_ka: formData.get("address_ka") as string,
     employee_count: formData.get("employee_count") as string || undefined,
+    tech_stack: parseTagsFromForm(formData.get("tech_stack") as string),
+    why_work_here: formData.get("why_work_here") as string,
+    why_work_here_ka: formData.get("why_work_here_ka") as string,
+    benefits: parseTagsFromForm(formData.get("benefits") as string),
+    benefits_ka: parseTagsFromForm(formData.get("benefits_ka") as string),
   };
 
   const logoUrl = formData.get("logo_url") as string;
@@ -92,6 +105,11 @@ export async function updateCompanyAction(
     address: formData.get("address") as string,
     address_ka: formData.get("address_ka") as string,
     employee_count: formData.get("employee_count") as string || undefined,
+    tech_stack: parseTagsFromForm(formData.get("tech_stack") as string),
+    why_work_here: formData.get("why_work_here") as string,
+    why_work_here_ka: formData.get("why_work_here_ka") as string,
+    benefits: parseTagsFromForm(formData.get("benefits") as string),
+    benefits_ka: parseTagsFromForm(formData.get("benefits_ka") as string),
   };
 
   const logoUrl = formData.get("logo_url") as string;

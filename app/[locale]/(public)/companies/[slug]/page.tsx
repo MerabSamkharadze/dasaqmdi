@@ -1,3 +1,5 @@
+export const revalidate = 3600; // O4: Revalidate every hour
+
 import { getCompanyBySlug } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
@@ -10,6 +12,9 @@ import {
   Users,
   CheckCircle,
   ExternalLink,
+  Code2,
+  Heart,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import type { Metadata } from "next";
@@ -38,6 +43,12 @@ export default async function CompanyProfilePage({ params }: PageProps) {
   const name = localized(company, "name", locale);
   const description = localized(company, "description", locale);
   const address = localized(company, "address", locale);
+  const whyWorkHere = localized(company, "why_work_here", locale);
+  const benefits = locale === "ka"
+    ? (company.benefits_ka?.length ? company.benefits_ka : company.benefits)
+    : (company.benefits?.length ? company.benefits : company.benefits_ka);
+  const hasTechStack = company.tech_stack?.length > 0;
+  const hasBenefits = benefits?.length > 0;
 
   return (
     <div className="flex flex-col gap-8">
@@ -103,6 +114,64 @@ export default async function CompanyProfilePage({ params }: PageProps) {
           <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {description}
           </div>
+        </div>
+      )}
+
+      {/* Culture section */}
+      {(hasTechStack || hasBenefits || whyWorkHere) && (
+        <div className="flex flex-col gap-6">
+          {/* Tech Stack */}
+          {hasTechStack && (
+            <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-6 shadow-soft">
+              <div className="flex items-center gap-2 mb-3">
+                <Code2 className="h-4 w-4 text-primary/60" />
+                <h2 className="text-[15px] font-semibold tracking-tight">{t("techStack")}</h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {company.tech_stack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="inline-flex items-center rounded-lg bg-primary/8 px-2.5 py-1 text-xs font-medium text-primary dark:bg-primary/15"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Benefits */}
+          {hasBenefits && (
+            <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-6 shadow-soft">
+              <div className="flex items-center gap-2 mb-3">
+                <Heart className="h-4 w-4 text-primary/60" />
+                <h2 className="text-[15px] font-semibold tracking-tight">{t("benefits")}</h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {benefits.map((benefit) => (
+                  <span
+                    key={benefit}
+                    className="inline-flex items-center rounded-lg bg-muted/50 px-2.5 py-1 text-xs text-muted-foreground"
+                  >
+                    {benefit}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Why work here */}
+          {whyWorkHere && (
+            <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="h-4 w-4 text-primary/60" />
+                <h2 className="text-[15px] font-semibold tracking-tight">{t("whyWorkHere")}</h2>
+              </div>
+              <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                {whyWorkHere}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
