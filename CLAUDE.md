@@ -17,6 +17,7 @@
 | Theme | next-themes | ^0.4.6 |
 | Fonts | Geist Sans (Latin) + Noto Sans Georgian | `geist` + Google Fonts |
 | AI | Vercel AI SDK v6 (`ai` + `@ai-sdk/anthropic`) | Claude Sonnet |
+| Payments | Lemon Squeezy (`@lemonsqueezy/lemonsqueezy.js`) | MoR model |
 
 ### Next.js 14 Conventions (CRITICAL)
 
@@ -172,6 +173,11 @@ ANTHROPIC_API_KEY=<api-key>                   # AI Job Draft
 RESEND_API_KEY=<resend-api-key>               # Email digest
 CRON_SECRET=<random-secret>                   # Digest API auth
 NEXT_PUBLIC_SITE_URL=https://dasakmdi.com     # Email links
+LEMONSQUEEZY_API_KEY=<api-key>               # Lemon Squeezy payments
+LEMONSQUEEZY_STORE_ID=<store-id>             # Lemon Squeezy store
+LEMONSQUEEZY_WEBHOOK_SECRET=<webhook-secret> # Webhook HMAC verification
+LEMONSQUEEZY_PRO_VARIANT_ID=<variant-id>     # Pro plan variant
+LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id># Verified plan variant
 ```
 
 ---
@@ -309,12 +315,76 @@ NEXT_PUBLIC_SITE_URL=https://dasakmdi.com     # Email links
 
 | # | ამოცანა | დეტალები | სტატუსი |
 |---|---------|----------|---------|
-| T6.1 | Pricing გვერდი | `/pricing` — 3 პაკეტი: Free, Pro (50₾/თვე), Verified (100₾/თვე). Quiet Design, ორენოვანი | ❌ არ დაწყებულა |
-| T6.2 | DB — subscriptions ცხრილი | `subscriptions`: company_id, plan_type, status, current_period_start/end, payment_provider_id | ❌ არ დაწყებულა |
-| T6.3 | Payment ინტეგრაცია | BOG iPay ან Stripe (საქართველოს მხარდაჭერით). Webhook handler | ❌ არ დაწყებულა |
-| T6.4 | Feature gating | Free: 3 აქტიური ვაკანსია. Pro: unlimited + AI draft + match scores. Verified: badge + featured placement | ❌ არ დაწყებულა |
-| T6.5 | Employer dashboard — plan info | მიმდინარე პაკეტი, გადახდის ისტორია, upgrade CTA | ❌ არ დაწყებულა |
-| T6.6 | "Featured" ვაკანსიები | Pro/Verified კომპანიების ვაკანსიები ფიდის თავში, subtle highlight ბეჯით | ❌ არ დაწყებულა |
+| T6.1 | Pricing გვერდი | `/pricing` — 3 პაკეტი: Free, Pro (50₾/თვე), Verified (100₾/თვე). Quiet Design, ორენოვანი | ✅ |
+| T6.2 | DB — subscriptions ცხრილი | `005_subscriptions.sql`: company_id, plan, status, lemon_squeezy_id, period dates + `is_featured` on jobs | ✅ |
+| T6.3 | Payment ინტეგრაცია | Lemon Squeezy SDK + checkout action + webhook handler (`/api/webhooks/lemonsqueezy`) | ✅ |
+| T6.4 | Feature gating | Free: 3 აქტიური ვაკანსია. Pro: unlimited + AI draft + match scores. Verified: badge + featured | ✅ |
+| T6.5 | Employer dashboard — billing | `/employer/billing` — მიმდინარე პაკეტი, LS customer portal, upgrade CTA | ✅ |
+| T6.6 | "Featured" ვაკანსიები | `is_featured` ordering + Star badge + BadgeCheck verified badge on job cards | ✅ |
+
+---
+
+## Phase 11: Telegram Bot ინტეგრაცია
+
+**მიზანი**: ახალი ვაკანსიები რეალურ დროში მიუვიდეს გამომწერებს Telegram-ით. უფასო, 80-90% open rate.
+
+### არქიტექტურა
+
+```
+საიტზე "გამოიწერე" ღილაკი → t.me/dasakmdi_bot → /start → კატეგორიის არჩევა → DB
+Employer posts job → createJobAction() → /api/telegram/notify → bot.sendMessage() → გამომწერები
+```
+
+### TB1 — Bot Setup & Infrastructure
+
+| # | ამოცანა | დეტალები | სტატუსი |
+|---|---------|----------|---------|
+| TB1.1 | BotFather-ით ბოტის შექმნა | `@dasakmdi_bot`, BOT_TOKEN მიღება, env var: `TELEGRAM_BOT_TOKEN` | ❌ |
+| TB1.2 | `npm install grammy` | Grammy — ყველაზე მოდერნული TS Telegram bot framework | ❌ |
+| TB1.3 | DB მიგრაცია — `telegram_subscriptions` | `telegram_id BIGINT`, `chat_id BIGINT`, `username TEXT`, `categories TEXT[]`, `locale VARCHAR(2)`, `is_active BOOLEAN DEFAULT true`, `created_at` | ❌ |
+| TB1.4 | ტიპების განახლება | `database.ts` — TelegramSubscription Row/Insert type | ❌ |
+
+### TB2 — Bot Commands (Webhook Handler)
+
+| # | ამოცანა | დეტალები | სტატუსი |
+|---|---------|----------|---------|
+| TB2.1 | `/api/telegram/webhook` route | POST endpoint, Grammy webhook adapter, signature verification | ❌ |
+| TB2.2 | `/start` command | მისალმება ორენოვანი + inline keyboard კატეგორიების არჩევისთვის | ❌ |
+| TB2.3 | კატეგორიის არჩევა | callback_query handler — toggle categories, DB-ში შენახვა | ❌ |
+| TB2.4 | `/categories` command | მიმდინარე გამოწერების ჩვენება + შეცვლის შესაძლებლობა | ❌ |
+| TB2.5 | `/stop` command | `is_active = false` — გამოწერის გაუქმება | ❌ |
+| TB2.6 | `/language` command | locale შეცვლა (ka/en) — შეტყობინებების ენა | ❌ |
+
+### TB3 — ვაკანსიის Notification
+
+| # | ამოცანა | დეტალები | სტატუსი |
+|---|---------|----------|---------|
+| TB3.1 | `/api/telegram/notify` route | POST, CRON_SECRET-ით დაცული. Input: job_id → ფეჩავს ვაკანსიას → გამომწერების filter categories-ით → batch sendMessage | ❌ |
+| TB3.2 | შეტყობინების ფორმატი | `📢 ახალი ვაკანსია: {title}\n🏢 {company}\n📍 {city}\n💰 {salary}\n🔗 {url}` ორენოვანი | ❌ |
+| TB3.3 | `createJobAction` hook | ვაკანსიის შექმნის შემდეგ `/api/telegram/notify` გამოძახება (background, non-blocking) | ❌ |
+| TB3.4 | Rate limiting | Telegram API ლიმიტი: 30 msg/sec. Queue-ით batch გაგზავნა დიდ რაოდენობაზე | ❌ |
+
+### TB4 — საიტზე ინტეგრაცია
+
+| # | ამოცანა | დეტალები | სტატუსი |
+|---|---------|----------|---------|
+| TB4.1 | "გამოიწერე" ღილაკი | Header/Footer-ში + Job detail page-ზე. Telegram-ის ლოგოთი, `t.me/dasakmdi_bot` ლინკი | ❌ |
+| TB4.2 | i18n | `nav.telegramSubscribe`, `jobs.subscribeTelegram` ორივე ენაზე | ❌ |
+
+### TB5 — Telegram Channel (ბონუს)
+
+| # | ამოცანა | დეტალები | სტატუსი |
+|---|---------|----------|---------|
+| TB5.1 | Public channel | `@dasakmdi_jobs` channel შექმნა, ბოტი admin-ად | ❌ |
+| TB5.2 | Auto-post channel-ში | ყოველი ახალი ვაკანსია ავტომატურად channel-ში | ❌ |
+
+### შესრულების თანმიმდევრობა
+
+```
+TB1.1 → TB1.2 → TB1.3 → TB1.4 → TB2.1 → TB2.2 → TB2.3 → TB3.1 → TB3.2 → TB3.3 → TB4.1 → TB4.2
+(TB2.4-TB2.6 და TB3.4 პარალელურად)
+(TB5 ბონუსი — ბოლოს)
+```
 
 ---
 

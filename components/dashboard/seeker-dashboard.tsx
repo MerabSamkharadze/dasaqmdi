@@ -79,7 +79,7 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
         <div>
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="text-[15px] font-semibold tracking-tight flex items-center gap-1.5">
-              <Zap className="h-4 w-4 text-primary/70" />
+              <Zap className="h-4 w-4 text-violet-600 dark:text-violet-400" />
               {t("recommendedJobs")}
             </h2>
             <Link
@@ -124,7 +124,7 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
                   </div>
                   <Badge
                     variant="outline"
-                    className="shrink-0 text-[10px] font-medium gap-1 border-primary/30 bg-primary/5 text-primary"
+                    className="shrink-0 text-[10px] font-medium gap-1 border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400"
                   >
                     <Zap className="h-2.5 w-2.5" />
                     {job.matchScore}%
@@ -245,34 +245,34 @@ function ApplicationBadge({
 }) {
   if (status === "accepted") {
     return (
-      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
+      <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px] font-normal">
         Accepted
       </Badge>
     );
   }
   if (status === "rejected") {
     return (
-      <Badge className="bg-destructive/10 text-destructive border-destructive/20 text-[10px] font-normal">
+      <Badge className="bg-red-100 text-red-700 border-red-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20 text-[10px] font-normal">
         Rejected
       </Badge>
     );
   }
   if (status === "shortlisted" || status === "reviewed") {
     return (
-      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
+      <Badge className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/20 text-[10px] font-normal">
         Reviewed
       </Badge>
     );
   }
   if (isViewed) {
     return (
-      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
+      <Badge className="bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/20 text-[10px] font-normal">
         Seen
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] font-normal">
+    <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
       Pending
     </Badge>
   );

@@ -6,6 +6,11 @@ export type Company = Database["public"]["Tables"]["companies"]["Row"];
 export type Job = Database["public"]["Tables"]["jobs"]["Row"];
 export type Application = Database["public"]["Tables"]["applications"]["Row"];
 export type Category = Database["public"]["Tables"]["categories"]["Row"];
+export type Subscription = Database["public"]["Tables"]["subscriptions"]["Row"];
+
+// ── Subscription types ──
+export type SubscriptionInsert = Database["public"]["Tables"]["subscriptions"]["Insert"];
+export type SubscriptionUpdate = Database["public"]["Tables"]["subscriptions"]["Update"];
 
 // ── Insert types ──
 export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
@@ -21,7 +26,7 @@ export type ApplicationUpdate = Database["public"]["Tables"]["applications"]["Up
 
 // ── Joined types (for Server Components) ──
 export type JobWithCompany = Job & {
-  company: Pick<Company, "id" | "name" | "name_ka" | "slug" | "logo_url">;
+  company: Pick<Company, "id" | "name" | "name_ka" | "slug" | "logo_url" | "is_verified">;
   category: Pick<Category, "id" | "slug" | "name_en" | "name_ka">;
 };
 
@@ -63,4 +68,6 @@ export type {
   SalaryCurrency,
   EmployeeCount,
   Locale,
+  SubscriptionPlan,
+  SubscriptionStatus,
 } from "./enums";

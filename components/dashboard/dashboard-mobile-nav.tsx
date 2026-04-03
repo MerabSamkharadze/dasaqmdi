@@ -62,7 +62,7 @@ export function DashboardMobileNav({ role, fullName }: DashboardMobileNavProps) 
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200",
                   isActive
-                    ? "bg-primary/12 text-primary"
+                    ? "bg-primary/10 text-primary shadow-sm relative before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-full before:bg-primary"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
                 )}
               >

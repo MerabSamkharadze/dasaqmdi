@@ -35,7 +35,7 @@ export async function getJobs({
     .select(
       `
       *,
-      company:companies!inner(id, name, name_ka, slug, logo_url),
+      company:companies!inner(id, name, name_ka, slug, logo_url, is_verified),
       category:categories!inner(id, slug, name_en, name_ka)
     `,
       { count: "exact" },
@@ -43,6 +43,7 @@ export async function getJobs({
     .eq("status", "active")
     .gte("expires_at", new Date().toISOString())
     .or(`application_deadline.is.null,application_deadline.gte.${new Date().toISOString()}`)
+    .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false })
     .range(from, to);
 
@@ -83,7 +84,7 @@ export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[
     .select(
       `
       *,
-      company:companies!inner(id, name, name_ka, slug, logo_url),
+      company:companies!inner(id, name, name_ka, slug, logo_url, is_verified),
       category:categories!inner(id, slug, name_en, name_ka)
     `
     )
@@ -110,7 +111,7 @@ export async function getJobById(id: string): Promise<JobWithCompany | null> {
     .select(
       `
       *,
-      company:companies!inner(id, name, name_ka, slug, logo_url, city, website, description, description_ka),
+      company:companies!inner(id, name, name_ka, slug, logo_url, is_verified, city, website, description, description_ka),
       category:categories!inner(id, slug, name_en, name_ka)
     `,
     )

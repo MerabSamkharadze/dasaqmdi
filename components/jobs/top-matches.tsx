@@ -37,7 +37,7 @@ export function TopMatches({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Zap className="h-4 w-4 text-primary" />
+        <Zap className="h-4 w-4 text-violet-600 dark:text-violet-400" />
         <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
           {translations.title}
         </h2>
@@ -77,7 +77,7 @@ export function TopMatchesEmpty({
   return (
     <section className="flex flex-col gap-4">
       <div className="flex items-center gap-2">
-        <Zap className="h-4 w-4 text-primary" />
+        <Zap className="h-4 w-4 text-violet-600 dark:text-violet-400" />
         <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
           {title}
         </h2>

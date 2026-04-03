@@ -227,7 +227,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             {matchResult && (
               <Badge
                 variant="outline"
-                className="text-sm font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 px-3 py-1"
+                className="text-sm font-medium gap-1.5 border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400 px-3 py-1"
               >
                 <Zap className="h-3.5 w-3.5" />
                 {t("match", { score: matchResult.score })}
@@ -241,7 +241,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             ) : hasApplied ? (
               <Badge
                 variant="outline"
-                className="text-sm font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary px-3 py-1"
+                className="text-sm font-medium gap-1.5 border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-400 px-3 py-1"
               >
                 <CheckCircle className="h-3.5 w-3.5" />
                 {t("alreadyApplied")}
@@ -283,8 +283,8 @@ export default async function JobDetailPage({ params }: PageProps) {
 
       {/* ── Match Highlights ── */}
       {matchResult && matchResult.matchedSkills.length > 0 && (
-        <div className="rounded-xl border border-primary/25 dark:border-primary/15 bg-primary/8 dark:bg-primary/10 p-5">
-          <p className="text-sm font-medium text-primary mb-3 flex items-center gap-2">
+        <div className="rounded-xl border border-violet-200 dark:border-violet-500/20 bg-violet-50/50 dark:bg-violet-500/5 p-5">
+          <p className="text-sm font-medium text-violet-700 dark:text-violet-400 mb-3 flex items-center gap-2">
             <CheckCircle className="h-4 w-4" />
             {t("matchingSkills")}
           </p>
@@ -293,7 +293,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               <Badge
                 key={skill}
                 variant="outline"
-                className="text-xs font-normal border-primary/30 text-primary bg-primary/5 dark:bg-primary/10 px-2.5 py-0.5"
+                className="text-xs font-normal border-violet-300 text-violet-700 bg-violet-100/50 dark:border-violet-500/30 dark:text-violet-400 dark:bg-violet-500/10 px-2.5 py-0.5"
               >
                 {skill}
               </Badge>
@@ -341,7 +341,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                   variant="secondary"
                   className={`font-normal text-xs px-2.5 py-0.5 ${
                     isMatched
-                      ? "bg-primary/10 text-primary dark:bg-primary/15"
+                      ? "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-400"
                       : ""
                   }`}
                 >

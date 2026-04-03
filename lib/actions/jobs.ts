@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { createJobSchema, updateJobSchema } from "@/lib/validations/job";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getActivePlan } from "@/lib/queries/subscriptions";
+import { canPostJob } from "@/lib/subscription-helpers";
 import type { ActionResult } from "@/lib/types";
 
 function extractJobFields(formData: FormData) {
@@ -42,6 +44,21 @@ export async function createJobAction(
 
   const companyId = formData.get("company_id") as string;
   if (!companyId) return { error: "Company required" };
+
+  // Check plan-based job limit
+  const plan = await getActivePlan(companyId);
+  if (plan === "free") {
+    const { count } = await supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("company_id", companyId)
+      .eq("status", "active")
+      .gte("expires_at", new Date().toISOString());
+
+    if (!canPostJob(plan, count ?? 0)) {
+      return { error: "Free plan is limited to 3 active jobs. Upgrade to Pro for unlimited." };
+    }
+  }
 
   const raw = extractJobFields(formData);
 

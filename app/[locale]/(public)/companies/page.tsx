@@ -52,7 +52,7 @@ export default async function CompaniesPage() {
             <Link
               key={company.id}
               href={`/companies/${company.slug}`}
-              className="group rounded-xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border hover:-translate-y-0.5 animate-fade-in"
+              className="group relative rounded-xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border/80 hover:-translate-y-0.5 animate-fade-in before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-full before:bg-primary/0 before:transition-all before:duration-200 hover:before:bg-primary/60 before:scale-y-0 hover:before:scale-y-100"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-3">
@@ -75,7 +75,7 @@ export default async function CompaniesPage() {
                       {name}
                     </h2>
                     {company.is_verified && (
-                      <CheckCircle className="h-3.5 w-3.5 text-primary/70 shrink-0" />
+                      <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     )}
                   </div>
 

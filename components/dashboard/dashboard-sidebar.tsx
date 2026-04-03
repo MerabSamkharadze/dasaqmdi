@@ -26,7 +26,7 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
   const normalizedPath = pathname.replace(/^\/(ka|en)/, "") || "/";
 
   return (
-    <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r border-border/30 bg-card/40">
+    <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r border-border/30 bg-card/60 backdrop-blur-sm">
       <div className="flex h-14 items-center border-b border-border/30 px-5">
         <Link
           href="/"
@@ -46,9 +46,9 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200",
+                "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 relative",
                 isActive
-                  ? "bg-primary/12 text-primary"
+                  ? "bg-primary/10 text-primary shadow-sm before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[3px] before:rounded-full before:bg-primary"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >

@@ -125,17 +125,20 @@ export default async function SalariesPage({
                   : `${allAvgMin.toLocaleString()}`
                 }
                 icon={<BarChart3 className="h-4 w-4" />}
+                iconColor="text-blue-600 dark:text-blue-400"
                 sub={t("basedOn", { count: String(totalJobs) })}
               />
               <SummaryCard
                 label={t("minSalary")}
                 value={Math.min(...salaryData.map((d) => d.min_salary)).toLocaleString()}
                 icon={<TrendingDown className="h-4 w-4" />}
+                iconColor="text-amber-600 dark:text-amber-400"
               />
               <SummaryCard
                 label={t("maxSalary")}
                 value={Math.max(...salaryData.map((d) => d.max_salary)).toLocaleString()}
                 icon={<TrendingUp className="h-4 w-4" />}
+                iconColor="text-emerald-600 dark:text-emerald-400"
               />
             </div>
           )}
@@ -210,17 +213,19 @@ function SummaryCard({
   label,
   value,
   icon,
+  iconColor,
   sub,
 }: {
   label: string;
   value: string;
   icon: React.ReactNode;
+  iconColor?: string;
   sub?: string;
 }) {
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-        <span className="text-primary/60">{icon}</span>
+        <span className={iconColor ?? "text-primary/60"}>{icon}</span>
         {label}
       </div>
       <p className="text-xl font-semibold text-foreground tabular-nums">

@@ -151,7 +151,7 @@ export default async function JobApplicationsPage({
                         <span>{app.applicant.experience_years}y exp</span>
                       )}
                       {matchScore != null && (
-                        <span className="inline-flex items-center gap-0.5 text-primary font-medium">
+                        <span className="inline-flex items-center gap-0.5 text-violet-600 dark:text-violet-400 font-medium">
                           <Zap className="h-2.5 w-2.5" />
                           {matchScore}%
                         </span>

@@ -9,11 +9,11 @@ type ApplicationStatusBadgeProps = {
 };
 
 const statusColors: Record<string, string> = {
-  pending: "bg-gold/12 text-gold-foreground dark:bg-gold/15 dark:text-gold",
-  reviewed: "bg-primary/12 text-primary dark:bg-primary/20",
-  shortlisted: "bg-gold/18 text-gold-foreground dark:bg-gold/25 dark:text-gold",
-  rejected: "bg-destructive/12 text-destructive dark:bg-destructive/20",
-  accepted: "bg-primary/15 text-primary dark:bg-primary/20",
+  pending: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+  reviewed: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
+  shortlisted: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400",
+  rejected: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
+  accepted: "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400",
 };
 
 export function ApplicationStatusBadge({
@@ -31,7 +31,7 @@ export function ApplicationStatusBadge({
       className={cn("text-[11px] font-medium", statusColors[displayStatus])}
     >
       {isViewed && status === "pending" && (
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mr-1.5" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5" />
       )}
       {displayLabel}
     </Badge>

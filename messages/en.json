@@ -34,7 +34,9 @@
     "backToSite": "Back to Site",
     "noJobs": "No jobs posted yet",
     "applicants": "Applicants",
-    "salaries": "Salaries"
+    "salaries": "Salaries",
+    "billing": "Billing",
+    "pricing": "Pricing"
   },
   "home": {
     "title": "Find Your Dream Job in Georgia",
@@ -74,6 +76,7 @@
     "salary": "Salary",
     "perMonth": "/month",
     "remote": "Remote",
+    "featured": "Featured",
     "views": "{count} views",
     "create": "Post a New Job",
     "editJob": "Edit Job",
@@ -272,6 +275,57 @@
     "basedOn": "Based on {count} listings",
     "range": "Range",
     "disclaimer": "Data based on job listings published on this site with specified salary ranges"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "subtitle": "Choose the right plan for your hiring needs",
+    "free": {
+      "name": "Free",
+      "price": "0₾",
+      "cta": "Get Started"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "50₾",
+      "cta": "Subscribe"
+    },
+    "verified": {
+      "name": "Verified",
+      "price": "100₾",
+      "cta": "Subscribe"
+    },
+    "perMonth": "/month",
+    "features": {
+      "activeJobs3": "Up to 3 active jobs",
+      "unlimitedJobs": "Unlimited active jobs",
+      "basicPosting": "Basic job posting",
+      "aiDraft": "AI job description drafts",
+      "matchScores": "Applicant match scores",
+      "verifiedBadge": "Verified company badge",
+      "featuredJobs": "Featured job placement",
+      "allProFeatures": "Everything in Pro"
+    },
+    "popular": "Most Popular",
+    "currentPlan": "Current Plan",
+    "needCompany": "You need to create a company first"
+  },
+  "billing": {
+    "title": "Billing & Plan",
+    "currentPlan": "Current Plan",
+    "nextBilling": "Next billing date",
+    "manageSub": "Manage Subscription",
+    "upgrade": "Upgrade Plan",
+    "freePlan": "You are on the Free plan",
+    "upgradePrompt": "Upgrade to unlock unlimited jobs, AI drafts, and more",
+    "cancelledNotice": "Your subscription will end on {date}",
+    "pastDue": "Payment failed. Please update your payment method.",
+    "successMessage": "Subscription activated successfully!",
+    "status": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "past_due": "Past Due",
+      "expired": "Expired"
+    }
   },
   "errors": {
     "generic": "Something went wrong",

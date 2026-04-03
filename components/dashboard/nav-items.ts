@@ -8,6 +8,7 @@ import {
   Users,
   Bookmark,
   Search,
+  CreditCard,
 } from "lucide-react";
 import type { UserRole } from "@/lib/types/enums";
 
@@ -45,6 +46,7 @@ const employerNav: NavItem[] = [
   { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase, exact: true },
   { href: "/employer/applications", labelKey: "applicants", icon: FileText },
   { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle, exact: true },
+  { href: "/employer/billing", labelKey: "billing", icon: CreditCard },
 ];
 
 const adminNav: NavItem[] = [

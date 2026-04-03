@@ -37,7 +37,9 @@ export default async function HomePage({
 
   const page = Number(searchParams.page) || 1;
 
-  const [{ jobs, totalPages, currentPage, totalCount }, categories] =
+  // Fetch jobs, categories, and auth in parallel (biggest speed win)
+  const supabase = createClient();
+  const [{ jobs, totalPages, currentPage, totalCount }, categories, { data: { user } }] =
     await Promise.all([
       getJobs({
         page,
@@ -47,6 +49,7 @@ export default async function HomePage({
         q: searchParams.q,
       }),
       getCategories(),
+      supabase.auth.getUser(),
     ]);
 
   // Match scores + saved jobs for logged-in seekers
@@ -55,17 +58,17 @@ export default async function HomePage({
   let isLoggedIn = false;
   let isSeeker = false;
   let hasSkills = false;
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (user) {
     isLoggedIn = true;
-    const profile = await getProfile(user.id);
+    // Profile + saved jobs in parallel (not sequential)
+    const [profile, savedIds] = await Promise.all([
+      getProfile(user.id),
+      getSavedJobIds(user.id),
+    ]);
     if (profile?.role === "seeker") {
       isSeeker = true;
-      savedJobIds = await getSavedJobIds(user.id);
+      savedJobIds = savedIds;
       hasSkills = (profile.skills?.length ?? 0) > 0;
       if (hasSkills) {
         const results = calculateMatchScores(
@@ -82,8 +85,19 @@ export default async function HomePage({
     }
   }
 
+  // Compute top match IDs to exclude from main feed
+  const showTopMatches = isSeeker && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && page === 1;
+  const topMatchIds = new Set<string>();
+  if (showTopMatches && matchScores && matchScores.size > 0) {
+    const sorted = [...matchScores.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+    for (const [id] of sorted) {
+      topMatchIds.add(id);
+    }
+  }
+
   const jobTranslations = {
     remote: t("remote"),
+    featured: t("featured"),
     deadline: t("deadline", { date: "{date}" }),
     noJobs: t("noJobs"),
     match: t("match", { score: "{score}" }),
@@ -123,19 +137,21 @@ export default async function HomePage({
       <Header />
 
       <main className="flex-1 w-full">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-12">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
           {/* Page header */}
-          <div className="flex items-baseline justify-between mb-8">
-            <h1 className="text-lg font-semibold tracking-tight text-foreground">
-              {t("title")}
-            </h1>
-            <span className="text-xs text-muted-foreground/60 tabular-nums">
+          <div className="flex items-baseline justify-between mb-6">
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground text-balance">
+                {t("title")}
+              </h1>
+            </div>
+            <span className="text-xs text-muted-foreground/50 tabular-nums bg-muted/50 px-2 py-0.5 rounded-md">
               {totalCount}
             </span>
           </div>
 
           {/* Filters */}
-          <div className="mb-8">
+          <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
             <Suspense>
               <JobFilters
                 categories={categoryOptions}
@@ -180,9 +196,9 @@ export default async function HomePage({
             </div>
           )}
 
-          {/* Job feed */}
+          {/* Job feed — exclude jobs already shown in TopMatches */}
           <JobList
-            jobs={jobs}
+            jobs={topMatchIds.size > 0 ? jobs.filter((j) => !topMatchIds.has(j.id)) : jobs}
             locale={locale}
             matchScores={matchScores}
             savedJobIds={savedJobIds}

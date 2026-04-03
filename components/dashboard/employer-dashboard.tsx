@@ -49,7 +49,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
                 {companyName}
               </p>
               {data.company.is_verified && (
-                <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0" />
+                <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
               )}
             </div>
           </div>
@@ -215,27 +215,27 @@ function JobStatusBadge({
 }) {
   if (isExpired) {
     return (
-      <Badge className="bg-destructive/10 text-destructive border-destructive/20 text-[10px] font-normal">
+      <Badge className="bg-red-100 text-red-700 border-red-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20 text-[10px] font-normal">
         {t("expired")}
       </Badge>
     );
   }
   if (status === "closed") {
     return (
-      <Badge variant="secondary" className="text-[10px] font-normal">
+      <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
         {t("closed")}
       </Badge>
     );
   }
   if (isActive) {
     return (
-      <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
+      <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/20 text-[10px] font-normal">
         {t("active")}
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] font-normal">
+    <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
       {status}
     </Badge>
   );

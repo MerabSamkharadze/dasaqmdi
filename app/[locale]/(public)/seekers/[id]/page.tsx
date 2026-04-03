@@ -47,7 +47,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
       <div className="rounded-xl border border-border/60 bg-card p-6 sm:p-8 shadow-soft">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Avatar */}
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-primary/5 ring-2 ring-border/40">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary/15 via-violet-500/10 to-emerald-500/10 ring-2 ring-primary/20 dark:ring-primary/30">
             {profile.avatar_url ? (
               <Image
                 src={profile.avatar_url}

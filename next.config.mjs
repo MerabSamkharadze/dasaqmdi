@@ -4,6 +4,9 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ["@opentelemetry/api", "@opentelemetry/core", "@opentelemetry/semantic-conventions"],
+  },
   images: {
     remotePatterns: [
       {

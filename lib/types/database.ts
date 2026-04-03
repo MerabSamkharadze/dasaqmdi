@@ -185,6 +185,7 @@ export type Database = {
           expires_at: string;
           tags: string[];
           views_count: number;
+          is_featured: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -210,6 +211,7 @@ export type Database = {
           expires_at?: string;
           tags?: string[];
           views_count?: number;
+          is_featured?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -235,6 +237,7 @@ export type Database = {
           expires_at?: string;
           tags?: string[];
           views_count?: number;
+          is_featured?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -280,11 +283,93 @@ export type Database = {
           updated_at?: string;
         };
       };
+      subscriptions: {
+        Row: {
+          id: string;
+          company_id: string;
+          plan: "free" | "pro" | "verified";
+          status: "active" | "cancelled" | "past_due" | "expired";
+          lemon_squeezy_id: string | null;
+          lemon_squeezy_customer_id: string | null;
+          variant_id: string | null;
+          current_period_start: string | null;
+          current_period_end: string | null;
+          cancel_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          plan?: "free" | "pro" | "verified";
+          status?: "active" | "cancelled" | "past_due" | "expired";
+          lemon_squeezy_id?: string | null;
+          lemon_squeezy_customer_id?: string | null;
+          variant_id?: string | null;
+          current_period_start?: string | null;
+          current_period_end?: string | null;
+          cancel_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          company_id?: string;
+          plan?: "free" | "pro" | "verified";
+          status?: "active" | "cancelled" | "past_due" | "expired";
+          lemon_squeezy_id?: string | null;
+          lemon_squeezy_customer_id?: string | null;
+          variant_id?: string | null;
+          current_period_start?: string | null;
+          current_period_end?: string | null;
+          cancel_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      telegram_subscriptions: {
+        Row: {
+          id: string;
+          telegram_id: number;
+          chat_id: number;
+          username: string | null;
+          first_name: string | null;
+          categories: string[];
+          locale: string;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          telegram_id: number;
+          chat_id: number;
+          username?: string | null;
+          first_name?: string | null;
+          categories?: string[];
+          locale?: string;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          telegram_id?: number;
+          chat_id?: number;
+          username?: string | null;
+          first_name?: string | null;
+          categories?: string[];
+          locale?: string;
+          is_active?: boolean;
+          updated_at?: string;
+        };
+      };
     };
     Enums: {
       job_type: "full-time" | "part-time" | "contract" | "internship" | "remote";
       job_status: "draft" | "active" | "closed" | "archived";
       application_status: "pending" | "reviewed" | "shortlisted" | "rejected" | "accepted";
+      subscription_plan: "free" | "pro" | "verified";
+      subscription_status: "active" | "cancelled" | "past_due" | "expired";
     };
   };
 };

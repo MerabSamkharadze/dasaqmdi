@@ -48,11 +48,11 @@ export default async function AdminJobsPage() {
               </div>
 
               {job.status === "active" && !isExpired ? (
-                <Badge variant="secondary" className="text-[11px] bg-primary/5 text-primary dark:bg-primary/10 dark:text-primary">
+                <Badge className="text-[11px] bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/20">
                   {job.status}
                 </Badge>
               ) : (
-                <Badge variant="destructive" className="text-[11px]">
+                <Badge className="text-[11px] bg-red-100 text-red-700 border-red-200 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/20">
                   {isExpired ? "Expired" : job.status}
                 </Badge>
               )}

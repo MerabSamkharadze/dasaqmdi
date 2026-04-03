@@ -51,6 +51,25 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  // Plan gating: AI draft requires Pro+ plan
+  const { data: company } = await supabase
+    .from("companies")
+    .select("id")
+    .eq("owner_id", user.id)
+    .single();
+
+  if (company) {
+    const { getActivePlan } = await import("@/lib/queries/subscriptions");
+    const { canUseAIDraft } = await import("@/lib/subscription-helpers");
+    const plan = await getActivePlan(company.id);
+    if (!canUseAIDraft(plan)) {
+      return new Response(
+        JSON.stringify({ error: "AI draft requires Pro or Verified plan" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  }
+
   // H1 FIX: Validate and sanitize all inputs
   let body: unknown;
   try {

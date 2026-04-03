@@ -16,5 +16,11 @@ export type SalaryCurrency = (typeof SALARY_CURRENCIES)[number];
 export const EMPLOYEE_COUNTS = ["1-10", "11-50", "51-200", "201-500", "500+"] as const;
 export type EmployeeCount = (typeof EMPLOYEE_COUNTS)[number];
 
+export const SUBSCRIPTION_PLANS = ["free", "pro", "verified"] as const;
+export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number];
+
+export const SUBSCRIPTION_STATUSES = ["active", "cancelled", "past_due", "expired"] as const;
+export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
+
 export const LOCALES = ["ka", "en"] as const;
 export type Locale = (typeof LOCALES)[number];

@@ -102,7 +102,7 @@ export default async function SavedJobsPage() {
                   {matchResult && matchResult.score > 0 && (
                     <Badge
                       variant="outline"
-                      className="shrink-0 text-[10px] font-medium gap-1 border-primary/30 bg-primary/5 text-primary"
+                      className="shrink-0 text-[10px] font-medium gap-1 border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400"
                     >
                       <Zap className="h-2.5 w-2.5" />
                       {matchResult.score}%

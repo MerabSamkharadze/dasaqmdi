@@ -35,7 +35,8 @@ export default async function JobsPage({
 
   const page = Number(searchParams.page) || 1;
 
-  const [{ jobs, totalPages, currentPage, totalCount }, categories] =
+  const supabase = createClient();
+  const [{ jobs, totalPages, currentPage, totalCount }, categories, { data: { user } }] =
     await Promise.all([
       getJobs({
         page,
@@ -45,22 +46,22 @@ export default async function JobsPage({
         q: searchParams.q,
       }),
       getCategories(),
+      supabase.auth.getUser(),
     ]);
 
   // Match scores + saved jobs for logged-in seekers
   let matchScores: Map<string, number> | null = null;
   let savedJobIds: Set<string> | null = null;
   let isLoggedIn = false;
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   if (user) {
     isLoggedIn = true;
-    const profile = await getProfile(user.id);
+    const [profile, savedIds] = await Promise.all([
+      getProfile(user.id),
+      getSavedJobIds(user.id),
+    ]);
     if (profile?.role === "seeker") {
-      savedJobIds = await getSavedJobIds(user.id);
+      savedJobIds = savedIds;
       if (profile.skills?.length > 0) {
         const results = calculateMatchScores(
           profile.skills,
@@ -78,6 +79,7 @@ export default async function JobsPage({
 
   const jobTranslations = {
     remote: t("remote"),
+    featured: t("featured"),
     deadline: t("deadline", { date: "{date}" }),
     noJobs: t("noJobs"),
     match: t("match", { score: "{score}" }),
@@ -127,12 +129,14 @@ export default async function JobsPage({
       </div>
 
       {/* Filters */}
-      <Suspense>
-        <JobFilters
-          categories={categoryOptions}
-          translations={filterTranslations}
-        />
-      </Suspense>
+      <div className="rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
+        <Suspense>
+          <JobFilters
+            categories={categoryOptions}
+            translations={filterTranslations}
+          />
+        </Suspense>
+      </div>
 
       {/* Active filters summary */}
       {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (

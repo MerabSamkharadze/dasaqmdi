@@ -16,7 +16,7 @@ export async function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/30 bg-[hsl(195_70%_65%/0.80)] dark:bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full bg-[hsl(195_70%_65%/0.85)] shadow-[0_1px_3px_rgb(0_0_0/0.08)] dark:bg-background/80 dark:border-b dark:border-border/30 dark:shadow-none backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
         {/* Logo + Nav */}
         <div className="flex items-center gap-6">
@@ -24,7 +24,7 @@ export async function Header() {
             href="/"
             className="transition-opacity duration-200 hover:opacity-80"
           >
-            <Logo />
+            <Logo variant="header" />
           </Link>
           <nav className="hidden sm:flex items-center gap-1">
             {navLinks.map((link) => (
