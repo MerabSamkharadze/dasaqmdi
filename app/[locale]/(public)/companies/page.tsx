@@ -2,6 +2,7 @@ import { getAllCompanies } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Building2, MapPin, Users, CheckCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -55,9 +56,11 @@ export default async function CompaniesPage() {
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
                   {company.logo_url ? (
-                    <img
+                    <Image
                       src={company.logo_url}
                       alt={name}
+                      width={32}
+                      height={32}
                       className="h-8 w-8 rounded-md object-contain"
                     />
                   ) : (

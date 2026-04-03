@@ -44,7 +44,8 @@
       "Bash(xargs grep:*)",
       "Bash(grep -h \"from \\\\\"@/components\" /c/Users/msamkharadze/Desktop/personal/my-app/components/dashboard/*.tsx)",
       "Bash(grep:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "WebSearch"
     ]
   }
 }

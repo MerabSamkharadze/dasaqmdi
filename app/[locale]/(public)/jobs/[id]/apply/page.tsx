@@ -6,6 +6,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { ApplyForm } from "@/components/applications/apply-form";
 import { Building2 } from "lucide-react";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,12 +25,14 @@ export default async function ApplyPage({
 
   if (!user) redirect("/auth/login");
 
-  const job = await getJobById(params.id);
+  // O3: Parallel fetching
+  const [job, locale, t, profile] = await Promise.all([
+    getJobById(params.id),
+    getLocale(),
+    getTranslations("applications"),
+    getProfile(user.id),
+  ]);
   if (!job) notFound();
-
-  const locale = await getLocale();
-  const t = await getTranslations("applications");
-  const profile = await getProfile(user.id);
 
   // Only seekers can apply
   if (profile?.role && profile.role !== "seeker") {
@@ -83,9 +86,11 @@ export default async function ApplyPage({
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
           {job.company.logo_url ? (
-            <img
+            <Image
               src={job.company.logo_url}
               alt={companyName}
+              width={32}
+              height={32}
               className="h-8 w-8 rounded-md object-contain"
             />
           ) : (

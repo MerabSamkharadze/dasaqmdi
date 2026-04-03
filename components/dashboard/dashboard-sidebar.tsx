@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -68,9 +69,11 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden">
             {avatarUrl ? (
-              <img
+              <Image
                 src={avatarUrl}
                 alt=""
+                width={36}
+                height={36}
                 className="h-9 w-9 rounded-full object-cover"
               />
             ) : (

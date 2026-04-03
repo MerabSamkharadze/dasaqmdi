@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { AdminVerifyButton } from "@/components/dashboard/admin-verify-button";
 import { Building2, CheckCircle } from "lucide-react";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Manage Companies" };
@@ -31,9 +32,11 @@ export default async function AdminCompaniesPage() {
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/8">
               {company.logo_url ? (
-                <img
+                <Image
                   src={company.logo_url}
                   alt=""
+                  width={24}
+                  height={24}
                   className="h-6 w-6 rounded-md object-contain"
                 />
               ) : (

@@ -18,6 +18,7 @@ import {
   Zap,
   CheckCircle,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { ViewTracker } from "@/components/jobs/view-tracker";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
@@ -69,13 +70,13 @@ function DetailCell({
   highlight?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${highlight ? "bg-primary/12" : "bg-muted/50"}`}>
-        <Icon className={`h-3.5 w-3.5 ${highlight ? "text-primary/70" : "text-muted-foreground/50"}`} />
+    <div className="flex items-center gap-3">
+      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${highlight ? "bg-primary/12" : "bg-muted/50"}`}>
+        <Icon className={`h-4 w-4 ${highlight ? "text-primary/70" : "text-muted-foreground/50"}`} />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] text-muted-foreground/50 leading-tight">{label}</p>
-        <p className={`text-[13px] font-medium leading-tight truncate ${highlight ? "text-primary" : "text-foreground"}`}>
+        <p className="text-xs text-muted-foreground/50 leading-normal">{label}</p>
+        <p className={`text-sm font-medium leading-snug truncate ${highlight ? "text-primary" : "text-foreground"}`}>
           {value}
         </p>
       </div>
@@ -142,8 +143,54 @@ export default async function JobDetailPage({ params }: PageProps) {
     }
   }
 
+  // O7: JSON-LD structured data for Google Jobs
+  const jobTypeMap: Record<string, string> = {
+    "full-time": "FULL_TIME",
+    "part-time": "PART_TIME",
+    contract: "CONTRACTOR",
+    internship: "INTERN",
+    remote: "FULL_TIME",
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: job.title,
+    description: job.description,
+    datePosted: job.created_at,
+    validThrough: job.application_deadline ?? job.expires_at,
+    employmentType: jobTypeMap[job.job_type] ?? "FULL_TIME",
+    hiringOrganization: {
+      "@type": "Organization",
+      name: job.company.name,
+      ...(job.company.logo_url && { logo: job.company.logo_url }),
+    },
+    jobLocation: job.is_remote
+      ? { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: "GE" } }
+      : job.city
+        ? { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.city, addressCountry: "GE" } }
+        : undefined,
+    jobLocationType: job.is_remote ? "TELECOMMUTE" : undefined,
+    ...(job.salary_min && {
+      baseSalary: {
+        "@type": "MonetaryAmount",
+        currency: job.salary_currency,
+        value: {
+          "@type": "QuantitativeValue",
+          minValue: job.salary_min,
+          ...(job.salary_max && { maxValue: job.salary_max }),
+          unitText: "MONTH",
+        },
+      },
+    }),
+  };
+
   return (
     <div className="flex flex-col gap-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ViewTracker jobId={job.id} />
 
       {/* ── Hero Card: Logo + Title + Actions ── */}
@@ -152,9 +199,11 @@ export default async function JobDetailPage({ params }: PageProps) {
           <div className="flex gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
               {job.company.logo_url ? (
-                <img
+                <Image
                   src={job.company.logo_url}
                   alt={companyName}
+                  width={40}
+                  height={40}
                   className="h-10 w-10 rounded-lg object-contain"
                 />
               ) : (
@@ -162,12 +211,12 @@ export default async function JobDetailPage({ params }: PageProps) {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground leading-snug">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground leading-snug">
                 {title}
               </h1>
               <Link
                 href={`/companies/${job.company.slug}`}
-                className="text-[13px] text-muted-foreground/70 hover:text-primary transition-colors duration-200"
+                className="text-sm text-muted-foreground/70 hover:text-primary transition-colors duration-200 mt-0.5 inline-block"
               >
                 {companyName}
               </Link>
@@ -178,9 +227,9 @@ export default async function JobDetailPage({ params }: PageProps) {
             {matchResult && (
               <Badge
                 variant="outline"
-                className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10"
+                className="text-sm font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 px-3 py-1"
               >
-                <Zap className="h-3 w-3" />
+                <Zap className="h-3.5 w-3.5" />
                 {t("match", { score: matchResult.score })}
               </Badge>
             )}
@@ -188,13 +237,13 @@ export default async function JobDetailPage({ params }: PageProps) {
               <BookmarkButton jobId={job.id} isSaved={isJobSaved} />
             )}
             {isExpired ? (
-              <Badge variant="destructive" className="text-[12px]">{t("jobClosed")}</Badge>
+              <Badge variant="destructive" className="text-sm px-3 py-1">{t("jobClosed")}</Badge>
             ) : hasApplied ? (
               <Badge
                 variant="outline"
-                className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary"
+                className="text-sm font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary px-3 py-1"
               >
-                <CheckCircle className="h-3 w-3" />
+                <CheckCircle className="h-3.5 w-3.5" />
                 {t("alreadyApplied")}
               </Badge>
             ) : isSeeker ? (
@@ -235,16 +284,16 @@ export default async function JobDetailPage({ params }: PageProps) {
       {/* ── Match Highlights ── */}
       {matchResult && matchResult.matchedSkills.length > 0 && (
         <div className="rounded-xl border border-primary/25 dark:border-primary/15 bg-primary/8 dark:bg-primary/10 p-5">
-          <p className="text-[13px] font-medium text-primary mb-3 flex items-center gap-1.5">
-            <CheckCircle className="h-3.5 w-3.5" />
+          <p className="text-sm font-medium text-primary mb-3 flex items-center gap-2">
+            <CheckCircle className="h-4 w-4" />
             {t("matchingSkills")}
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {matchResult.matchedSkills.map((skill) => (
               <Badge
                 key={skill}
                 variant="outline"
-                className="text-[11px] font-normal border-primary/30 text-primary bg-primary/5 dark:bg-primary/10"
+                className="text-xs font-normal border-primary/30 text-primary bg-primary/5 dark:bg-primary/10 px-2.5 py-0.5"
               >
                 {skill}
               </Badge>
@@ -255,10 +304,10 @@ export default async function JobDetailPage({ params }: PageProps) {
 
       {/* ── Description ── */}
       <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
-        <h2 className="text-[15px] font-semibold tracking-tight mb-4 flex items-center gap-2">
+        <h2 className="text-base font-semibold tracking-tight mb-5">
           {t("descriptionLabel")}
         </h2>
-        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+        <div className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90">
           {description}
         </div>
       </div>
@@ -266,10 +315,10 @@ export default async function JobDetailPage({ params }: PageProps) {
       {/* ── Requirements ── */}
       {requirements && (
         <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
-          <h2 className="text-[15px] font-semibold tracking-tight mb-4">
+          <h2 className="text-base font-semibold tracking-tight mb-5">
             {t("requirements")}
           </h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+          <div className="whitespace-pre-wrap text-[15px] leading-7 text-foreground/90">
             {requirements}
           </div>
         </div>
@@ -278,10 +327,10 @@ export default async function JobDetailPage({ params }: PageProps) {
       {/* ── Tags ── */}
       {job.tags && job.tags.length > 0 && (
         <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
-          <h2 className="text-[13px] font-semibold tracking-tight mb-3">
+          <h2 className="text-sm font-semibold tracking-tight mb-3">
             Tags
           </h2>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {job.tags.map((tag) => {
               const isMatched = matchResult?.matchedSkills.some(
                 (s) => s.toLowerCase() === tag.toLowerCase()
@@ -290,7 +339,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                 <Badge
                   key={tag}
                   variant="secondary"
-                  className={`font-normal text-[11px] ${
+                  className={`font-normal text-xs px-2.5 py-0.5 ${
                     isMatched
                       ? "bg-primary/10 text-primary dark:bg-primary/15"
                       : ""
@@ -305,9 +354,9 @@ export default async function JobDetailPage({ params }: PageProps) {
       )}
 
       {/* ── Footer meta ── */}
-      <div className="flex items-center justify-between text-[12px] text-muted-foreground/50 px-1">
+      <div className="flex items-center justify-between text-xs text-muted-foreground/50 px-1">
         <span className="flex items-center gap-1.5">
-          <Calendar className="h-3 w-3 opacity-50" />
+          <Calendar className="h-3.5 w-3.5 opacity-50" />
           {formatDate(job.created_at, locale)}
         </span>
         <span>{t("views", { count: job.views_count })}</span>

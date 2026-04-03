@@ -4,15 +4,9 @@ import { cn } from "@/lib/utils";
 import { loginAction } from "@/lib/actions/auth";
 import type { ActionResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Logo } from "@/components/brand/logo";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
@@ -24,7 +18,7 @@ function SubmitButton() {
   const t = useTranslations("auth");
 
   return (
-    <Button type="submit" className="w-full" disabled={pending}>
+    <Button type="submit" className="w-full h-11 text-[14px]" disabled={pending}>
       {pending ? "..." : t("login")}
     </Button>
   );
@@ -38,59 +32,80 @@ export function LoginForm({
   const t = useTranslations("auth");
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">{t("login")}</CardTitle>
-          <CardDescription>{t("loginDescription")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={formAction}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">{t("email")}</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">{t("password")}</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    {t("forgotPassword")}
-                  </Link>
-                </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                />
-              </div>
-              {state.error && (
-                <p className="text-sm text-red-500">{state.error}</p>
-              )}
-              <SubmitButton />
-            </div>
-            <div className="mt-4 text-center text-sm">
-              {t("noAccount")}{" "}
-              <Link
-                href="/auth/sign-up"
-                className="underline underline-offset-4"
-              >
-                {t("signUp")}
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className={cn("flex flex-col", className)} {...props}>
+      {/* Mobile logo */}
+      <div className="flex lg:hidden justify-center mb-10">
+        <Logo />
+      </div>
+
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight">{t("login")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t("loginDescription")}
+        </p>
+      </div>
+
+      {/* Form */}
+      <form action={formAction} className="flex flex-col gap-5">
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-[13px]">
+            {t("email")}
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="m@example.com"
+            required
+            className="h-11 bg-card"
+          />
+        </div>
+
+        {/* Password */}
+        <div className="space-y-2">
+          <div className="flex items-center">
+            <Label htmlFor="password" className="text-[13px]">
+              {t("password")}
+            </Label>
+            <Link
+              href="/auth/forgot-password"
+              className="ml-auto text-[12px] text-muted-foreground hover:text-primary transition-colors"
+            >
+              {t("forgotPassword")}
+            </Link>
+          </div>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            required
+            className="h-11 bg-card"
+          />
+        </div>
+
+        {/* Error */}
+        {state.error && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/8 px-4 py-3 text-sm text-destructive">
+            {state.error}
+          </div>
+        )}
+
+        {/* Submit */}
+        <SubmitButton />
+      </form>
+
+      {/* Sign up link */}
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        {t("noAccount")}{" "}
+        <Link
+          href="/auth/sign-up"
+          className="font-medium text-primary hover:text-primary/80 transition-colors"
+        >
+          {t("signUp")}
+        </Link>
+      </p>
     </div>
   );
 }

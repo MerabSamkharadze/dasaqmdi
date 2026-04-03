@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { localized } from "@/lib/utils";
 import { Briefcase, FileText, Eye, PlusCircle, CheckCircle, Building2 } from "lucide-react";
@@ -37,7 +38,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
         <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-4 shadow-sm">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/8">
             {data.company.logo_url ? (
-              <img src={data.company.logo_url} alt="" className="h-9 w-9 rounded-lg object-contain" />
+              <Image src={data.company.logo_url} alt="" width={36} height={36} className="h-9 w-9 rounded-lg object-contain" />
             ) : (
               <Building2 className="h-5 w-5 text-muted-foreground/40" />
             )}

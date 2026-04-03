@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import {
   User,
   MapPin,
@@ -26,9 +27,11 @@ export function ProfileView({ profile, email, t }: ProfileViewProps) {
       <div className="flex items-center gap-5">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-muted/60">
           {profile.avatar_url ? (
-            <img
+            <Image
               src={profile.avatar_url}
               alt={displayName}
+              width={80}
+              height={80}
               className="h-20 w-20 rounded-full object-cover"
             />
           ) : (

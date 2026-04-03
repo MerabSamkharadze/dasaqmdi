@@ -8,6 +8,7 @@ import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { Bookmark, Building2, MapPin, Zap } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -71,9 +72,11 @@ export default async function SavedJobsPage() {
                 <Link href={`/jobs/${job.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50">
                     {job.company.logo_url ? (
-                      <img
+                      <Image
                         src={job.company.logo_url}
                         alt=""
+                        width={36}
+                        height={36}
                         className="h-9 w-9 rounded-lg object-cover"
                       />
                     ) : (

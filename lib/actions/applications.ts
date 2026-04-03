@@ -134,6 +134,54 @@ export async function updateApplicationStatusAction(
   return { error: null };
 }
 
+// O9: Batch mark multiple applications as viewed in one query
+export async function markApplicationsBatchViewedAction(
+  applicationIds: string[],
+): Promise<ActionResult> {
+  if (applicationIds.length === 0) return { error: null };
+
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  // Ownership check: only mark applications for jobs this user owns
+  const { data: userJobs } = await supabase
+    .from("jobs")
+    .select("id")
+    .eq("posted_by", user.id);
+
+  const userJobIds = new Set((userJobs ?? []).map((j) => j.id));
+
+  // Filter to only applications belonging to user's jobs
+  const { data: validApps } = await supabase
+    .from("applications")
+    .select("id, job_id")
+    .in("id", applicationIds)
+    .eq("is_viewed", false);
+
+  const ownedIds = (validApps ?? [])
+    .filter((a) => userJobIds.has(a.job_id))
+    .map((a) => a.id);
+
+  if (ownedIds.length === 0) return { error: null };
+
+  const { error } = await supabase
+    .from("applications")
+    .update({
+      is_viewed: true,
+      viewed_at: new Date().toISOString(),
+    })
+    .in("id", ownedIds);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/seeker/applications");
+  return { error: null };
+}
+
 export async function markApplicationViewedAction(
   applicationId: string,
 ): Promise<ActionResult> {

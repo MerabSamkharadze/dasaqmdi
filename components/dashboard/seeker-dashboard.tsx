@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { localized } from "@/lib/utils";
 import { FileText, CheckCircle, Clock, User, Zap, Building2 } from "lucide-react";
@@ -102,9 +103,11 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
                 >
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/8">
                     {job.company.logo_url ? (
-                      <img
+                      <Image
                         src={job.company.logo_url}
                         alt=""
+                        width={36}
+                        height={36}
                         className="h-9 w-9 rounded-lg object-cover"
                       />
                     ) : (
@@ -177,9 +180,11 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
                 >
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50">
                     {app.job.company.logo_url ? (
-                      <img
+                      <Image
                         src={app.job.company.logo_url}
                         alt=""
+                        width={36}
+                        height={36}
                         className="h-9 w-9 rounded-lg object-cover"
                       />
                     ) : (

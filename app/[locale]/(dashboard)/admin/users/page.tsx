@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
 import { AdminRoleSelect } from "@/components/dashboard/admin-role-select";
 import { User } from "lucide-react";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Manage Users" };
@@ -35,9 +36,11 @@ export default async function AdminUsersPage() {
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/60">
               {user.avatar_url ? (
-                <img
+                <Image
                   src={user.avatar_url}
                   alt=""
+                  width={32}
+                  height={32}
                   className="h-8 w-8 rounded-full object-cover"
                 />
               ) : (

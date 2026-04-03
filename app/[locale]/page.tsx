@@ -78,9 +78,9 @@ export default async function HomePage({
 
   const jobTranslations = {
     remote: t("remote"),
-    deadline: t("deadline"),
+    deadline: t("deadline", { date: "{date}" }),
     noJobs: t("noJobs"),
-    match: t("match"),
+    match: t("match", { score: "{score}" }),
     types: {
       "full-time": t("types.full-time"),
       "part-time": t("types.part-time"),

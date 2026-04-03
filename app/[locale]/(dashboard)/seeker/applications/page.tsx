@@ -7,6 +7,7 @@ import { ApplicationStatusBadge } from "@/components/applications/application-st
 import { DeleteApplicationButton } from "@/components/applications/delete-application-button";
 import { Badge } from "@/components/ui/badge";
 import { Building2, Calendar } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -94,9 +95,11 @@ export default async function SeekerApplicationsPage() {
                 {/* Company logo */}
                 <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
                   {app.job.company.logo_url ? (
-                    <img
+                    <Image
                       src={app.job.company.logo_url}
                       alt={companyName}
+                      width={32}
+                      height={32}
                       className="h-8 w-8 rounded-md object-contain"
                     />
                   ) : (

@@ -2,13 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import { getJobById } from "@/lib/queries/jobs";
 import { getApplicationsByJob, getSignedResumeUrl } from "@/lib/queries/applications";
-import { markApplicationViewedAction } from "@/lib/actions/applications";
+import { markApplicationsBatchViewedAction } from "@/lib/actions/applications";
 import { calculateMatch } from "@/lib/matching";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
 import { User, Calendar, ExternalLink, Zap } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -42,10 +43,10 @@ export default async function JobApplicationsPage({
   const t = await getTranslations("applications");
   const applications = await getApplicationsByJob(job.id, user.id);
 
-  for (const app of applications) {
-    if (!app.is_viewed) {
-      await markApplicationViewedAction(app.id);
-    }
+  // O9: Batch mark all unviewed as viewed in one query
+  const unviewedIds = applications.filter((a) => !a.is_viewed).map((a) => a.id);
+  if (unviewedIds.length > 0) {
+    await markApplicationsBatchViewedAction(unviewedIds);
   }
 
   // Generate signed URLs for resumes (private bucket)
@@ -122,9 +123,11 @@ export default async function JobApplicationsPage({
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted/60">
                     {app.applicant.avatar_url ? (
-                      <img
+                      <Image
                         src={app.applicant.avatar_url}
                         alt={applicantName}
+                        width={40}
+                        height={40}
                         className="h-10 w-10 rounded-full object-cover"
                       />
                     ) : (

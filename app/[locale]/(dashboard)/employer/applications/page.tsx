@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getAllEmployerApplications } from "@/lib/queries/employer-applications";
-import { markApplicationViewedAction } from "@/lib/actions/applications";
+import { markApplicationsBatchViewedAction } from "@/lib/actions/applications";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
 import { User, Calendar, Briefcase } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -34,11 +35,10 @@ export default async function EmployerAllApplicationsPage() {
   const t = await getTranslations("applications");
   const applications = await getAllEmployerApplications(user.id);
 
-  // Mark unviewed applications as viewed
-  for (const app of applications) {
-    if (!app.is_viewed) {
-      await markApplicationViewedAction(app.id);
-    }
+  // O9: Batch mark all unviewed as viewed
+  const unviewedIds = applications.filter((a) => !a.is_viewed).map((a) => a.id);
+  if (unviewedIds.length > 0) {
+    await markApplicationsBatchViewedAction(unviewedIds);
   }
 
   if (applications.length === 0) {
@@ -79,9 +79,11 @@ export default async function EmployerAllApplicationsPage() {
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60">
                     {app.applicant.avatar_url ? (
-                      <img
+                      <Image
                         src={app.applicant.avatar_url}
                         alt={applicantName}
+                        width={36}
+                        height={36}
                         className="h-9 w-9 rounded-full object-cover"
                       />
                     ) : (

@@ -4,6 +4,7 @@ import { localized } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { User, MapPin, Calendar, Briefcase } from "lucide-react";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 type PageProps = {
@@ -36,9 +37,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
       <div className="flex items-center gap-4">
         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-muted/60">
           {profile.avatar_url ? (
-            <img
+            <Image
               src={profile.avatar_url}
               alt={fullName}
+              width={64}
+              height={64}
               className="h-16 w-16 rounded-full object-cover"
             />
           ) : (

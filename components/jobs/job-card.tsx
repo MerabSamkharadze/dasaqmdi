@@ -1,8 +1,12 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
 import { Building2, Calendar, Clock, MapPin, Zap } from "lucide-react";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type JobCardProps = {
@@ -41,25 +45,32 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   const title = localized(job, "title", locale);
   const companyName = localized(job.company, "name", locale);
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency);
+  const router = useRouter();
 
   return (
-    <Link
-      href={`/jobs/${job.id}`}
-      className="group block rounded-xl border border-border/60 bg-card px-5 py-5 sm:px-6 sm:py-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border hover:-translate-y-0.5"
+    <div
+      onClick={() => router.push(`/jobs/${job.id}`)}
+      className="group block cursor-pointer rounded-xl border border-border/60 bg-card px-5 py-5 sm:px-6 sm:py-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border hover:-translate-y-0.5"
     >
       <div className="flex items-start gap-4 sm:gap-5">
         {/* Company Logo */}
-        <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
+        <Link
+          href={`/companies/${job.company.slug}`}
+          onClick={(e) => e.stopPropagation()}
+          className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 hover:bg-primary/12 transition-colors duration-200"
+        >
           {job.company.logo_url ? (
-            <img
+            <Image
               src={job.company.logo_url}
               alt={companyName}
+              width={32}
+              height={32}
               className="h-8 w-8 rounded-md object-contain"
             />
           ) : (
             <Building2 className="h-4 w-4 text-primary/60" />
           )}
-        </div>
+        </Link>
 
         {/* Main content */}
         <div className="flex-1 min-w-0 space-y-2">
@@ -70,10 +81,14 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
 
           {/* Company + location */}
           <div className="flex items-center gap-3 text-[13px] text-muted-foreground leading-normal">
-            <span className="flex items-center gap-1.5 truncate">
+            <Link
+              href={`/companies/${job.company.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              className="flex items-center gap-1.5 truncate hover:text-primary transition-colors duration-200"
+            >
               <Building2 className="h-3 w-3 shrink-0 opacity-50" />
               {companyName}
-            </span>
+            </Link>
             {job.city && (
               <span className="hidden sm:flex items-center gap-1.5">
                 <MapPin className="h-3 w-3 shrink-0 opacity-50" />
@@ -88,14 +103,14 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               {translations.types[job.job_type] ?? job.job_type}
             </Badge>
             {job.is_remote && (
-              <Badge variant="outline" className="text-[11px] font-normal px-2 py-0.5 bg-gold/12 border-gold/25 text-gold-foreground dark:bg-gold/15 dark:text-gold dark:border-gold/30">
+              <Badge variant="outline" className="text-[11px] font-normal px-2 py-0.5 border-primary/20 text-primary/80">
                 {translations.remote}
               </Badge>
             )}
             {matchScore != null && matchScore > 0 && (
               <Badge
                 variant="outline"
-                className="text-[11px] font-medium px-2 py-0.5 border-primary/30 bg-primary/12 text-primary dark:border-primary/25 dark:bg-primary/15 dark:text-primary gap-1"
+                className="text-[11px] font-medium px-2 py-0.5 border-primary/30 bg-primary/12 text-primary dark:border-primary/25 dark:bg-primary/15 gap-1"
               >
                 <Zap className="h-2.5 w-2.5" />
                 {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
@@ -143,6 +158,6 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

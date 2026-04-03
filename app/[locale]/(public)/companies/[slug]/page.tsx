@@ -11,6 +11,7 @@ import {
   CheckCircle,
   ExternalLink,
 } from "lucide-react";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 type PageProps = {
@@ -44,9 +45,11 @@ export default async function CompanyProfilePage({ params }: PageProps) {
       <div className="flex items-start gap-4">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
           {company.logo_url ? (
-            <img
+            <Image
               src={company.logo_url}
               alt={name}
+              width={40}
+              height={40}
               className="h-10 w-10 rounded-lg object-contain"
             />
           ) : (
