@@ -81,7 +81,7 @@ export default async function ApplyPage({
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
       {/* Job summary */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
           {job.company.logo_url ? (
             <img
               src={job.company.logo_url}
@@ -99,7 +99,7 @@ export default async function ApplyPage({
       </div>
 
       {/* Apply form */}
-      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
+      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
         <h2 className="text-sm font-semibold tracking-tight mb-6">{t("submitApplication")}</h2>
         <ApplyForm
           jobId={job.id}

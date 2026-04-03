@@ -42,7 +42,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
     <div className="flex flex-col gap-8">
       {/* Header */}
       <div className="flex items-start gap-4">
-        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted/60">
+        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
           {company.logo_url ? (
             <img
               src={company.logo_url}
@@ -96,7 +96,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
 
       {/* Description */}
       {description && (
-        <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
           <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
             {description}
           </div>

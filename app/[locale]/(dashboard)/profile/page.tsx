@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/queries/profile";
 import { getTranslations } from "next-intl/server";
-import { ProfileForm } from "@/components/dashboard/profile-form";
+import { ProfilePageClient } from "@/components/dashboard/profile-page-client";
 import { UserX } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -37,12 +37,5 @@ export default async function ProfilePage() {
     );
   }
 
-  return (
-    <div className="flex flex-col gap-6">
-      <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
-      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
-        <ProfileForm profile={profile} />
-      </div>
-    </div>
-  );
+  return <ProfilePageClient profile={profile} email={user.email ?? ""} />;
 }

@@ -1,8 +1,16 @@
 import Link from "next/link";
 import { localized } from "@/lib/utils";
-import { Briefcase, FileText, Eye, PlusCircle } from "lucide-react";
+import { Briefcase, FileText, Eye, PlusCircle, CheckCircle, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { RenewJobButton } from "@/components/dashboard/job-action-buttons";
 import type { JobWithCompany } from "@/lib/types";
+
+type CompanyInfo = {
+  name: string;
+  name_ka: string | null;
+  logo_url: string | null;
+  is_verified: boolean;
+} | null;
 
 type EmployerDashboardProps = {
   data: {
@@ -11,14 +19,56 @@ type EmployerDashboardProps = {
     totalApplications: number;
     newApplications: number;
     recentJobs: JobWithCompany[];
+    company: CompanyInfo;
   };
   locale: string;
   t: (key: string, values?: Record<string, string | number>) => string;
 };
 
 export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
+  const companyName = data.company
+    ? (locale === "ka" && data.company.name_ka ? data.company.name_ka : data.company.name)
+    : null;
+
   return (
     <div className="flex flex-col gap-8">
+      {/* E3: Company info */}
+      {data.company ? (
+        <div className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-4 shadow-sm">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/8">
+            {data.company.logo_url ? (
+              <img src={data.company.logo_url} alt="" className="h-9 w-9 rounded-lg object-contain" />
+            ) : (
+              <Building2 className="h-5 w-5 text-muted-foreground/40" />
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <p className="text-[15px] font-semibold tracking-tight text-foreground truncate">
+                {companyName}
+              </p>
+              {data.company.is_verified && (
+                <CheckCircle className="h-3.5 w-3.5 text-primary shrink-0" />
+              )}
+            </div>
+          </div>
+          <Link
+            href="/employer/company"
+            className="text-[12px] text-primary/70 hover:text-primary transition-colors duration-200"
+          >
+            {t("editCompany")}
+          </Link>
+        </div>
+      ) : (
+        <Link
+          href="/employer/company/new"
+          className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-primary/30 bg-primary/8 py-5 text-[13px] font-medium text-primary hover:bg-primary/12 hover:border-primary/50 transition-all duration-200"
+        >
+          <Building2 className="h-4 w-4" />
+          {t("createCompany")}
+        </Link>
+      )}
+
       {/* Stats grid */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
@@ -48,7 +98,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
       {data.totalJobs === 0 && (
         <Link
           href="/employer/jobs/new"
-          className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-primary/30 bg-primary/3 py-5 text-[13px] font-medium text-primary/80 hover:bg-primary/6 hover:border-primary/50 transition-all duration-200"
+          className="flex items-center justify-center gap-2 rounded-xl border border-dashed border-primary/30 bg-primary/8 py-5 text-[13px] font-medium text-primary hover:bg-primary/12 hover:border-primary/50 transition-all duration-200"
         >
           <PlusCircle className="h-4 w-4" />
           {t("postFirstJob")}
@@ -103,7 +153,10 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
                       )}
                     </p>
                   </Link>
-                  <JobStatusBadge isActive={isActive} isExpired={isExpired} status={job.status} />
+                  <JobStatusBadge isActive={isActive} isExpired={isExpired} status={job.status} t={t} />
+                  {isExpired && job.status !== "closed" && (
+                    <RenewJobButton jobId={job.id} />
+                  )}
                   <Link
                     href={`/employer/jobs/${job.id}/applications`}
                     className="text-[11px] text-primary/60 hover:text-primary transition-colors duration-200"
@@ -134,7 +187,7 @@ function StatCard({
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/6">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12">
           <Icon className="h-4 w-4 text-primary/70" />
         </div>
         <div>
@@ -152,29 +205,31 @@ function JobStatusBadge({
   isActive,
   isExpired,
   status,
+  t,
 }: {
   isActive: boolean;
   isExpired: boolean;
   status: string;
+  t: (key: string) => string;
 }) {
   if (isExpired) {
     return (
       <Badge className="bg-destructive/10 text-destructive border-destructive/20 text-[10px] font-normal">
-        Expired
+        {t("expired")}
       </Badge>
     );
   }
   if (status === "closed") {
     return (
       <Badge variant="secondary" className="text-[10px] font-normal">
-        Closed
+        {t("closed")}
       </Badge>
     );
   }
   if (isActive) {
     return (
       <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-normal">
-        Active
+        {t("active")}
       </Badge>
     );
   }

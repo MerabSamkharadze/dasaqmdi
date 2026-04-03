@@ -83,16 +83,16 @@ export default async function SeekerApplicationsPage() {
             <div
               key={app.id}
               className={cn(
-                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-sm transition-all duration-200 animate-fade-in",
+                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-soft transition-all duration-200 animate-fade-in",
                 expired
                   ? "border-red-200/60 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10"
-                  : "border-border/30",
+                  : "border-border/60",
               )}
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-center gap-4">
                 {/* Company logo */}
-                <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+                <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
                   {app.job.company.logo_url ? (
                     <img
                       src={app.job.company.logo_url}

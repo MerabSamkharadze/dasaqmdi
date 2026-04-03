@@ -33,7 +33,7 @@ export default async function AdminJobsPage() {
           return (
             <div
               key={job.id}
-              className="flex items-center gap-4 rounded-xl border border-border/30 bg-card px-5 py-3.5 shadow-sm animate-fade-in"
+              className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft animate-fade-in"
               style={{ animationDelay: `${i * 30}ms` }}
             >
               <div className="flex-1 min-w-0">

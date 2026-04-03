@@ -114,7 +114,7 @@ export default async function JobApplicationsPage({
           return (
             <div
               key={app.id}
-              className="rounded-xl border border-border/30 bg-card px-5 py-4 sm:px-6 shadow-sm animate-fade-in"
+              className="rounded-xl border border-border/60 bg-card px-5 py-4 sm:px-6 shadow-soft animate-fade-in"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">

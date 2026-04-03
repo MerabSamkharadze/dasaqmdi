@@ -41,7 +41,10 @@
       "Bash(node:*)",
       "Bash(NODE_TLS_REJECT_UNAUTHORIZED=0 npx shadcn@latest add skeleton --yes)",
       "Bash(grep -v \"^$\")",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(grep -h \"from \\\\\"@/components\" /c/Users/msamkharadze/Desktop/personal/my-app/components/dashboard/*.tsx)",
+      "Bash(grep:*)",
+      "Bash(npx eslint:*)"
     ]
   }
 }

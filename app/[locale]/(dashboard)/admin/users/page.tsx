@@ -30,7 +30,7 @@ export default async function AdminUsersPage() {
         {users.map((user, i) => (
           <div
             key={user.id}
-            className="flex items-center gap-4 rounded-xl border border-border/30 bg-card px-5 py-3.5 shadow-sm animate-fade-in"
+            className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft animate-fade-in"
             style={{ animationDelay: `${i * 30}ms` }}
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/60">

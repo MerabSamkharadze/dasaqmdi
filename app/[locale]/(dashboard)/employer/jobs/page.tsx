@@ -41,7 +41,7 @@ export default async function EmployerJobsPage() {
         </div>
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/30 py-24 gap-4">
           <Briefcase className="h-7 w-7 text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground/60">No jobs posted yet</p>
+          <p className="text-sm text-muted-foreground/60">{t("noJobs")}</p>
           <Button asChild>
             <Link href="/employer/jobs/new">
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -75,10 +75,10 @@ export default async function EmployerJobsPage() {
             <div
               key={job.id}
               className={cn(
-                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-sm transition-all duration-200 animate-fade-in",
+                "rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-soft transition-all duration-200 animate-fade-in",
                 (isExpired || isClosed)
                   ? "border-red-200/60 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10"
-                  : "border-border/30",
+                  : "border-border/60",
               )}
               style={{ animationDelay: `${i * 50}ms` }}
             >

@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { localized } from "@/lib/utils";
-import { FileText, CheckCircle, Clock, XCircle, User } from "lucide-react";
+import { FileText, CheckCircle, Clock, User, Zap, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import type { ApplicationWithJob } from "@/lib/types";
+import type { ApplicationWithJob, JobWithCompany } from "@/lib/types";
+
+type RecommendedJob = JobWithCompany & { matchScore: number };
 
 type SeekerDashboardProps = {
   data: {
@@ -13,6 +15,7 @@ type SeekerDashboardProps = {
     rejectedCount: number;
     recentApplications: ApplicationWithJob[];
     profileStrength: number;
+    recommendedJobs: RecommendedJob[];
   };
   locale: string;
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -69,6 +72,66 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
           </p>
         )}
       </div>
+
+      {/* Recommended jobs */}
+      {data.recommendedJobs.length > 0 && (
+        <div>
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-[15px] font-semibold tracking-tight flex items-center gap-1.5">
+              <Zap className="h-4 w-4 text-primary/70" />
+              {t("recommendedJobs")}
+            </h2>
+            <Link
+              href="/jobs"
+              className="text-[12px] text-primary/70 hover:text-primary hover:underline transition-colors duration-200"
+            >
+              {t("viewAll")}
+            </Link>
+          </div>
+          <div className="flex flex-col gap-2">
+            {data.recommendedJobs.map((job, i) => {
+              const title = localized(job, "title", locale);
+              const companyName = localized(job.company, "name", locale);
+
+              return (
+                <Link
+                  key={job.id}
+                  href={`/jobs/${job.id}`}
+                  className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft hover:shadow-soft-md hover:border-border transition-all duration-200 animate-fade-in"
+                  style={{ animationDelay: `${i * 50}ms` }}
+                >
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/8">
+                    {job.company.logo_url ? (
+                      <img
+                        src={job.company.logo_url}
+                        alt=""
+                        className="h-9 w-9 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <Building2 className="h-4 w-4 text-muted-foreground/40" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-medium text-foreground truncate">
+                      {title}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/60 truncate">
+                      {companyName}
+                    </p>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="shrink-0 text-[10px] font-medium gap-1 border-primary/30 bg-primary/5 text-primary"
+                  >
+                    <Zap className="h-2.5 w-2.5" />
+                    {job.matchScore}%
+                  </Badge>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Recent applications */}
       <div>
@@ -154,7 +217,7 @@ function StatCard({
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/6">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12">
           <Icon className="h-4 w-4 text-primary/70" />
         </div>
         <div>

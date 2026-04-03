@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { ViewTracker } from "@/components/jobs/view-tracker";
+import { BookmarkButton } from "@/components/jobs/bookmark-button";
+import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import type { Metadata } from "next";
 
 type PageProps = {
@@ -55,6 +57,32 @@ function formatSalary(min: number | null, max: number | null, currency: string):
   return `${max!.toLocaleString()} ${currency}`;
 }
 
+function DetailCell({
+  icon: Icon,
+  label,
+  value,
+  highlight = false,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-2.5">
+      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${highlight ? "bg-primary/12" : "bg-muted/50"}`}>
+        <Icon className={`h-3.5 w-3.5 ${highlight ? "text-primary/70" : "text-muted-foreground/50"}`} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[10px] text-muted-foreground/50 leading-tight">{label}</p>
+        <p className={`text-[13px] font-medium leading-tight truncate ${highlight ? "text-primary" : "text-foreground"}`}>
+          {value}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default async function JobDetailPage({ params }: PageProps) {
   const job = await getJobById(params.id);
   if (!job) notFound();
@@ -78,6 +106,7 @@ export default async function JobDetailPage({ params }: PageProps) {
   let matchResult: { score: number; matchedSkills: string[] } | null = null;
   let hasApplied = false;
   let isSeeker = false;
+  let isJobSaved = false;
 
   const supabase = createClient();
   const {
@@ -89,15 +118,19 @@ export default async function JobDetailPage({ params }: PageProps) {
     isSeeker = profile?.role === "seeker";
 
     if (isSeeker) {
-      // Check if already applied
-      const { data: existing } = await supabase
-        .from("applications")
-        .select("id")
-        .eq("job_id", job.id)
-        .eq("applicant_id", user.id)
-        .single();
+      // Check if already applied + saved status
+      const [existing, savedIds] = await Promise.all([
+        supabase
+          .from("applications")
+          .select("id")
+          .eq("job_id", job.id)
+          .eq("applicant_id", user.id)
+          .single(),
+        getSavedJobIds(user.id),
+      ]);
 
-      hasApplied = !!existing;
+      hasApplied = !!existing.data;
+      isJobSaved = savedIds.has(job.id);
 
       // Smart matching
       if (job.tags?.length > 0 && profile?.skills?.length) {
@@ -110,68 +143,99 @@ export default async function JobDetailPage({ params }: PageProps) {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <ViewTracker jobId={job.id} />
-      {/* Header section */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted/60">
-            {job.company.logo_url ? (
-              <img
-                src={job.company.logo_url}
-                alt={companyName}
-                className="h-10 w-10 rounded-lg object-contain"
-              />
-            ) : (
-              <Building2 className="h-6 w-6 text-muted-foreground/50" />
-            )}
+
+      {/* ── Hero Card: Logo + Title + Actions ── */}
+      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex gap-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
+              {job.company.logo_url ? (
+                <img
+                  src={job.company.logo_url}
+                  alt={companyName}
+                  className="h-10 w-10 rounded-lg object-contain"
+                />
+              ) : (
+                <Building2 className="h-6 w-6 text-primary/50" />
+              )}
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground leading-snug">
+                {title}
+              </h1>
+              <Link
+                href={`/companies/${job.company.slug}`}
+                className="text-[13px] text-muted-foreground/70 hover:text-primary transition-colors duration-200"
+              >
+                {companyName}
+              </Link>
+            </div>
           </div>
 
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight text-foreground leading-snug">
-              {title}
-            </h1>
-            <Link
-              href={`/companies/${job.company.slug}`}
-              className="text-[13px] text-muted-foreground/70 hover:text-primary transition-colors duration-200"
-            >
-              {companyName}
-            </Link>
+          <div className="flex items-center gap-2.5 shrink-0">
+            {matchResult && (
+              <Badge
+                variant="outline"
+                className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10"
+              >
+                <Zap className="h-3 w-3" />
+                {t("match", { score: matchResult.score })}
+              </Badge>
+            )}
+            {isSeeker && (
+              <BookmarkButton jobId={job.id} isSaved={isJobSaved} />
+            )}
+            {isExpired ? (
+              <Badge variant="destructive" className="text-[12px]">{t("jobClosed")}</Badge>
+            ) : hasApplied ? (
+              <Badge
+                variant="outline"
+                className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary"
+              >
+                <CheckCircle className="h-3 w-3" />
+                {t("alreadyApplied")}
+              </Badge>
+            ) : isSeeker ? (
+              <Button asChild size="lg" className="rounded-xl">
+                <Link href={`/jobs/${job.id}/apply`}>{t("applyNow")}</Link>
+              </Button>
+            ) : null}
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          {matchResult && (
-            <Badge
-              variant="outline"
-              className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 dark:text-primary"
-            >
-              <Zap className="h-3 w-3" />
-              {t("match", { score: matchResult.score })}
-            </Badge>
+        {/* Key details grid inside hero */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mt-6 pt-6 border-t border-border/40">
+          <DetailCell
+            icon={Clock}
+            label={t("filters.type")}
+            value={t(`types.${job.job_type}`)}
+          />
+          {job.city && (
+            <DetailCell icon={MapPin} label={t("filters.location")} value={job.city} />
           )}
-          {isExpired ? (
-            <Badge variant="destructive" className="text-[12px]">{t("jobClosed")}</Badge>
-          ) : hasApplied ? (
-            <Badge
-              variant="outline"
-              className="text-[12px] font-medium gap-1.5 border-primary/30 bg-primary/5 text-primary dark:border-primary/25 dark:bg-primary/10 dark:text-primary"
-            >
-              <CheckCircle className="h-3 w-3" />
-              {t("alreadyApplied")}
-            </Badge>
-          ) : isSeeker ? (
-            <Button asChild size="lg" className="rounded-xl">
-              <Link href={`/jobs/${job.id}/apply`}>{t("applyNow")}</Link>
-            </Button>
-          ) : null}
+          {job.is_remote && (
+            <DetailCell icon={Globe} label={t("remote")} value={t("remote")} highlight />
+          )}
+          <DetailCell icon={Tag} label={t("filters.category")} value={categoryName} />
+          {salary && (
+            <DetailCell icon={DollarSign} label={t("salary")} value={salary} />
+          )}
+          {job.application_deadline && (
+            <DetailCell
+              icon={Calendar}
+              label={t("deadline", { date: "" }).replace(": ", "")}
+              value={formatDate(job.application_deadline, locale)}
+            />
+          )}
         </div>
       </div>
 
-      {/* Match highlights */}
+      {/* ── Match Highlights ── */}
       {matchResult && matchResult.matchedSkills.length > 0 && (
-        <div className="rounded-xl border border-primary/20 dark:border-primary/15 bg-primary/[0.03] dark:bg-primary/[0.06] p-4 sm:p-5">
-          <p className="text-[13px] font-medium text-primary dark:text-primary mb-2.5 flex items-center gap-1.5">
+        <div className="rounded-xl border border-primary/25 dark:border-primary/15 bg-primary/8 dark:bg-primary/10 p-5">
+          <p className="text-[13px] font-medium text-primary mb-3 flex items-center gap-1.5">
             <CheckCircle className="h-3.5 w-3.5" />
             {t("matchingSkills")}
           </p>
@@ -180,7 +244,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               <Badge
                 key={skill}
                 variant="outline"
-                className="text-[11px] font-normal border-primary/30 text-primary dark:border-primary/25 dark:text-primary bg-primary/5 dark:bg-primary/10"
+                className="text-[11px] font-normal border-primary/30 text-primary bg-primary/5 dark:bg-primary/10"
               >
                 {skill}
               </Badge>
@@ -189,91 +253,60 @@ export default async function JobDetailPage({ params }: PageProps) {
         </div>
       )}
 
-      {/* Meta row */}
-      <div className="flex flex-wrap gap-2">
-        <Badge variant="secondary" className="gap-1.5 text-[12px] font-normal">
-          <Clock className="h-3 w-3 opacity-60" />
-          {t(`types.${job.job_type}`)}
-        </Badge>
-
-        {job.city && (
-          <Badge variant="outline" className="gap-1.5 text-[12px] font-normal">
-            <MapPin className="h-3 w-3 opacity-60" />
-            {job.city}
-          </Badge>
-        )}
-
-        {job.is_remote && (
-          <Badge variant="outline" className="gap-1.5 text-[12px] font-normal border-primary/20 text-primary/80">
-            <Globe className="h-3 w-3" />
-            {t("remote")}
-          </Badge>
-        )}
-
-        <Badge variant="outline" className="gap-1.5 text-[12px] font-normal">
-          <Tag className="h-3 w-3 opacity-60" />
-          {categoryName}
-        </Badge>
-
-        {salary && (
-          <Badge variant="outline" className="gap-1.5 text-[12px] font-normal">
-            <DollarSign className="h-3 w-3 opacity-60" />
-            {salary}
-          </Badge>
-        )}
-
-        {job.application_deadline && (
-          <Badge variant="outline" className="gap-1.5 text-[12px] font-normal">
-            <Calendar className="h-3 w-3 opacity-60" />
-            {t("deadline", { date: formatDate(job.application_deadline, locale) })}
-          </Badge>
-        )}
-      </div>
-
-      {/* Description */}
-      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
-        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+      {/* ── Description ── */}
+      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
+        <h2 className="text-[15px] font-semibold tracking-tight mb-4 flex items-center gap-2">
+          {t("descriptionLabel")}
+        </h2>
+        <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
           {description}
         </div>
       </div>
 
-      {/* Requirements */}
+      {/* ── Requirements ── */}
       {requirements && (
-        <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
-          <h2 className="text-sm font-semibold tracking-tight mb-4">{t("requirements")}</h2>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
+          <h2 className="text-[15px] font-semibold tracking-tight mb-4">
+            {t("requirements")}
+          </h2>
+          <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
             {requirements}
           </div>
         </div>
       )}
 
-      {/* Tags */}
+      {/* ── Tags ── */}
       {job.tags && job.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {job.tags.map((tag) => {
-            const isMatched = matchResult?.matchedSkills.some(
-              (s) => s.toLowerCase() === tag.toLowerCase()
-            );
-            return (
-              <Badge
-                key={tag}
-                variant="secondary"
-                className={`font-normal text-[11px] ${
-                  isMatched
-                    ? "bg-primary/10 text-primary dark:bg-primary/15"
-                    : ""
-                }`}
-              >
-                {tag}
-              </Badge>
-            );
-          })}
+        <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
+          <h2 className="text-[13px] font-semibold tracking-tight mb-3">
+            Tags
+          </h2>
+          <div className="flex flex-wrap gap-1.5">
+            {job.tags.map((tag) => {
+              const isMatched = matchResult?.matchedSkills.some(
+                (s) => s.toLowerCase() === tag.toLowerCase()
+              );
+              return (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className={`font-normal text-[11px] ${
+                    isMatched
+                      ? "bg-primary/10 text-primary dark:bg-primary/15"
+                      : ""
+                  }`}
+                >
+                  {tag}
+                </Badge>
+              );
+            })}
+          </div>
         </div>
       )}
 
-      {/* Footer meta */}
-      <div className="text-[12px] text-muted-foreground/60 flex items-center gap-4">
-        <span className="flex items-center gap-1">
+      {/* ── Footer meta ── */}
+      <div className="flex items-center justify-between text-[12px] text-muted-foreground/50 px-1">
+        <span className="flex items-center gap-1.5">
           <Calendar className="h-3 w-3 opacity-50" />
           {formatDate(job.created_at, locale)}
         </span>

@@ -23,7 +23,7 @@ export default function JobDetailLoading() {
       </div>
 
       {/* Description card */}
-      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm space-y-3">
+      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft space-y-3">
         <Skeleton className="h-3.5 w-full rounded-lg" />
         <Skeleton className="h-3.5 w-full rounded-lg" />
         <Skeleton className="h-3.5 w-5/6 rounded-lg" />
@@ -34,7 +34,7 @@ export default function JobDetailLoading() {
       </div>
 
       {/* Requirements card */}
-      <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm space-y-3">
+      <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft space-y-3">
         <Skeleton className="h-4 w-24 rounded-lg mb-1" />
         <Skeleton className="h-3.5 w-full rounded-lg" />
         <Skeleton className="h-3.5 w-4/5 rounded-lg" />

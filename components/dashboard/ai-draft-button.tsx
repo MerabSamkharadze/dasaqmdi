@@ -105,7 +105,7 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
   }
 
   return (
-    <div className="rounded-xl border border-primary/15 bg-primary/[0.03] p-4 sm:p-5 space-y-4">
+    <div className="rounded-xl border border-primary/20 bg-primary/8 p-4 sm:p-5 space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-[13px] font-medium flex items-center gap-1.5 text-foreground">
           <Sparkles className="h-3.5 w-3.5 text-primary/70" />
@@ -175,7 +175,7 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
       )}
 
       {completion && (
-        <div className="rounded-xl border border-border/30 bg-card p-4 max-h-64 overflow-y-auto">
+        <div className="rounded-xl border border-border/60 bg-card p-4 max-h-64 overflow-y-auto">
           <pre className="whitespace-pre-wrap text-[13px] leading-relaxed text-foreground font-sans">
             {completion}
           </pre>

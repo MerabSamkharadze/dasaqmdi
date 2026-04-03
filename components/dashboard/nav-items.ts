@@ -6,6 +6,8 @@ import {
   Briefcase,
   PlusCircle,
   Users,
+  Bookmark,
+  Search,
 } from "lucide-react";
 import type { UserRole } from "@/lib/types/enums";
 
@@ -31,14 +33,17 @@ export function isNavActive(item: NavItem, currentPath: string): boolean {
 
 const seekerNav: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
-  { href: "/profile", labelKey: "profile", icon: User },
+  { href: "/jobs", labelKey: "jobs", icon: Search, exact: true },
   { href: "/seeker/applications", labelKey: "myApplications", icon: FileText },
+  { href: "/seeker/saved", labelKey: "savedJobs", icon: Bookmark },
+  { href: "/profile", labelKey: "profile", icon: User },
 ];
 
 const employerNav: NavItem[] = [
   { href: "/dashboard", labelKey: "dashboard", icon: LayoutDashboard },
   { href: "/employer/company", labelKey: "myCompany", icon: Building2 },
   { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase, exact: true },
+  { href: "/employer/applications", labelKey: "applicants", icon: FileText },
   { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle, exact: true },
 ];
 

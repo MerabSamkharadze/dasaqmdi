@@ -22,7 +22,7 @@ export default function JobsLoading() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/30 bg-card px-5 py-5 shadow-sm"
+            className="rounded-xl border border-border/60 bg-card px-5 py-5 shadow-soft"
             style={{ opacity: 1 - i * 0.08 }}
           >
             <div className="flex items-start gap-5">

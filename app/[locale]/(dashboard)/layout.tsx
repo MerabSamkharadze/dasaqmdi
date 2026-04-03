@@ -24,9 +24,27 @@ export default async function DashboardLayout({
   const fullName = profile?.full_name || profile?.full_name_ka || null;
   const avatarUrl = profile?.avatar_url ?? null;
 
+  // E5: Fetch unread application count for employer sidebar badge
+  let newApplicationsCount = 0;
+  if (role === "employer") {
+    const { data: jobs } = await supabase
+      .from("jobs")
+      .select("id")
+      .eq("posted_by", user.id);
+    const jobIds = (jobs ?? []).map((j) => j.id);
+    if (jobIds.length > 0) {
+      const { count } = await supabase
+        .from("applications")
+        .select("id", { count: "exact", head: true })
+        .in("job_id", jobIds)
+        .eq("is_viewed", false);
+      newApplicationsCount = count ?? 0;
+    }
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <DashboardSidebar role={role} fullName={fullName} avatarUrl={avatarUrl} />
+      <DashboardSidebar role={role} fullName={fullName} avatarUrl={avatarUrl} badgeCount={newApplicationsCount} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <DashboardHeader

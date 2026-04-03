@@ -9,11 +9,11 @@ type ApplicationStatusBadgeProps = {
 };
 
 const statusColors: Record<string, string> = {
-  pending: "bg-muted text-muted-foreground",
-  reviewed: "bg-primary/10 text-primary dark:bg-primary/15",
-  shortlisted: "bg-gold/15 text-gold-foreground dark:bg-gold/20 dark:text-gold",
-  rejected: "bg-destructive/10 text-destructive dark:bg-destructive/20",
-  accepted: "bg-primary/10 text-primary dark:bg-primary/15",
+  pending: "bg-gold/12 text-gold-foreground dark:bg-gold/15 dark:text-gold",
+  reviewed: "bg-primary/12 text-primary dark:bg-primary/20",
+  shortlisted: "bg-gold/18 text-gold-foreground dark:bg-gold/25 dark:text-gold",
+  rejected: "bg-destructive/12 text-destructive dark:bg-destructive/20",
+  accepted: "bg-primary/15 text-primary dark:bg-primary/20",
 };
 
 export function ApplicationStatusBadge({

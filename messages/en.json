@@ -30,7 +30,10 @@
     "manageJobs": "Manage Jobs",
     "manageCompanies": "Manage Companies",
     "settings": "Settings",
-    "backToSite": "Back to Site"
+    "savedJobs": "Saved Jobs",
+    "backToSite": "Back to Site",
+    "noJobs": "No jobs posted yet",
+    "applicants": "Applicants"
   },
   "home": {
     "title": "Find Your Dream Job in Georgia",
@@ -127,6 +130,8 @@
     "language": "Preferred Language",
     "avatar": "Profile Photo",
     "uploadAvatar": "Upload Photo",
+    "editProfile": "Edit Profile",
+    "viewResume": "View Resume",
     "updateSuccess": "Profile updated successfully",
     "notFound": "Profile not found",
     "anonymous": "Anonymous User",
@@ -146,7 +151,8 @@
     "logo": "Company Logo",
     "verified": "Verified",
     "createCompany": "Create Company Profile",
-    "editCompany": "Edit Company Profile"
+    "editCompany": "Edit Company Profile",
+    "createFirst": "You need to create a company before posting jobs"
   },
   "applications": {
     "title": "Applications",
@@ -198,6 +204,15 @@
     "yourJobs": "Your Jobs",
     "noJobs": "No jobs posted yet",
     "applicants": "Applicants",
+    "expired": "Expired",
+    "closed": "Closed",
+    "active": "Active",
+    "recommendedJobs": "Recommended for You",
+    "savedJobs": "Saved Jobs",
+    "noSavedJobs": "No saved jobs yet",
+    "editCompany": "Edit",
+    "createCompany": "Create Company",
+    "renew": "Renew",
     "roles": {
       "seeker": "Job Seeker",
       "employer": "Employer",

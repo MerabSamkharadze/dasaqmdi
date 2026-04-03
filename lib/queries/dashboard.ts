@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { calculateMatch } from "@/lib/matching";
 import type { ApplicationWithJob, JobWithCompany } from "@/lib/types";
+
+type RecommendedJob = JobWithCompany & { matchScore: number };
 
 type SeekerDashboardData = {
   totalApplications: number;
@@ -9,7 +12,15 @@ type SeekerDashboardData = {
   rejectedCount: number;
   recentApplications: ApplicationWithJob[];
   profileStrength: number;
+  recommendedJobs: RecommendedJob[];
 };
+
+type EmployerCompanyInfo = {
+  name: string;
+  name_ka: string | null;
+  logo_url: string | null;
+  is_verified: boolean;
+} | null;
 
 type EmployerDashboardData = {
   activeJobs: number;
@@ -17,6 +28,7 @@ type EmployerDashboardData = {
   totalApplications: number;
   newApplications: number;
   recentJobs: JobWithCompany[];
+  company: EmployerCompanyInfo;
 };
 
 export async function getSeekerDashboardData(
@@ -24,7 +36,9 @@ export async function getSeekerDashboardData(
 ): Promise<SeekerDashboardData> {
   const supabase = createClient();
 
-  const [applicationsResult, profileResult] = await Promise.all([
+  const now = new Date().toISOString();
+
+  const [applicationsResult, profileResult, jobsResult] = await Promise.all([
     supabase
       .from("applications")
       .select(
@@ -40,10 +54,27 @@ export async function getSeekerDashboardData(
       .order("created_at", { ascending: false })
       .returns<ApplicationWithJob[]>(),
     supabase.from("profiles").select("*").eq("id", userId).single(),
+    // Fetch active jobs with tags for matching
+    supabase
+      .from("jobs")
+      .select(
+        `
+        *,
+        company:companies!inner(id, name, name_ka, slug, logo_url),
+        category:categories!inner(id, slug, name_en, name_ka)
+      `
+      )
+      .eq("status", "active")
+      .gte("expires_at", now)
+      .or(`application_deadline.is.null,application_deadline.gte.${now}`)
+      .order("created_at", { ascending: false })
+      .limit(50)
+      .returns<JobWithCompany[]>(),
   ]);
 
   const applications = applicationsResult.data ?? [];
   const profile = profileResult.data;
+  const allJobs = jobsResult.data ?? [];
 
   // Profile strength: count filled fields out of key fields
   const profileFields = [
@@ -59,6 +90,24 @@ export async function getSeekerDashboardData(
   const filledCount = profileFields.filter(Boolean).length;
   const profileStrength = Math.round((filledCount / profileFields.length) * 100);
 
+  // Recommended jobs: match against seeker skills, exclude already-applied
+  const appliedJobIds = new Set(applications.map((a) => a.job.id));
+  const seekerSkills = profile?.skills ?? [];
+  let recommendedJobs: RecommendedJob[] = [];
+
+
+  if (seekerSkills.length > 0) {
+    recommendedJobs = allJobs
+      .filter((job) => !appliedJobIds.has(job.id) && job.tags?.length > 0)
+      .map((job) => {
+        const { score } = calculateMatch(seekerSkills, job.tags);
+        return { ...job, matchScore: score };
+      })
+      .filter((job) => job.matchScore > 0)
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 5);
+  }
+
   return {
     totalApplications: applications.length,
     pendingCount: applications.filter((a) => a.status === "pending").length,
@@ -69,6 +118,7 @@ export async function getSeekerDashboardData(
     rejectedCount: applications.filter((a) => a.status === "rejected").length,
     recentApplications: applications.slice(0, 5),
     profileStrength,
+    recommendedJobs,
   };
 }
 
@@ -78,19 +128,26 @@ export async function getEmployerDashboardData(
   const supabase = createClient();
   const now = new Date().toISOString();
 
-  // Get employer's jobs with company info
-  const { data: jobs } = await supabase
-    .from("jobs")
-    .select(
+  // Get employer's company + jobs in parallel
+  const [{ data: companyData }, { data: jobs }] = await Promise.all([
+    supabase
+      .from("companies")
+      .select("name, name_ka, logo_url, is_verified")
+      .eq("owner_id", userId)
+      .single(),
+    supabase
+      .from("jobs")
+      .select(
+        `
+        *,
+        company:companies!inner(id, name, name_ka, slug, logo_url),
+        category:categories!inner(id, slug, name_en, name_ka)
       `
-      *,
-      company:companies!inner(id, name, name_ka, slug, logo_url),
-      category:categories!inner(id, slug, name_en, name_ka)
-    `
-    )
-    .eq("posted_by", userId)
-    .order("created_at", { ascending: false })
-    .returns<JobWithCompany[]>();
+      )
+      .eq("posted_by", userId)
+      .order("created_at", { ascending: false })
+      .returns<JobWithCompany[]>(),
+  ]);
 
   const allJobs = jobs ?? [];
   const jobIds = allJobs.map((j) => j.id);
@@ -126,5 +183,6 @@ export async function getEmployerDashboardData(
     totalApplications,
     newApplications,
     recentJobs: allJobs.slice(0, 5),
+    company: companyData ?? null,
   };
 }

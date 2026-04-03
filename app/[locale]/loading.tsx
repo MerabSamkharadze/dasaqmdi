@@ -28,7 +28,7 @@ export default function HomeLoading() {
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-border/30 bg-card px-5 py-5 sm:px-6 shadow-sm"
+                className="rounded-xl border border-border/60 bg-card px-5 py-5 sm:px-6 shadow-soft"
                 style={{ opacity: 1 - i * 0.08 }}
               >
                 <div className="flex items-start gap-4 sm:gap-5">

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { getNavItems, isNavActive } from "./nav-items";
 import { RoleLabel } from "./role-label";
@@ -14,9 +14,10 @@ type DashboardSidebarProps = {
   role: UserRole;
   fullName: string | null;
   avatarUrl: string | null;
+  badgeCount?: number;
 };
 
-export function DashboardSidebar({ role, fullName, avatarUrl }: DashboardSidebarProps) {
+export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: DashboardSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("nav");
   const navItems = getNavItems(role);
@@ -46,26 +47,21 @@ export function DashboardSidebar({ role, fullName, avatarUrl }: DashboardSidebar
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200",
                 isActive
-                  ? "bg-primary/8 text-primary"
+                  ? "bg-primary/12 text-primary"
                   : "text-muted-foreground hover:bg-accent hover:text-foreground"
               )}
             >
               <Icon className="h-4 w-4 shrink-0 opacity-70" />
-              {t(item.labelKey)}
+              <span className="flex-1">{t(item.labelKey)}</span>
+              {item.labelKey === "applicants" && badgeCount > 0 && (
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground tabular-nums">
+                  {badgeCount > 99 ? "99+" : badgeCount}
+                </span>
+              )}
             </Link>
           );
         })}
       </nav>
-
-      <div className="border-t border-border/30 p-3">
-        <Link
-          href="/"
-          className="flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium text-muted-foreground/60 transition-all duration-200 hover:bg-accent hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4 shrink-0 opacity-60" />
-          {t("backToSite")}
-        </Link>
-      </div>
 
       {/* User identity + logout */}
       <div className="border-t border-border/30 px-4 py-3.5">

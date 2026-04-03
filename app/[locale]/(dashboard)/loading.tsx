@@ -12,7 +12,7 @@ export default function DashboardLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/30 bg-card p-5 shadow-sm"
+            className="rounded-xl border border-border/60 bg-card p-5 shadow-soft"
           >
             <div className="flex items-center gap-3">
               <Skeleton className="h-9 w-9 rounded-lg" />

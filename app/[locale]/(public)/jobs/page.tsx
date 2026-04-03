@@ -3,6 +3,7 @@ import { getCategories } from "@/lib/queries/categories";
 import { getProfile } from "@/lib/queries/profile";
 import { createClient } from "@/lib/supabase/server";
 import { calculateMatchScores } from "@/lib/matching";
+import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
@@ -46,24 +47,30 @@ export default async function JobsPage({
       getCategories(),
     ]);
 
-  // Match scores for logged-in seekers
+  // Match scores + saved jobs for logged-in seekers
   let matchScores: Map<string, number> | null = null;
+  let savedJobIds: Set<string> | null = null;
+  let isLoggedIn = false;
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (user) {
+    isLoggedIn = true;
     const profile = await getProfile(user.id);
-    if (profile?.role === "seeker" && profile.skills?.length > 0) {
-      const results = calculateMatchScores(
-        profile.skills,
-        jobs.map((j) => ({ id: j.id, tags: j.tags }))
-      );
-      matchScores = new Map<string, number>();
-      for (const [jobId, result] of results) {
-        if (result.score > 0) {
-          matchScores.set(jobId, result.score);
+    if (profile?.role === "seeker") {
+      savedJobIds = await getSavedJobIds(user.id);
+      if (profile.skills?.length > 0) {
+        const results = calculateMatchScores(
+          profile.skills,
+          jobs.map((j) => ({ id: j.id, tags: j.tags }))
+        );
+        matchScores = new Map<string, number>();
+        for (const [jobId, result] of results) {
+          if (result.score > 0) {
+            matchScores.set(jobId, result.score);
+          }
         }
       }
     }
@@ -142,6 +149,8 @@ export default async function JobsPage({
         jobs={jobs}
         locale={locale}
         matchScores={matchScores}
+        savedJobIds={savedJobIds}
+        isLoggedIn={isLoggedIn}
         translations={jobTranslations}
       />
 

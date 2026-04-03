@@ -5,34 +5,32 @@
 @layer base {
   :root {
     /*
-     * Light — "Premium Soft" palette
-     * Background: #F8FAFC (Slate 50) — soft off-white, never clinical.
-     * Cards: pure #FFFFFF — elevated surfaces against the slate canvas.
-     * Primary: Cerulean #3db2d8 deepened to 195 82% 36% for WCAG AA (4.56:1).
+     * Light — "Warm Cream" palette
+     * Every surface carries a warm golden undertone for reading comfort.
+     * Background: #FBF6EA (warm cream) — canvas.
+     * Card: #FCFBF7 (warm white) — elevated surfaces.
+     * Primary: Cerulean 195 82% 36% — cool accent on warm canvas (Santorini effect).
      * Gold: #facf5a for VIP/premium badges.
-     * Text: Slate 900 headings, Slate 600 body — high readability, zero strain.
-     *
-     * Cerulean scale:  50→97%  100→90%  200→78%  300→64%  400→54%(#3db2d8)  500→36%(primary)  600→30%  700→24%  800→18%  900→12%  950→8%
-     * Gold scale:      50→96%  100→89%  200→78%  300→72%  400→67%(#facf5a)  500→55%           600→45%  700→35%
+     * Text: Slate 900 headings, Slate 600 body.
      */
-    --background: 210 40% 98%;
+    --background: 44 65% 95%;
     --foreground: 222 47% 11.2%;
-    --card: 0 0% 100%;
+    --card: 44 45% 98.5%;
     --card-foreground: 222 47% 11.2%;
-    --popover: 0 0% 100%;
+    --popover: 44 45% 98.5%;
     --popover-foreground: 222 47% 11.2%;
     --primary: 195 82% 36%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 195 30% 95%;
+    --secondary: 44 35% 93%;
     --secondary-foreground: 222 47% 11.2%;
-    --muted: 210 40% 96%;
+    --muted: 44 35% 93%;
     --muted-foreground: 215 19% 35%;
-    --accent: 195 25% 94%;
+    --accent: 44 30% 92%;
     --accent-foreground: 222 47% 11.2%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91.4%;
-    --input: 214 32% 91.4%;
+    --border: 40 25% 88%;
+    --input: 40 25% 88%;
     --ring: 195 82% 36%;
     --gold: 44 94% 67%;
     --gold-foreground: 35 80% 18%;

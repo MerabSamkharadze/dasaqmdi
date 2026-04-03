@@ -5,6 +5,8 @@ type JobListProps = {
   jobs: JobWithCompany[];
   locale: string;
   matchScores?: Map<string, number> | null;
+  savedJobIds?: Set<string> | null;
+  isLoggedIn?: boolean;
   translations: {
     remote: string;
     types: Record<string, string>;
@@ -14,7 +16,7 @@ type JobListProps = {
   };
 };
 
-export function JobList({ jobs, locale, matchScores, translations }: JobListProps) {
+export function JobList({ jobs, locale, matchScores, savedJobIds, isLoggedIn, translations }: JobListProps) {
   if (jobs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-24 text-muted-foreground/60">
@@ -35,6 +37,8 @@ export function JobList({ jobs, locale, matchScores, translations }: JobListProp
             job={job}
             locale={locale}
             matchScore={matchScores?.get(job.id) ?? null}
+            isSaved={savedJobIds?.has(job.id) ?? false}
+            isLoggedIn={isLoggedIn}
             translations={translations}
           />
         </div>

@@ -12,7 +12,7 @@ export default function DashboardLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/30 bg-card p-5 shadow-sm"
+            className="rounded-xl border border-border/60 bg-card p-5 shadow-soft"
           >
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-lg bg-muted/40" />
@@ -32,7 +32,7 @@ export default function DashboardLoading() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 rounded-xl border border-border/30 bg-card px-5 py-3.5 shadow-sm"
+              className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft"
             >
               <div className="h-9 w-9 rounded-lg bg-muted/40" />
               <div className="flex-1">

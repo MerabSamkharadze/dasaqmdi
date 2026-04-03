@@ -5,6 +5,26 @@ import { closeJobAction, renewJobAction } from "@/lib/actions/jobs";
 import { Edit, XCircle, RefreshCw, Users } from "lucide-react";
 import Link from "next/link";
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
+
+// E6: Standalone renew button for dashboard
+export function RenewJobButton({ jobId }: { jobId: string }) {
+  const [isPending, startTransition] = useTransition();
+  const t = useTranslations("dashboard");
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => startTransition(async () => { await renewJobAction(jobId); })}
+      disabled={isPending}
+      className="gap-1.5 text-[11px] h-7"
+    >
+      <RefreshCw className={`h-2.5 w-2.5 ${isPending ? "animate-spin" : ""}`} />
+      {t("renew")}
+    </Button>
+  );
+}
 
 type JobActionButtonsProps = {
   jobId: string;

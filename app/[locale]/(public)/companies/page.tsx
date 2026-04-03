@@ -53,7 +53,7 @@ export default async function CompaniesPage() {
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/60">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
                   {company.logo_url ? (
                     <img
                       src={company.logo_url}

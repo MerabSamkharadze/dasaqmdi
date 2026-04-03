@@ -78,7 +78,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
       {/* Bio */}
       {bio && (
-        <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
           <h2 className="text-[15px] font-semibold tracking-tight mb-3">
             {t("bio")}
           </h2>
@@ -90,7 +90,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
       {/* Skills */}
       {profile.skills && profile.skills.length > 0 && (
-        <div className="rounded-xl border border-border/30 bg-card p-5 sm:p-8 shadow-sm">
+        <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
           <h2 className="text-[15px] font-semibold tracking-tight mb-3">
             {t("skills")}
           </h2>
