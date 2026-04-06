@@ -88,7 +88,8 @@
     "matchingSkills": "თქვენი შესაბამისი უნარები",
     "noMatchData": "დაამატეთ უნარები პროფილში თავსებადობის სანახავად",
     "requirements": "მოთხოვნები",
-    "descriptionLabel": "აღწერა"
+    "descriptionLabel": "აღწერა",
+    "subscribeTelegram": "მიიღე მსგავსი ვაკანსიები ტელეგრამით"
   },
   "categories": {
     "it-software": "IT და პროგრამირება",

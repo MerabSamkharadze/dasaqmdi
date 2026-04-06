@@ -88,7 +88,8 @@
     "matchingSkills": "Your matching skills",
     "noMatchData": "Add skills to your profile to see match scores",
     "requirements": "Requirements",
-    "descriptionLabel": "Description"
+    "descriptionLabel": "Description",
+    "subscribeTelegram": "Get similar jobs on Telegram"
   },
   "categories": {
     "it-software": "IT & Software",

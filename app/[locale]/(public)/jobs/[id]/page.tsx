@@ -17,6 +17,7 @@ import {
   Tag,
   Zap,
   CheckCircle,
+  Send,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -356,6 +357,17 @@ export default async function JobDetailPage({ params }: PageProps) {
           </div>
         </div>
       )}
+
+      {/* ── Telegram CTA ── */}
+      <a
+        href="https://t.me/dasaqmdi_bot"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 rounded-xl border border-border/60 bg-card py-4 text-[13px] text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-200"
+      >
+        <Send className="h-4 w-4" />
+        {t("subscribeTelegram")}
+      </a>
 
       {/* ── Footer meta ── */}
       <div className="flex items-center justify-between text-xs text-muted-foreground/50 px-1">
