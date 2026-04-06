@@ -13,7 +13,7 @@ export function getBot(): Bot {
 }
 
 // Category slugs matching our DB categories table
-const CATEGORIES = [
+export const CATEGORIES = [
   { slug: "it-software", label_en: "IT & Software", label_ka: "IT და პროგრამირება" },
   { slug: "sales-marketing", label_en: "Sales & Marketing", label_ka: "გაყიდვები და მარკეტინგი" },
   { slug: "administration", label_en: "Administration", label_ka: "ადმინისტრაცია" },

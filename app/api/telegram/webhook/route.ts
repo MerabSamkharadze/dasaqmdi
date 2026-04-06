@@ -1,5 +1,5 @@
 import { webhookCallback } from "grammy";
-import { getBot, buildCategoryKeyboard, MESSAGES } from "@/lib/telegram/bot";
+import { getBot, buildCategoryKeyboard, MESSAGES, CATEGORIES } from "@/lib/telegram/bot";
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase service client for bot operations (no cookie context)
@@ -62,11 +62,17 @@ function setupBotHandlers() {
 
     if (action === "done") {
       if (currentCategories.length === 0) {
-        await ctx.answerCallbackQuery({ text: msg.noCategories });
+        await ctx.answerCallbackQuery({ text: msg.noCategories, show_alert: true });
         return;
       }
-      await ctx.answerCallbackQuery({ text: "✅" });
-      await ctx.editMessageText(msg.saved);
+      await ctx.answerCallbackQuery();
+      const selectedNames = currentCategories.map((slug: string) => {
+        const cat = CATEGORIES.find((c) => c.slug === slug);
+        return cat ? (locale === "ka" ? cat.label_ka : cat.label_en) : slug;
+      });
+      await ctx.editMessageText(
+        `${msg.saved}\n\n📋 ${selectedNames.join(", ")}`
+      );
       return;
     }
 
