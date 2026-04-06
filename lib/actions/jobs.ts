@@ -78,9 +78,7 @@ export async function createJobAction(
 
   // TB3.3: Notify Telegram subscribers (non-blocking)
   if (newJob?.id && process.env.CRON_SECRET) {
-    const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-      ? "https://dasakmdi.com"
-      : "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
     fetch(`${baseUrl}/api/telegram/notify`, {
       method: "POST",
       headers: {

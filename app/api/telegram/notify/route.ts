@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   }
 
   const bot = getBot();
-  const baseUrl = "https://dasakmdi.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
   let sentCount = 0;
 
   // Format salary
