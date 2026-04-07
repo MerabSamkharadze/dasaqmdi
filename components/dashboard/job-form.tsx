@@ -37,18 +37,45 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
   const t = useTranslations("jobs");
   const tc = useTranslations("common");
   const tt = useTranslations("jobs.types");
+  const titleRef = useRef<HTMLInputElement>(null);
+  const tagsRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
   const descKaRef = useRef<HTMLTextAreaElement>(null);
+  const reqRef = useRef<HTMLTextAreaElement>(null);
+  const reqKaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleAIDraft = useCallback((text: string) => {
-    const targetRef = locale === "ka" ? descKaRef : descRef;
-    if (targetRef.current) {
-      targetRef.current.value = text;
-      // Trigger React's change detection
-      const event = new Event("input", { bubbles: true });
-      targetRef.current.dispatchEvent(event);
+  const handleAIDraft = useCallback((data: {
+    title: string;
+    tags: string;
+    description: string;
+    description_ka: string;
+    requirements: string;
+    requirements_ka: string;
+  }) => {
+    // Fill title and tags from AI input fields
+    if (titleRef.current && data.title) {
+      titleRef.current.value = data.title;
+      titleRef.current.dispatchEvent(new Event("input", { bubbles: true }));
     }
-  }, [locale]);
+    if (tagsRef.current && data.tags) {
+      tagsRef.current.value = data.tags;
+      tagsRef.current.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
+    // Fill description and requirements (both languages)
+    const textFields = [
+      { ref: descRef, value: data.description },
+      { ref: descKaRef, value: data.description_ka },
+      { ref: reqRef, value: data.requirements },
+      { ref: reqKaRef, value: data.requirements_ka },
+    ];
+    for (const { ref, value } of textFields) {
+      if (ref.current && value) {
+        ref.current.value = value;
+        ref.current.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    }
+  }, []);
 
   return (
     <form action={formAction} className="space-y-6">
@@ -69,10 +96,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
 
       {/* AI Draft */}
       {mode === "create" && (
-        <AIDraftButton
-          onDraftComplete={handleAIDraft}
-          language={locale === "ka" ? "ka" : "en"}
-        />
+        <AIDraftButton onDraftComplete={handleAIDraft} />
       )}
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -80,6 +104,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
         <div className="space-y-2">
           <Label htmlFor="title">Title</Label>
           <Input
+            ref={titleRef}
             id="title"
             name="title"
             required
@@ -245,6 +270,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       <div className="space-y-2">
         <Label htmlFor="requirements">Requirements</Label>
         <Textarea
+          ref={reqRef}
           id="requirements"
           name="requirements"
           rows={4}
@@ -256,6 +282,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       <div className="space-y-2">
         <Label htmlFor="requirements_ka">Requirements (Georgian)</Label>
         <Textarea
+          ref={reqKaRef}
           id="requirements_ka"
           name="requirements_ka"
           rows={4}
@@ -267,6 +294,7 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
       <div className="space-y-2">
         <Label htmlFor="tags">Tags / Skills</Label>
         <Input
+          ref={tagsRef}
           id="tags"
           name="tags"
           defaultValue={job?.tags?.join(", ") ?? ""}

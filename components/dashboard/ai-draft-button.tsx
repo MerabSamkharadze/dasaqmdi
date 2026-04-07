@@ -13,12 +13,20 @@ import {
 } from "@/components/ui/select";
 import { Sparkles, Loader2, X } from "lucide-react";
 
-type AIDraftButtonProps = {
-  onDraftComplete: (text: string) => void;
-  language: "en" | "ka" | "both";
+type DraftResult = {
+  title: string;
+  tags: string;
+  description: string;
+  description_ka: string;
+  requirements: string;
+  requirements_ka: string;
 };
 
-export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps) {
+type AIDraftButtonProps = {
+  onDraftComplete: (data: DraftResult) => void;
+};
+
+export function AIDraftButton({ onDraftComplete }: AIDraftButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [skills, setSkills] = useState("");
@@ -42,52 +50,42 @@ export function AIDraftButton({ onDraftComplete, language }: AIDraftButtonProps)
           title,
           skills: skills.split(",").map((s) => s.trim()).filter(Boolean),
           seniority,
-          language,
         }),
       });
 
       if (!response.ok) {
         const errorText = response.status === 401
           ? "Authentication required. Please log in again."
-          : response.status === 400
-            ? "Invalid input. Please check your title and skills."
-            : `Generation failed (${response.status}). Please try again.`;
+          : response.status === 403
+            ? "AI draft requires Pro or Verified plan."
+            : response.status === 400
+              ? "Invalid input. Please check your title and skills."
+              : `Generation failed (${response.status}). Please try again.`;
         setError(errorText);
         setIsLoading(false);
         return;
       }
 
-      if (!response.body) {
-        setError("No response received. Please try again.");
-        setIsLoading(false);
-        return;
-      }
+      const data = await response.json();
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        fullText += chunk;
-        setCompletion(fullText);
-      }
-
-      if (fullText.length === 0) {
+      if (!data.description) {
         setError("Empty response received. Please try again.");
         return;
       }
 
-      onDraftComplete(fullText);
+      setCompletion(`EN: ${data.description.substring(0, 100)}...\nKA: ${data.description_ka.substring(0, 100)}...`);
+      onDraftComplete({
+        ...data,
+        title: title.trim(),
+        tags: skills.trim(),
+      });
     } catch (err) {
       console.error("AI draft generation failed:", err);
       setError("Network error. Please check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [title, skills, seniority, language, onDraftComplete]);
+  }, [title, skills, seniority, onDraftComplete]);
 
   if (!isOpen) {
     return (
