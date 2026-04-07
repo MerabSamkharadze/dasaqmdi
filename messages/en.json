@@ -208,7 +208,12 @@
     "resumeRequired": "Resume is required",
     "alreadyApplied": "Applied",
     "seekerOnly": "Only job seekers can apply to jobs",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "allJobs": "All Jobs",
+    "allStatuses": "All Statuses",
+    "filterByJob": "Filter by Job",
+    "filterByStatus": "Filter by Status",
+    "noResults": "No applications match these filters"
   },
   "dashboard": {
     "title": "Dashboard",

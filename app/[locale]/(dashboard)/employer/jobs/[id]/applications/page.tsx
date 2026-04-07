@@ -175,6 +175,20 @@ export default async function JobApplicationsPage({
                   </div>
                 </div>
 
+                {/* Resume link — always visible */}
+                {resumeUrls.get(app.id) && (
+                  <div className="shrink-0">
+                    <a
+                      href={resumeUrls.get(app.id)!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[12px] text-primary/80 hover:text-primary hover:underline transition-colors duration-200"
+                    >
+                      {t("resume")} <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                )}
+
                 {/* Status update */}
                 <div className="shrink-0">
                   <ApplicationStatusUpdate
@@ -184,12 +198,10 @@ export default async function JobApplicationsPage({
                 </div>
               </div>
 
-              {/* Collapsible details: cover letter + resume */}
+              {/* Collapsible cover letter */}
               <ApplicationDetails
                 coverLetter={app.cover_letter}
-                resumeUrl={resumeUrls.get(app.id) ?? null}
                 label={t("viewDetails")}
-                resumeLabel={t("resume")}
               />
             </div>
           );

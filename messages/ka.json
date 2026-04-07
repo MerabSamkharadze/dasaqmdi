@@ -208,7 +208,12 @@
     "resumeRequired": "რეზიუმე აუცილებელია",
     "alreadyApplied": "გაგზავნილია",
     "seekerOnly": "ვაკანსიაზე განაცხადის გაგზავნა მხოლოდ კანდიდატებს შეუძლიათ",
-    "viewDetails": "დეტალურად ნახვა"
+    "viewDetails": "დეტალურად ნახვა",
+    "allJobs": "ყველა ვაკანსია",
+    "allStatuses": "ყველა სტატუსი",
+    "filterByJob": "ვაკანსიით ფილტრი",
+    "filterByStatus": "სტატუსით ფილტრი",
+    "noResults": "ფილტრებით შედეგები ვერ მოიძებნა"
   },
   "dashboard": {
     "title": "პანელი",
