@@ -6,6 +6,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
+import { ApplicationDetails } from "@/components/dashboard/application-details";
 import { User, Calendar, Briefcase } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -137,6 +138,14 @@ export default async function EmployerAllApplicationsPage() {
                   />
                 </div>
               </div>
+
+              {/* Collapsible details: cover letter */}
+              <ApplicationDetails
+                coverLetter={app.cover_letter}
+                resumeUrl={null}
+                label={t("viewDetails")}
+                resumeLabel={t("resume")}
+              />
             </div>
           );
         })}

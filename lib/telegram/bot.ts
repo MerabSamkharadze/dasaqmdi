@@ -39,24 +39,62 @@ export function buildCategoryKeyboard(
   return keyboard;
 }
 
+export function buildCompanyKeyboard(
+  companies: Array<{ id: string; name: string }>,
+  selectedIds: string[],
+  page: number,
+  totalPages: number,
+  locale: string
+): InlineKeyboard {
+  const keyboard = new InlineKeyboard();
+
+  for (const company of companies) {
+    const isSelected = selectedIds.includes(company.id);
+    const text = isSelected ? `✅ ${company.name}` : company.name;
+    keyboard.text(text, `comp:${company.id}`).row();
+  }
+
+  // Pagination
+  const navRow: Array<{ text: string; data: string }> = [];
+  if (page > 0) navRow.push({ text: "⬅️", data: `comp_page:${page - 1}` });
+  if (page < totalPages - 1) navRow.push({ text: "➡️", data: `comp_page:${page + 1}` });
+  if (navRow.length > 0) {
+    for (const btn of navRow) keyboard.text(btn.text, btn.data);
+    keyboard.row();
+  }
+
+  keyboard.text(locale === "ka" ? "✅ შენახვა" : "✅ Save", "comp:done").row();
+  return keyboard;
+}
+
 export const MESSAGES = {
   ka: {
-    welcome: "👋 გამარჯობა! მე ვარ dasakmdi.com-ის ბოტი.\n\nაირჩიე კატეგორიები და მიიღე ახალი ვაკანსიები რეალურ დროში.",
+    welcome: "👋 გამარჯობა! მე ვარ dasaqmdi.com-ის ბოტი.\n\nაირჩიე კატეგორიები და მიიღე ახალი ვაკანსიები რეალურ დროში.\n\n/categories — კატეგორიების არჩევა\n/companies — კომპანიების გამოწერა",
     selectCategories: "📋 აირჩიე კატეგორიები:",
-    saved: "✅ გამოწერა შენახულია! მიიღებ შეტყობინებებს არჩეულ კატეგორიებში.",
+    selectCompanies: "🏢 აირჩიე კომპანიები:",
+    saved: "✅ გამოწერა შენახულია!",
+    savedCategories: "✅ კატეგორიები შენახულია!",
+    savedCompanies: "✅ კომპანიები შენახულია!",
     noCategories: "⚠️ აირჩიე მინიმუმ 1 კატეგორია.",
-    stopped: "🔕 გამოწერა გაუქმებულია. /start ხელახალი გამოწერისთვის.",
-    currentCategories: "📋 შენი გამოწერები:",
+    noCompanies: "🏢 კომპანიები ჯერ არ არის დარეგისტრირებული.",
+    stopped: "🔕 გამოწერა გაუქმებულია.\n\n/start — ხელახალი გამოწერა",
+    currentCategories: "📋 შენი კატეგორიები:",
+    currentCompanies: "🏢 შენი კომპანიები:",
     languageChanged: "🌐 ენა შეცვლილია: ქართული",
     newJob: "📢 ახალი ვაკანსია",
   },
   en: {
-    welcome: "👋 Hello! I'm the dasakmdi.com bot.\n\nChoose categories and get new job postings in real time.",
+    welcome: "👋 Hello! I'm the dasaqmdi.com bot.\n\nChoose categories and get new job postings in real time.\n\n/categories — select categories\n/companies — follow companies",
     selectCategories: "📋 Select categories:",
-    saved: "✅ Subscription saved! You'll receive notifications for selected categories.",
+    selectCompanies: "🏢 Select companies to follow:",
+    saved: "✅ Subscription saved!",
+    savedCategories: "✅ Categories saved!",
+    savedCompanies: "✅ Companies saved!",
     noCategories: "⚠️ Select at least 1 category.",
-    stopped: "🔕 Subscription cancelled. /start to re-subscribe.",
-    currentCategories: "📋 Your subscriptions:",
+    noCompanies: "🏢 No companies registered yet.",
+    stopped: "🔕 Subscription cancelled.\n\n/start — re-subscribe",
+    currentCategories: "📋 Your categories:",
+    currentCompanies: "🏢 Your followed companies:",
     languageChanged: "🌐 Language changed: English",
     newJob: "📢 New job posting",
   },

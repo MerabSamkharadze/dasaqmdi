@@ -26,7 +26,7 @@ export async function POST(req: Request) {
   // Fetch job with company and category
   const { data: job } = await supabase
     .from("jobs")
-    .select("id, title, title_ka, city, salary_min, salary_max, salary_currency, job_type, category:categories!inner(slug, name_en, name_ka), company:companies!inner(name, name_ka)")
+    .select("id, title, title_ka, city, salary_min, salary_max, salary_currency, job_type, company_id, category:categories!inner(slug, name_en, name_ka), company:companies!inner(name, name_ka)")
     .eq("id", job_id)
     .single();
 
@@ -38,20 +38,42 @@ export async function POST(req: Request) {
   const companyName = (job.company as unknown as { name: string; name_ka: string | null });
   const categoryName = (job.category as unknown as { name_en: string; name_ka: string });
 
-  // Find active subscribers for this category
-  const { data: subscribers } = await supabase
-    .from("telegram_subscriptions")
-    .select("chat_id, locale")
-    .eq("is_active", true)
-    .contains("categories", [categorySlug]);
+  // Find active subscribers: by category OR by company
+  const companyId = (job.company as unknown as { id?: string }).id ?? job.company_id;
 
-  if (!subscribers || subscribers.length === 0) {
+  const [{ data: catSubscribers }, { data: compSubscribers }] = await Promise.all([
+    supabase
+      .from("telegram_subscriptions")
+      .select("chat_id, locale")
+      .eq("is_active", true)
+      .contains("categories", [categorySlug]),
+    companyId
+      ? supabase
+          .from("telegram_subscriptions")
+          .select("chat_id, locale")
+          .eq("is_active", true)
+          .contains("company_ids", [companyId])
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  // Deduplicate by chat_id
+  const subscriberMap = new Map<number, { chat_id: number; locale: string }>();
+  for (const s of catSubscribers ?? []) subscriberMap.set(s.chat_id, s);
+  for (const s of compSubscribers ?? []) subscriberMap.set(s.chat_id, s);
+  const subscribers = Array.from(subscriberMap.values());
+
+  if (subscribers.length === 0) {
     return Response.json({ sent: 0 });
   }
 
   const bot = getBot();
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
   let sentCount = 0;
+
+  // Escape Markdown special characters in user-generated text
+  function escapeMarkdown(text: string): string {
+    return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+  }
 
   // Format salary
   function formatSalary(min: number | null, max: number | null, currency: string): string | null {
@@ -74,11 +96,14 @@ export async function POST(req: Request) {
     const category = locale === "ka" ? categoryName.name_ka : categoryName.name_en;
     const jobUrl = locale === "ka" ? `${baseUrl}/jobs/${job.id}` : `${baseUrl}/en/jobs/${job.id}`;
 
+    const safeTitle = escapeMarkdown(title);
+    const safeCompany = escapeMarkdown(company);
+
     let text = `${msg.newJob}\n\n`;
-    text += `💼 *${title}*\n`;
-    text += `🏢 ${company}\n`;
+    text += `💼 *${safeTitle}*\n`;
+    text += `🏢 ${safeCompany}\n`;
     text += `📂 ${category}\n`;
-    if (job.city) text += `📍 ${job.city}\n`;
+    if (job.city) text += `📍 ${escapeMarkdown(job.city)}\n`;
     if (salary) text += `💰 ${salary}\n`;
     text += `\n🔗 [${locale === "ka" ? "ნახე ვაკანსია" : "View job"}](${jobUrl})`;
 

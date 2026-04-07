@@ -207,7 +207,8 @@
     "updateStatus": "Update Status",
     "resumeRequired": "Resume is required",
     "alreadyApplied": "Applied",
-    "seekerOnly": "Only job seekers can apply to jobs"
+    "seekerOnly": "Only job seekers can apply to jobs",
+    "viewDetails": "View Details"
   },
   "dashboard": {
     "title": "Dashboard",

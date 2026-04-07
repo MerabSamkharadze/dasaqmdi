@@ -58,7 +58,9 @@
       "Bash(find:*)",
       "Bash(head -5 /c/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\\\\\(dashboard\\\\\\)/dashboard/page.tsx /c/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\\\\\(dashboard\\\\\\)/admin/page.tsx /c/Users/msamkharadze/Desktop/personal/my-app/app/[locale]/\\\\\\(public\\\\\\)/jobs/page.tsx)",
       "Bash(npm view:*)",
-      "Bash(python3 -c \"import sys,json; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")"
+      "Bash(python3 -c \"import sys,json; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
+      "Bash(netstat -ano)",
+      "Bash(taskkill:*)"
     ]
   }
 }

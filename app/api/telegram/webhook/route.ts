@@ -1,5 +1,5 @@
 import { webhookCallback } from "grammy";
-import { getBot, buildCategoryKeyboard, MESSAGES, CATEGORIES } from "@/lib/telegram/bot";
+import { getBot, buildCategoryKeyboard, buildCompanyKeyboard, MESSAGES, CATEGORIES } from "@/lib/telegram/bot";
 import { createClient } from "@supabase/supabase-js";
 
 // Supabase service client for bot operations (no cookie context)
@@ -64,65 +64,145 @@ function setupBotHandlers() {
     }
   });
 
-  // Category toggle callback
+  // Callback query handler — categories + companies
   bot.on("callback_query:data", async (ctx) => {
     const data = ctx.callbackQuery.data;
     const telegramId = ctx.from?.id;
-    if (!telegramId || !data.startsWith("cat:")) return;
+    if (!telegramId) return;
 
     const supabase = getServiceClient();
-    const action = data.replace("cat:", "");
 
-    // Fetch current subscription
-    const { data: sub } = await supabase
-      .from("telegram_subscriptions")
-      .select("categories, locale")
-      .eq("telegram_id", telegramId)
-      .single();
+    // --- Category callbacks ---
+    if (data.startsWith("cat:")) {
+      const action = data.replace("cat:", "");
 
-    const currentCategories = sub?.categories ?? [];
-    const locale = (sub?.locale ?? "ka") as "ka" | "en";
-    const msg = MESSAGES[locale];
-
-    if (action === "done") {
-      // Refetch to get latest categories
-      const { data: freshSub } = await supabase
+      const { data: sub } = await supabase
         .from("telegram_subscriptions")
-        .select("categories")
+        .select("categories, locale")
         .eq("telegram_id", telegramId)
         .single();
 
-      const savedCategories = freshSub?.categories ?? [];
+      const currentCategories = sub?.categories ?? [];
+      const locale = (sub?.locale ?? "ka") as "ka" | "en";
+      const msg = MESSAGES[locale];
 
-      if (savedCategories.length === 0) {
-        await ctx.answerCallbackQuery({ text: msg.noCategories, show_alert: true });
+      if (action === "done") {
+        const { data: freshSub } = await supabase
+          .from("telegram_subscriptions")
+          .select("categories")
+          .eq("telegram_id", telegramId)
+          .single();
+
+        const savedCategories = freshSub?.categories ?? [];
+        if (savedCategories.length === 0) {
+          await ctx.answerCallbackQuery({ text: msg.noCategories, show_alert: true });
+          return;
+        }
+        await ctx.answerCallbackQuery();
+        const selectedNames = savedCategories.map((slug: string) => {
+          const cat = CATEGORIES.find((c) => c.slug === slug);
+          return cat ? (locale === "ka" ? cat.label_ka : cat.label_en) : slug;
+        });
+        await ctx.editMessageText(`${msg.savedCategories}\n\n📋 ${selectedNames.join(", ")}`);
         return;
       }
+
+      const updated = currentCategories.includes(action)
+        ? currentCategories.filter((c: string) => c !== action)
+        : [...currentCategories, action];
+
+      await supabase
+        .from("telegram_subscriptions")
+        .update({ categories: updated })
+        .eq("telegram_id", telegramId);
+
       await ctx.answerCallbackQuery();
-      const selectedNames = savedCategories.map((slug: string) => {
-        const cat = CATEGORIES.find((c) => c.slug === slug);
-        return cat ? (locale === "ka" ? cat.label_ka : cat.label_en) : slug;
+      await ctx.editMessageReplyMarkup({
+        reply_markup: buildCategoryKeyboard(updated, locale),
       });
-      await ctx.editMessageText(
-        `${msg.saved}\n\n📋 ${selectedNames.join(", ")}`
-      );
       return;
     }
 
-    // Toggle category
-    const updated = currentCategories.includes(action)
-      ? currentCategories.filter((c: string) => c !== action)
-      : [...currentCategories, action];
+    // --- Company callbacks ---
+    if (data.startsWith("comp:") || data.startsWith("comp_page:")) {
+      const { data: sub } = await supabase
+        .from("telegram_subscriptions")
+        .select("company_ids, locale")
+        .eq("telegram_id", telegramId)
+        .single();
 
-    await supabase
-      .from("telegram_subscriptions")
-      .update({ categories: updated })
-      .eq("telegram_id", telegramId);
+      const currentCompanyIds = sub?.company_ids ?? [];
+      const locale = (sub?.locale ?? "ka") as "ka" | "en";
+      const msg = MESSAGES[locale];
 
-    await ctx.answerCallbackQuery();
-    await ctx.editMessageReplyMarkup({
-      reply_markup: buildCategoryKeyboard(updated, locale),
-    });
+      // Fetch all companies for keyboard
+      const { data: allCompanies } = await supabase
+        .from("companies")
+        .select("id, name, name_ka")
+        .order("name");
+
+      const companyList = (allCompanies ?? []).map((c) => ({
+        id: c.id,
+        name: locale === "ka" && c.name_ka ? c.name_ka : c.name,
+      }));
+      const totalPages = Math.ceil(companyList.length / COMPANIES_PER_PAGE);
+
+      // Pagination
+      if (data.startsWith("comp_page:")) {
+        const page = parseInt(data.replace("comp_page:", ""), 10);
+        const pageCompanies = companyList.slice(page * COMPANIES_PER_PAGE, (page + 1) * COMPANIES_PER_PAGE);
+        await ctx.answerCallbackQuery();
+        await ctx.editMessageReplyMarkup({
+          reply_markup: buildCompanyKeyboard(pageCompanies, currentCompanyIds, page, totalPages, locale),
+        });
+        return;
+      }
+
+      const companyId = data.replace("comp:", "");
+
+      if (companyId === "done") {
+        const { data: freshSub } = await supabase
+          .from("telegram_subscriptions")
+          .select("company_ids")
+          .eq("telegram_id", telegramId)
+          .single();
+
+        const savedIds = freshSub?.company_ids ?? [];
+        await ctx.answerCallbackQuery();
+
+        if (savedIds.length === 0) {
+          await ctx.editMessageText(msg.savedCompanies);
+        } else {
+          const savedNames = savedIds.map((id: string) => {
+            const c = companyList.find((co) => co.id === id);
+            return c?.name ?? id;
+          });
+          await ctx.editMessageText(`${msg.savedCompanies}\n\n🏢 ${savedNames.join(", ")}`);
+        }
+        return;
+      }
+
+      // Toggle company
+      const updated = currentCompanyIds.includes(companyId)
+        ? currentCompanyIds.filter((id: string) => id !== companyId)
+        : [...currentCompanyIds, companyId];
+
+      await supabase
+        .from("telegram_subscriptions")
+        .update({ company_ids: updated })
+        .eq("telegram_id", telegramId);
+
+      // Find current page from companyId position
+      const companyIndex = companyList.findIndex((c) => c.id === companyId);
+      const currentPage = Math.floor(companyIndex / COMPANIES_PER_PAGE);
+      const pageCompanies = companyList.slice(currentPage * COMPANIES_PER_PAGE, (currentPage + 1) * COMPANIES_PER_PAGE);
+
+      await ctx.answerCallbackQuery();
+      await ctx.editMessageReplyMarkup({
+        reply_markup: buildCompanyKeyboard(pageCompanies, updated, currentPage, totalPages, locale),
+      });
+      return;
+    }
   });
 
   // /categories — show current subscriptions
@@ -137,12 +217,16 @@ function setupBotHandlers() {
       .eq("telegram_id", telegramId)
       .single();
 
-    const locale = (sub?.locale ?? "ka") as "ka" | "en";
+    if (!sub) {
+      await ctx.reply("ჯერ /start ბრძანება გამოიყენე გამოწერისთვის.");
+      return;
+    }
+
+    const locale = (sub.locale ?? "ka") as "ka" | "en";
     const msg = MESSAGES[locale];
-    const categories = sub?.categories ?? [];
 
     await ctx.reply(msg.currentCategories, {
-      reply_markup: buildCategoryKeyboard(categories, locale),
+      reply_markup: buildCategoryKeyboard(sub.categories ?? [], locale),
     });
   });
 
@@ -158,7 +242,12 @@ function setupBotHandlers() {
       .eq("telegram_id", telegramId)
       .single();
 
-    const locale = (sub?.locale ?? "ka") as "ka" | "en";
+    if (!sub) {
+      await ctx.reply("გამოწერა არ მოიძებნა.");
+      return;
+    }
+
+    const locale = (sub.locale ?? "ka") as "ka" | "en";
 
     await supabase
       .from("telegram_subscriptions")
@@ -180,7 +269,12 @@ function setupBotHandlers() {
       .eq("telegram_id", telegramId)
       .single();
 
-    const newLocale = sub?.locale === "en" ? "ka" : "en";
+    if (!sub) {
+      await ctx.reply("ჯერ /start ბრძანება გამოიყენე.");
+      return;
+    }
+
+    const newLocale = sub.locale === "en" ? "ka" : "en";
 
     await supabase
       .from("telegram_subscriptions")
@@ -188,6 +282,59 @@ function setupBotHandlers() {
       .eq("telegram_id", telegramId);
 
     await ctx.reply(MESSAGES[newLocale].languageChanged);
+  });
+
+  // /companies — follow companies
+  const COMPANIES_PER_PAGE = 6;
+
+  bot.command("companies", async (ctx) => {
+    const telegramId = ctx.from?.id;
+    if (!telegramId) return;
+
+    const supabase = getServiceClient();
+    const { data: sub } = await supabase
+      .from("telegram_subscriptions")
+      .select("company_ids, locale")
+      .eq("telegram_id", telegramId)
+      .single();
+
+    if (!sub) {
+      await ctx.reply("ჯერ /start ბრძანება გამოიყენე.");
+      return;
+    }
+
+    const locale = (sub.locale ?? "ka") as "ka" | "en";
+    const msg = MESSAGES[locale];
+
+    const { data: companies } = await supabase
+      .from("companies")
+      .select("id, name, name_ka")
+      .order("name");
+
+    if (!companies || companies.length === 0) {
+      await ctx.reply(msg.noCompanies);
+      return;
+    }
+
+    const companyList = companies.map((c) => ({
+      id: c.id,
+      name: locale === "ka" && c.name_ka ? c.name_ka : c.name,
+    }));
+
+    const totalPages = Math.ceil(companyList.length / COMPANIES_PER_PAGE);
+    const pageCompanies = companyList.slice(0, COMPANIES_PER_PAGE);
+
+    await ctx.reply(msg.selectCompanies, {
+      reply_markup: buildCompanyKeyboard(pageCompanies, sub.company_ids ?? [], 0, totalPages, locale),
+    });
+  });
+
+  // Company callbacks: comp:{id}, comp:done, comp_page:{page}
+  // (handled in the existing callback_query handler — extend it)
+
+  // Global error handler — prevents Telegram retries on crash
+  bot.catch((err) => {
+    console.error("Telegram bot error:", err);
   });
 
   return bot;

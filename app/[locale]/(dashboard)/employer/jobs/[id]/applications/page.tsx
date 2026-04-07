@@ -8,6 +8,7 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
+import { ApplicationDetails } from "@/components/dashboard/application-details";
 import { User, Calendar, ExternalLink, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -174,20 +175,6 @@ export default async function JobApplicationsPage({
                   </div>
                 </div>
 
-                {/* Resume link (signed URL for private bucket) */}
-                {resumeUrls.get(app.id) && (
-                  <div className="shrink-0">
-                    <a
-                      href={resumeUrls.get(app.id)!}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[12px] text-primary/80 hover:text-primary hover:underline transition-colors duration-200"
-                    >
-                      Resume <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-
                 {/* Status update */}
                 <div className="shrink-0">
                   <ApplicationStatusUpdate
@@ -196,6 +183,14 @@ export default async function JobApplicationsPage({
                   />
                 </div>
               </div>
+
+              {/* Collapsible details: cover letter + resume */}
+              <ApplicationDetails
+                coverLetter={app.cover_letter}
+                resumeUrl={resumeUrls.get(app.id) ?? null}
+                label={t("viewDetails")}
+                resumeLabel={t("resume")}
+              />
             </div>
           );
         })}

@@ -335,6 +335,7 @@ export type Database = {
           username: string | null;
           first_name: string | null;
           categories: string[];
+          company_ids: string[];
           locale: string;
           is_active: boolean;
           created_at: string;
@@ -347,6 +348,7 @@ export type Database = {
           username?: string | null;
           first_name?: string | null;
           categories?: string[];
+          company_ids?: string[];
           locale?: string;
           is_active?: boolean;
           created_at?: string;
@@ -358,6 +360,7 @@ export type Database = {
           username?: string | null;
           first_name?: string | null;
           categories?: string[];
+          company_ids?: string[];
           locale?: string;
           is_active?: boolean;
           updated_at?: string;
