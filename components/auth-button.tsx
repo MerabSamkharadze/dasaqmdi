@@ -19,13 +19,8 @@ export async function AuthButton() {
       </Link>
     </Button>
   ) : (
-    <div className="flex gap-1.5 pl-1.5">
-      <Button asChild size="sm" variant="ghost">
-        <Link href="/auth/login">{t("login")}</Link>
-      </Button>
-      <Button asChild size="sm" variant="default">
-        <Link href="/auth/sign-up">{t("signUp")}</Link>
-      </Button>
-    </div>
+    <Button asChild size="sm" variant="default">
+      <Link href="/auth/login">{t("login")}</Link>
+    </Button>
   );
 }

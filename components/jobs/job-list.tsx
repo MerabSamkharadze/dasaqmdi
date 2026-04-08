@@ -1,4 +1,5 @@
 import { JobCard } from "@/components/jobs/job-card";
+import { AnimateIn } from "@/components/shared/animate-in";
 import type { JobWithCompany } from "@/lib/types";
 
 type JobListProps = {
@@ -19,19 +20,22 @@ type JobListProps = {
 export function JobList({ jobs, locale, matchScores, savedJobIds, isLoggedIn, translations }: JobListProps) {
   if (jobs.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-24 text-muted-foreground/60">
-        <p className="text-sm">{translations.noJobs}</p>
-      </div>
+      <AnimateIn direction="up">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/40 py-24 text-muted-foreground/60">
+          <p className="text-sm">{translations.noJobs}</p>
+        </div>
+      </AnimateIn>
     );
   }
 
   return (
     <div className="flex flex-col gap-2.5">
       {jobs.map((job, i) => (
-        <div
+        <AnimateIn
           key={job.id}
-          className="animate-fade-in"
-          style={{ animationDelay: `${i * 50}ms` }}
+          direction="up"
+          delay={i * 60}
+          duration="duration-400"
         >
           <JobCard
             job={job}
@@ -41,7 +45,7 @@ export function JobList({ jobs, locale, matchScores, savedJobIds, isLoggedIn, tr
             isLoggedIn={isLoggedIn}
             translations={translations}
           />
-        </div>
+        </AnimateIn>
       ))}
     </div>
   );

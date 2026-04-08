@@ -21,6 +21,7 @@
     "clsx": "^2.1.1",
     "geist": "^1.7.0",
     "grammy": "^1.41.1",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.511.0",
     "next": "^14.2.35",
     "next-intl": "^3.25.3",

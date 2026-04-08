@@ -10,6 +10,7 @@ import { calculateMatchScores } from "@/lib/matching";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { HeroIllustration } from "@/components/shared/hero-illustration";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -132,6 +133,26 @@ export default async function HomePage({
 
   return (
     <>
+      {/* Hero section — first page only, no filters active */}
+      {page === 1 && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && (
+        <section className="mb-10 flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">
+          {/* Text */}
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold tracking-tight text-foreground leading-[1.15]">
+              {tHome("title")}{" "}
+              <span className="text-gradient">{tHome("titleAccent")}</span>
+            </h1>
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md mx-auto md:mx-0">
+              {tHome("subtitle")}
+            </p>
+          </div>
+          {/* Animated SVG illustration */}
+          <div className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px] shrink-0 rounded-2xl overflow-hidden">
+            <HeroIllustration />
+          </div>
+        </section>
+      )}
+
       {/* Filters */}
       <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
         <Suspense>

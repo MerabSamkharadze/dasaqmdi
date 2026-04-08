@@ -10,7 +10,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Globe } from "lucide-react";
+import { GlobeIcon } from "@/components/brand/nav-icons";
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -28,7 +28,7 @@ export function LanguageSwitcher() {
           variant="ghost"
           className="h-8 gap-1.5 rounded-xl px-2 text-xs font-medium text-muted-foreground/70"
         >
-          <Globe className="h-4 w-4" />
+          <GlobeIcon className="h-4 w-4" />
           {locale === "ka" ? "ქარ" : "EN"}
         </Button>
       </DropdownMenuTrigger>

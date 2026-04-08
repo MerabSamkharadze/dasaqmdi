@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { localized } from "@/lib/utils";
 
 export const runtime = "edge";
-export const alt = "Job posting on dasakmdi.com";
+export const alt = "Job posting on dasaqmdi.com";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -23,8 +23,8 @@ export default async function OGImage({
   if (!job) {
     return new ImageResponse(
       (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#020617", color: "#f8fafc", fontSize: 48 }}>
-          dasakmdi.com
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#362828", color: "#fbf7e1", fontSize: 48 }}>
+          dasaqmdi.com
         </div>
       ),
       size
@@ -51,29 +51,29 @@ export default async function OGImage({
           width: "100%",
           height: "100%",
           padding: "60px 80px",
-          background: "linear-gradient(135deg, #020617 0%, #0f172a 100%)",
-          color: "#f8fafc",
+          background: "linear-gradient(135deg, #362828 0%, #543d3d 100%)",
+          color: "#fbf7e1",
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ fontSize: 22, color: "#818cf8", fontWeight: 600 }}>
+          <div style={{ fontSize: 22, color: "#f5ebb4", fontWeight: 600 }}>
             {companyName}
           </div>
           <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.2, maxWidth: "900px" }}>
             {jobTitle}
           </div>
-          <div style={{ display: "flex", gap: "24px", fontSize: 22, color: "#94a3b8", marginTop: "8px" }}>
+          <div style={{ display: "flex", gap: "24px", fontSize: 22, color: "#725252", marginTop: "8px" }}>
             {job.city && <span>{job.city}</span>}
             <span>{job.job_type}</span>
             {salary && <span>{salary}</span>}
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div style={{ fontSize: 28, fontWeight: 600, color: "#818cf8" }}>
-            dasakmdi.com
+          <div style={{ fontSize: 28, fontWeight: 600, color: "#f5ebb4" }}>
+            dasaqmdi.com
           </div>
-          <div style={{ fontSize: 18, color: "#64748b" }}>
+          <div style={{ fontSize: 18, color: "#725252" }}>
             დასაქმდი — ვაკანსიები საქართველოში
           </div>
         </div>

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/logo";
-import { Briefcase, Building2, BarChart3, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
+import { JobsIcon, CompaniesIcon, SalariesIcon } from "@/components/brand/nav-icons";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,9 +22,9 @@ interface NavLink {
 }
 
 const NAV_ICONS: Record<string, React.ElementType> = {
-  "/jobs": Briefcase,
-  "/companies": Building2,
-  "/salaries": BarChart3,
+  "/jobs": JobsIcon,
+  "/companies": CompaniesIcon,
+  "/salaries": SalariesIcon,
 };
 
 export function HeaderClient({
@@ -82,14 +83,7 @@ export function HeaderClient({
                   )}
                 >
                   {Icon && (
-                    <Icon
-                      className={cn(
-                        "h-4 w-4 transition-opacity duration-200",
-                        isActive
-                          ? "text-foreground/80"
-                          : "text-muted-foreground/50 group-hover:text-foreground/70"
-                      )}
-                    />
+                    <Icon className="h-4 w-4" />
                   )}
                   {link.label}
                   {/* Active underline indicator */}
@@ -148,12 +142,7 @@ export function HeaderClient({
                     )}
                   >
                     {Icon && (
-                      <Icon
-                        className={cn(
-                          "h-4 w-4",
-                          isActive ? "text-primary" : "text-muted-foreground/60"
-                        )}
-                      />
+                      <Icon className="h-4 w-4" />
                     )}
                     {link.label}
                   </Link>

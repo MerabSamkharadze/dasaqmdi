@@ -5,78 +5,79 @@
 @layer base {
   :root {
     /*
-     * Light — "Slate + Indigo" SaaS palette
-     * Background: Slate-50 off-white (#f8fafc) — soft, non-straining.
-     * Cards: Pure white for crisp elevation against the off-white ground.
-     * Primary: Indigo-600 (#4f46e5) — confident, modern, SaaS-grade.
-     * Neutrals: Full Slate scale for text hierarchy and borders.
-     * All contrast ratios meet WCAG AA (4.5:1+).
+     * Light — "Warm Premium" palette
+     * Background: Soft Cream #fbf7e1 — warm, inviting, eye-comfort.
+     * Cards: Warm white #fffefa — subtle elevation on cream.
+     * Primary/CTA: Pale Gold #f5ebb4 — warm highlight, buttons, badges.
+     * Text: Dark Chocolate #362828 — rich, high-contrast headings.
+     * Secondary: Warm Brown #543d3d — subheadings, interactive.
+     * Muted: Rose-Brown #725252 — borders, metadata, icons.
      */
-    --background: 210 40% 98%;          /* Slate-50  #f8fafc */
-    --foreground: 222.2 47.4% 11.2%;    /* Slate-900 #0f172a */
-    --card: 0 0% 100%;                  /* White     #ffffff */
-    --card-foreground: 222.2 47.4% 11.2%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 47.4% 11.2%;
-    --primary: 239 84% 67%;             /* Indigo-500 #6366f1 */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;         /* Slate-100 #f1f5f9 */
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;             /* Slate-100 */
-    --muted-foreground: 215.4 16.3% 46.9%; /* Slate-500 #64748b */
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 72% 51%;           /* Red-600   #dc2626 */
+    --background: 48 81% 93%;           /* Cream     #fbf7e1 */
+    --foreground: 0 16% 18%;            /* Chocolate #362828 */
+    --card: 48 100% 99%;                /* Warm white #fffefa */
+    --card-foreground: 0 16% 18%;
+    --popover: 48 100% 99%;
+    --popover-foreground: 0 16% 18%;
+    --primary: 44 80% 83%;              /* Pale Gold #f5ebb4 */
+    --primary-foreground: 0 16% 18%;    /* Dark text on gold */
+    --secondary: 0 16% 28%;             /* Warm Brown #543d3d */
+    --secondary-foreground: 48 81% 93%;
+    --muted: 44 50% 92%;                /* Lighter cream */
+    --muted-foreground: 0 16% 38%;      /* Rose-Brown #725252 */
+    --accent: 44 60% 90%;               /* Warm accent surface */
+    --accent-foreground: 0 16% 18%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214.3 31.8% 91.4%;        /* Slate-200 #e2e8f0 */
-    --input: 214.3 31.8% 91.4%;
-    --ring: 239 84% 67%;                /* Indigo-500 */
-    --gold: 42 78% 58%;
-    --gold-foreground: 35 70% 16%;
-    --header: 226 71% 40%;              /* Deep indigo-navy for header */
-    --chart-1: 239 84% 67%;             /* Indigo */
-    --chart-2: 42 78% 58%;              /* Gold */
-    --chart-3: 243 75% 59%;             /* Indigo-600 */
-    --chart-4: 215 50% 48%;             /* Slate-blue */
-    --chart-5: 262 83% 58%;             /* Violet accent */
+    --border: 0 12% 78%;                /* Warm gray border */
+    --input: 0 12% 78%;
+    --ring: 44 80% 83%;                 /* Gold ring */
+    --gold: 44 80% 83%;
+    --gold-foreground: 0 16% 18%;
+    --header: 48 100% 99%;              /* Warm white header */
+    --chart-1: 0 16% 28%;              /* Warm Brown */
+    --chart-2: 44 80% 83%;             /* Gold */
+    --chart-3: 0 16% 38%;              /* Rose-Brown */
+    --chart-4: 24 30% 45%;             /* Warm mid */
+    --chart-5: 44 60% 70%;             /* Deep gold */
     --radius: 0.75rem;
   }
 
   .dark {
     /*
-     * Dark — "Midnight Slate" premium dark mode
-     * Background: Slate-950 (#020617) — deep, rich, never pure black.
-     * Cards: Slate-900 (#0f172a) — subtle elevation with quiet borders.
-     * Primary: Indigo-400 (#818cf8) — brighter for dark-mode legibility.
-     * Text: Slate-50/100 for high readability.
+     * Dark — "Dark Chocolate" premium mode
+     * Background: #362828 deep chocolate — warm, never cold black.
+     * Cards: #543d3d warm brown surface — subtle elevation.
+     * Primary: #f5ebb4 Pale Gold — bright CTA on dark.
+     * Text: #fbf7e1 Cream — warm, readable.
      */
-    --background: 222.2 84% 4.9%;       /* Slate-950 #020617 */
-    --foreground: 210 40% 98%;           /* Slate-50  #f8fafc */
-    --card: 222.2 47.4% 11.2%;           /* Slate-900 #0f172a */
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 47.4% 11.2%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 239 84% 67%;              /* Indigo-400 #818cf8 */
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;     /* Slate-800 #1e293b */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%; /* Slate-400 #94a3b8 */
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;       /* Dark red */
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;        /* Slate-800 */
-    --input: 217.2 32.6% 17.5%;
-    --ring: 239 84% 67%;
-    --gold: 42 72% 55%;
-    --gold-foreground: 42 10% 94%;
-    --header: 222.2 47.4% 11.2%;        /* Slate-900 — seamless dark header */
-    --chart-1: 239 84% 67%;
-    --chart-2: 42 72% 55%;
-    --chart-3: 243 60% 75%;
-    --chart-4: 38 62% 52%;
-    --chart-5: 262 70% 65%;
+    --background: 0 16% 18%;            /* Chocolate #362828 */
+    --foreground: 48 81% 93%;           /* Cream     #fbf7e1 */
+    --card: 0 16% 28%;                  /* Brown     #543d3d */
+    --card-foreground: 48 81% 93%;
+    --popover: 0 16% 28%;
+    --popover-foreground: 48 81% 93%;
+    --primary: 44 80% 83%;              /* Pale Gold #f5ebb4 */
+    --primary-foreground: 0 16% 18%;
+    --secondary: 0 16% 24%;             /* Darker brown */
+    --secondary-foreground: 48 81% 93%;
+    --muted: 0 16% 24%;
+    --muted-foreground: 0 12% 60%;      /* Muted warm gray */
+    --accent: 0 16% 24%;
+    --accent-foreground: 48 81% 93%;
+    --destructive: 0 55% 38%;
+    --destructive-foreground: 48 81% 93%;
+    --border: 0 14% 32%;                /* Subtle warm border */
+    --input: 0 14% 32%;
+    --ring: 44 80% 83%;
+    --gold: 44 80% 83%;
+    --gold-foreground: 0 16% 18%;
+    --header: 0 16% 28%;               /* Brown header */
+    --chart-1: 44 80% 83%;
+    --chart-2: 0 12% 60%;
+    --chart-3: 44 60% 70%;
+    --chart-4: 24 30% 50%;
+    --chart-5: 0 16% 48%;
   }
 }
 
@@ -125,6 +126,18 @@
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.35);
   }
+
+  /* Respect users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
 @layer utilities {
@@ -135,6 +148,6 @@
   /* Gradient text helper */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(262 83% 58%));
+    background-image: linear-gradient(135deg, hsl(0 16% 28%), hsl(44 80% 60%));
   }
 }

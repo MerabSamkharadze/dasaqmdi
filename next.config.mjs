@@ -8,11 +8,16 @@ const nextConfig = {
     serverComponentsExternalPackages: ["@opentelemetry/api", "@opentelemetry/core", "@opentelemetry/semantic-conventions"],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
     ],
   },

@@ -55,10 +55,10 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <NextTopLoader
-              color="hsl(239 84% 67%)"
+              color="#543d3d"
               height={2}
               showSpinner={false}
-              shadow="0 0 10px hsl(239 84% 67% / 0.3), 0 0 5px hsl(239 84% 67% / 0.2)"
+              shadow="0 0 10px rgba(84,61,61,0.3), 0 0 5px rgba(84,61,61,0.2)"
             />
             {children}
           </ThemeProvider>
