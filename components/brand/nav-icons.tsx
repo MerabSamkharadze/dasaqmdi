@@ -47,17 +47,18 @@ export function CompaniesIcon({ className }: { className?: string }) {
 export function GlobeIcon({ className }: { className?: string }) {
   return (
     <svg {...ICON_PROPS} className={className}>
-      {/* Globe circle */}
-      <circle cx="12" cy="12" r="9.5" fill="#725252" />
+      {/* Globe body — gold gradient feel */}
+      <circle cx="12" cy="12" r="9" fill="none" stroke="#C7AE6A" strokeWidth="1.3" />
       {/* Meridian */}
-      <ellipse cx="12" cy="12" rx="4.5" ry="9.5" fill="none" stroke="#fbf7e1" strokeWidth="1.2" />
+      <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="#725252" strokeWidth="0.9" />
       {/* Equator */}
-      <line x1="2.5" y1="12" x2="21.5" y2="12" stroke="#fbf7e1" strokeWidth="1.2" />
-      {/* Latitude lines */}
-      <line x1="4" y1="7.5" x2="20" y2="7.5" stroke="#fbf7e1" strokeWidth="0.8" strokeOpacity="0.5" />
-      <line x1="4" y1="16.5" x2="20" y2="16.5" stroke="#fbf7e1" strokeWidth="0.8" strokeOpacity="0.5" />
-      {/* Highlight */}
-      <circle cx="8.5" cy="8" r="2.5" fill="#543d3d" fillOpacity="0.4" />
+      <path d="M3 12c1.5 1.5 5 2.5 9 2.5s7.5-1 9-2.5" fill="none" stroke="#725252" strokeWidth="0.9" />
+      {/* Top latitude */}
+      <path d="M5.5 7.5c1.5 1 4 1.5 6.5 1.5s5-.5 6.5-1.5" fill="none" stroke="#C7AE6A" strokeWidth="0.7" strokeOpacity="0.5" />
+      {/* Bottom latitude */}
+      <path d="M5.5 16.5c1.5-1 4-1.5 6.5-1.5s5 .5 6.5 1.5" fill="none" stroke="#C7AE6A" strokeWidth="0.7" strokeOpacity="0.5" />
+      {/* Shine dot */}
+      <circle cx="8" cy="7.5" r="1.5" fill="#C7AE6A" fillOpacity="0.3" />
     </svg>
   );
 }
