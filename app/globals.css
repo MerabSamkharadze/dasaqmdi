@@ -100,9 +100,9 @@
     color: hsl(var(--foreground));
   }
 
-  /* Focus ring — accessible but subtle */
+  /* Focus ring — accessible but subtle, no offset to avoid color clash on colored backgrounds */
   :focus-visible {
-    @apply outline-none ring-2 ring-primary/30 ring-offset-2 ring-offset-background;
+    @apply outline-none ring-[1.5px] ring-primary/30;
   }
 
   /* Scrollbar — thin & elegant */

@@ -1,3 +1,5 @@
+export const revalidate = 60; // ISR: revalidate every 60 seconds
+
 import { getJobById } from "@/lib/queries/jobs";
 import { getProfile } from "@/lib/queries/profile";
 import { createClient } from "@/lib/supabase/server";

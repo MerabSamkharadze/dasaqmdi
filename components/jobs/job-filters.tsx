@@ -76,7 +76,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
         defaultValue={searchParams.get("category") ?? "all"}
         onValueChange={(v) => updateParams("category", v)}
       >
-        <SelectTrigger className="w-full sm:w-[160px] h-9 text-[13px]">
+        <SelectTrigger className="w-full sm:w-[172px] h-9 text-[13px]">
           <SelectValue placeholder={translations.allCategories} />
         </SelectTrigger>
         <SelectContent>

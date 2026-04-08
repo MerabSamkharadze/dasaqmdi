@@ -40,9 +40,12 @@
     "telegramSubscribe": "Subscribe via Telegram"
   },
   "home": {
-    "title": "Find Your Dream Job in Georgia",
+    "title": "Find Your Dream",
+    "titleAccent": "Job in Georgia",
     "subtitle": "Browse thousands of job opportunities from top employers",
     "searchPlaceholder": "Search by job title or keyword...",
+    "heroSearch": "Search",
+    "jobCount": "{count}+ active jobs",
     "featuredJobs": "Featured Jobs",
     "browseByCategory": "Browse by Category",
     "latestJobs": "Latest Jobs",

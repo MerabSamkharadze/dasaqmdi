@@ -3,25 +3,45 @@
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Globe } from "lucide-react";
 
 export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
-  function switchLocale() {
-    const nextLocale = locale === "ka" ? "en" : "ka";
-    router.replace(pathname, { locale: nextLocale });
+  function switchLocale(value: string) {
+    router.replace(pathname, { locale: value });
   }
 
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-8 w-8 rounded-xl text-xs font-medium text-muted-foreground/70"
-      onClick={switchLocale}
-    >
-      {locale === "ka" ? "EN" : "ქარ"}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="h-8 gap-1.5 rounded-xl px-2 text-xs font-medium text-muted-foreground/70"
+        >
+          <Globe className="h-3.5 w-3.5" />
+          {locale === "ka" ? "ქარ" : "EN"}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-content" align="start">
+        <DropdownMenuRadioGroup value={locale} onValueChange={switchLocale}>
+          <DropdownMenuRadioItem className="flex gap-2 text-[13px]" value="ka">
+            <span>ქართული</span>
+          </DropdownMenuRadioItem>
+          <DropdownMenuRadioItem className="flex gap-2 text-[13px]" value="en">
+            <span>English</span>
+          </DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

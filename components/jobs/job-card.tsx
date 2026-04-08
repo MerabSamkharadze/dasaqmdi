@@ -1,9 +1,8 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
-import { BadgeCheck, Building2, Calendar, Clock, MapPin, Star, Zap } from "lucide-react";
+import { BadgeCheck, Building2, Calendar, Clock, MapPin, Star, Zap, Wifi } from "lucide-react";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -24,11 +23,17 @@ type JobCardProps = {
   };
 };
 
+const MONTHS_KA = ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"];
+const MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 function formatDate(dateString: string, locale: string): string {
-  return new Date(dateString).toLocaleDateString(locale === "ka" ? "ka-GE" : "en-US", {
-    day: "numeric",
-    month: "short",
-  });
+  const d = new Date(dateString);
+  const months = locale === "ka" ? MONTHS_KA : MONTHS_EN;
+  return `${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+function fmtNum(n: number): string {
+  return new Intl.NumberFormat("en-US").format(n);
 }
 
 function formatSalary(
@@ -37,10 +42,19 @@ function formatSalary(
   currency: string,
 ): string | null {
   if (!min && !max) return null;
-  if (min && max) return `${min.toLocaleString()} - ${max.toLocaleString()} ${currency}`;
-  if (min) return `${min.toLocaleString()}+ ${currency}`;
-  return `${max!.toLocaleString()} ${currency}`;
+  if (min && max) return `${fmtNum(min)} – ${fmtNum(max)} ${currency}`;
+  if (min) return `${fmtNum(min)}+ ${currency}`;
+  return `${fmtNum(max!)} ${currency}`;
 }
+
+/* Pastel badge palette — each type gets a distinct soft color */
+const TYPE_COLORS: Record<string, string> = {
+  "full-time":  "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400",
+  "part-time":  "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
+  contract:     "bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400",
+  internship:   "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400",
+  remote:       "bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400",
+};
 
 export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translations }: JobCardProps) {
   const title = localized(job, "title", locale);
@@ -48,124 +62,126 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency);
   const router = useRouter();
 
+  const typeColor = TYPE_COLORS[job.job_type] ?? "bg-secondary text-secondary-foreground";
+
   return (
     <div
       onClick={() => router.push(`/jobs/${job.id}`)}
-      className="group relative block cursor-pointer rounded-xl border border-border/60 bg-card px-5 py-5 sm:px-6 sm:py-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border/80 hover:-translate-y-0.5 before:absolute before:left-0 before:top-3 before:bottom-3 before:w-[3px] before:rounded-full before:bg-primary/0 before:transition-all before:duration-200 hover:before:bg-primary/60 before:origin-center before:scale-y-0 hover:before:scale-y-100"
+      className="group relative block cursor-pointer rounded-xl border border-border/40 bg-card p-4 sm:p-5 transition-all duration-200 hover:shadow-soft-md hover:border-border/60 hover:-translate-y-1"
     >
-      <div className="flex items-start gap-4 sm:gap-5">
+      <div className="flex items-start gap-4">
         {/* Company Logo */}
         <Link
           href={`/companies/${job.company.slug}`}
           onClick={(e) => e.stopPropagation()}
-          className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/60 hover:bg-muted transition-colors duration-200"
+          className="hidden sm:flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/50 ring-1 ring-border/30 hover:bg-muted transition-colors duration-150"
         >
           {job.company.logo_url ? (
             <Image
               src={job.company.logo_url}
               alt={companyName}
-              width={32}
-              height={32}
-              className="h-8 w-8 rounded-md object-contain"
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-lg object-contain"
             />
           ) : (
-            <Building2 className="h-4 w-4 text-primary/60" />
+            <Building2 className="h-4.5 w-4.5 text-muted-foreground/50" />
           )}
         </Link>
 
-        {/* Main content */}
+        {/* Middle: Title + Meta + Badges */}
         <div className="flex-1 min-w-0 space-y-2">
-          {/* Title */}
-          <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 truncate">
-            {title}
-          </h3>
+          {/* Title row */}
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="text-[15px] font-semibold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors duration-200 line-clamp-1">
+              {title}
+            </h3>
 
-          {/* Company + location */}
-          <div className="flex items-center gap-3 text-[13px] text-muted-foreground leading-normal">
+            {/* Desktop bookmark */}
+            {isLoggedIn && (
+              <div className="hidden md:block shrink-0 -mt-0.5 -mr-1">
+                <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
+              </div>
+            )}
+          </div>
+
+          {/* Company + Location + Date meta row */}
+          <div className="flex items-center gap-x-3 gap-y-1 flex-wrap text-[13px] text-muted-foreground">
             <Link
               href={`/companies/${job.company.slug}`}
               onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1.5 truncate hover:text-primary transition-colors duration-200"
+              className="inline-flex items-center gap-1.5 truncate hover:text-primary transition-colors duration-150"
             >
-              <Building2 className="h-3 w-3 shrink-0 opacity-50" />
               {companyName}
               {job.company.is_verified && (
                 <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
               )}
             </Link>
             {job.city && (
-              <span className="hidden sm:flex items-center gap-1.5">
-                <MapPin className="h-3 w-3 shrink-0 opacity-50" />
+              <span className="inline-flex items-center gap-1 text-muted-foreground/70">
+                <MapPin className="h-3 w-3 shrink-0" />
                 {job.city}
               </span>
             )}
-          </div>
-
-          {/* Badges */}
-          <div className="flex items-center gap-2 flex-wrap pt-0.5">
-            {job.is_featured && (
-              <Badge variant="outline" className="text-[11px] font-normal px-2 py-0.5 border-amber-300/60 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 gap-1">
-                <Star className="h-2.5 w-2.5" />
-                {translations.featured ?? "Featured"}
-              </Badge>
-            )}
-            <Badge variant="secondary" className="text-[11px] font-normal px-2 py-0.5">
-              {translations.types[job.job_type] ?? job.job_type}
-            </Badge>
-            {job.is_remote && (
-              <Badge variant="outline" className="text-[11px] font-normal px-2 py-0.5 border-teal-300/60 bg-teal-50 text-teal-700 dark:border-teal-500/30 dark:bg-teal-500/10 dark:text-teal-400">
-                {translations.remote}
-              </Badge>
-            )}
-            {matchScore != null && matchScore > 0 && (
-              <Badge
-                variant="outline"
-                className="text-[11px] font-medium px-2 py-0.5 border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400 gap-1"
-              >
-                <Zap className="h-2.5 w-2.5" />
-                {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {/* Right column: Salary + dates + bookmark */}
-        <div className="hidden md:flex flex-col items-end gap-2.5 shrink-0 pt-0.5">
-          <div className="flex items-center gap-1.5">
-            {salary && (
-              <span className="text-[13px] font-semibold text-foreground tabular-nums">{salary}</span>
-            )}
-            {isLoggedIn && (
-              <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
-            )}
-          </div>
-          <div className="flex items-center gap-3 text-[11px] text-muted-foreground/70">
-            <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 opacity-50" />
+            <span className="inline-flex items-center gap-1 text-muted-foreground/60">
+              <Calendar className="h-3 w-3 shrink-0" />
               {formatDate(job.created_at, locale)}
             </span>
             {job.application_deadline && (
-              <span className="flex items-center gap-1 text-muted-foreground">
-                <Clock className="h-3 w-3 opacity-60" />
+              <span className="hidden sm:inline-flex items-center gap-1 text-muted-foreground/60">
+                <Clock className="h-3 w-3 shrink-0" />
                 {formatDate(job.application_deadline, locale)}
               </span>
             )}
           </div>
-        </div>
 
-        {/* Mobile: salary + date + bookmark */}
-        <div className="flex md:hidden flex-col items-end gap-1.5 shrink-0 pt-0.5">
-          <div className="flex items-center gap-1">
+          {/* Badges + Salary row */}
+          <div className="flex items-center justify-between gap-3 pt-0.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {job.is_featured && (
+                <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+                  <Star className="h-2.5 w-2.5" />
+                  {translations.featured ?? "Featured"}
+                </span>
+              )}
+              <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[11px] font-medium ${typeColor}`}>
+                {translations.types[job.job_type] ?? job.job_type}
+              </span>
+              {job.is_remote && (
+                <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400">
+                  <Wifi className="h-2.5 w-2.5" />
+                  {translations.remote}
+                </span>
+              )}
+              {matchScore != null && matchScore > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400">
+                  <Zap className="h-2.5 w-2.5" />
+                  {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
+                </span>
+              )}
+            </div>
+
+            {/* Salary — desktop */}
             {salary && (
-              <span className="text-[11px] font-semibold text-foreground tabular-nums">{salary}</span>
+              <span className="hidden sm:block text-[13px] font-semibold text-foreground tabular-nums whitespace-nowrap">
+                {salary}
+              </span>
+            )}
+          </div>
+
+          {/* Mobile bottom row: salary + bookmark */}
+          <div className="flex sm:hidden items-center justify-between pt-1">
+            {salary ? (
+              <span className="text-[12px] font-semibold text-foreground tabular-nums">
+                {salary}
+              </span>
+            ) : (
+              <span />
             )}
             {isLoggedIn && (
               <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
             )}
           </div>
-          <span className="text-[11px] text-muted-foreground/60">
-            {formatDate(job.created_at, locale)}
-          </span>
         </div>
       </div>
     </div>

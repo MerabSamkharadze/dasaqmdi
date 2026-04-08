@@ -1,8 +1,14 @@
-export default function AuthLayout({
+import { getTranslations } from "next-intl/server";
+import { AuthSearchBar } from "@/components/auth/auth-search-bar";
+
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const t = await getTranslations("home");
+  const tJobs = await getTranslations("jobs");
+
   return (
     <div className="flex min-h-svh w-full">
       {/* ── Left branding panel (desktop only) ── */}
@@ -13,10 +19,10 @@ export default function AuthLayout({
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-white/[0.02]" />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center gap-8 text-center px-12">
+        <div className="relative z-10 flex flex-col items-center gap-8 text-center px-12 max-w-md">
           <svg
-            width="64"
-            height="64"
+            width="56"
+            height="56"
             viewBox="0 0 28 28"
             fill="none"
             aria-hidden="true"
@@ -36,13 +42,21 @@ export default function AuthLayout({
           </svg>
 
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight">
-              დასაქმდი
+            <h1 className="text-3xl font-bold text-white tracking-tight leading-[1.15]">
+              {t("title")}{" "}
+              <span className="text-white/80">{t("titleAccent")}</span>
             </h1>
-            <p className="mt-3 text-sm text-white/60 max-w-[260px] leading-relaxed">
-              სამუშაოს ძიება საქართველოში — სწრაფად, მარტივად, უსაფრთხოდ
+            <p className="mt-4 text-sm text-white/50 leading-relaxed">
+              {t("subtitle")}
             </p>
           </div>
+
+          {/* Quick job search */}
+          <AuthSearchBar
+            placeholder={t("searchPlaceholder")}
+            buttonLabel={t("heroSearch")}
+            locationPlaceholder={tJobs("filters.location")}
+          />
         </div>
       </div>
 

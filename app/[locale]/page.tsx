@@ -138,18 +138,6 @@ export default async function HomePage({
 
       <main className="flex-1 w-full">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
-          {/* Page header */}
-          <div className="flex items-baseline justify-between mb-6">
-            <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground text-balance">
-                {t("title")}
-              </h1>
-            </div>
-            <span className="text-xs text-muted-foreground/50 tabular-nums bg-muted/50 px-2 py-0.5 rounded-md">
-              {totalCount}
-            </span>
-          </div>
-
           {/* Filters */}
           <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
             <Suspense>
