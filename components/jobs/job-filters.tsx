@@ -57,7 +57,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
       {/* Search — O11: debounced realtime search */}
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
         <Input
           defaultValue={searchParams.get("q") ?? ""}
           placeholder={translations.searchPlaceholder}

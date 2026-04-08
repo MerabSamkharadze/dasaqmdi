@@ -84,10 +84,10 @@ export function HeaderClient({
                   {Icon && (
                     <Icon
                       className={cn(
-                        "h-3.5 w-3.5 transition-opacity duration-200",
+                        "h-4 w-4 transition-opacity duration-200",
                         isActive
-                          ? "opacity-80"
-                          : "opacity-50 group-hover:opacity-80"
+                          ? "text-foreground/80"
+                          : "text-muted-foreground/50 group-hover:text-foreground/70"
                       )}
                     />
                   )}
@@ -151,7 +151,7 @@ export function HeaderClient({
                       <Icon
                         className={cn(
                           "h-4 w-4",
-                          isActive ? "opacity-90" : "opacity-60"
+                          isActive ? "text-primary" : "text-muted-foreground/60"
                         )}
                       />
                     )}

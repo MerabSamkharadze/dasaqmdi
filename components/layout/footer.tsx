@@ -51,7 +51,7 @@ export async function Footer() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
               >
-                <Send className="h-3.5 w-3.5" />
+                <Send className="h-4 w-4 text-muted-foreground/50" />
                 {t("telegramSubscribe")}
               </a>
               <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">

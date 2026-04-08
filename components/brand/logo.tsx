@@ -1,89 +1,65 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import { useLocale } from "next-intl";
+
 interface LogoProps {
   /** "full" = icon + wordmark, "icon" = symbol only */
   variant?: "full" | "icon";
   className?: string;
 }
 
+function LogoMark({ size = 32 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 120 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      {/* Organic brush-stroke circle */}
+      <path
+        d="M60 6C30 4 8 26 6 56c-2 32 22 54 52 58 32 4 56-18 58-48C118 34 94 8 60 6Z"
+        fill="#3d2c2c"
+      />
+      <path
+        d="M22 14c-6 4-3 2 2-1s8-4 10-3-6 1-12 4Z"
+        fill="#3d2c2c"
+      />
+
+      {/* Geometric "D" icon — light cream on dark */}
+      <path d="M60 24 L84 42 L78 80 L42 80 L36 48 Z" fill="none" stroke="#ede0ce" strokeWidth="2.5" strokeLinejoin="round" />
+
+      {/* Diagonal facet lines */}
+      <path d="M60 24 L60 54" stroke="#ede0ce" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M36 48 L84 42" stroke="#ede0ce" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M60 54 L42 80" stroke="#ede0ce" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M60 54 L78 80" stroke="#ede0ce" strokeWidth="1.8" strokeLinecap="round" />
+
+      {/* Center play triangle */}
+      <path d="M53 48 L53 66 L67 57 Z" fill="#ede0ce" />
+    </svg>
+  );
+}
+
 export function Logo({ variant = "full", className }: LogoProps) {
+  const locale = useLocale();
+
   if (variant === "icon") {
     return (
-      <svg
-        width="28"
-        height="28"
-        viewBox="0 0 28 28"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        className={className}
-      >
-        <rect
-          x="3"
-          y="9"
-          width="22"
-          height="15"
-          rx="3.5"
-          className="stroke-foreground/80"
-          strokeWidth="1.5"
-          fill="none"
-        />
-        <path
-          d="M10 9V7a4 4 0 0 1 8 0v2"
-          className="stroke-foreground/80"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M9.5 17l3 3 6.5-7"
-          className="stroke-primary"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-      </svg>
+      <span className={className}>
+        <LogoMark size={32} />
+      </span>
     );
   }
 
   return (
-    <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 28 28"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <rect
-          x="3"
-          y="9"
-          width="22"
-          height="15"
-          rx="3.5"
-          className="stroke-foreground/80"
-          strokeWidth="1.5"
-          fill="none"
-        />
-        <path
-          d="M10 9V7a4 4 0 0 1 8 0v2"
-          className="stroke-foreground/80"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M9.5 17l3 3 6.5-7"
-          className="stroke-primary"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-        />
-      </svg>
-
-      <span className="text-[15px] font-bold tracking-tight text-foreground">
-        დასაქმდი
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <LogoMark size={36} />
+      <span className="text-[15px] font-extrabold tracking-wide uppercase text-foreground">
+        {locale === "ka" ? "დასაქმდი" : "dasaqmdi"}
       </span>
     </span>
   );

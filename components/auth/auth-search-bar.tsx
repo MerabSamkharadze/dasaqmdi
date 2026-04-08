@@ -55,7 +55,7 @@ export function AuthSearchBar({
             type="submit"
             className="h-10 px-5 rounded-xl bg-white font-semibold text-sm text-primary transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]"
           >
-            <Search className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
+            <Search className="h-4 w-4 inline-block mr-1.5" />
             {buttonLabel}
           </button>
         </div>

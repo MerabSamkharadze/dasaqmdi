@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { AuthSearchBar } from "@/components/auth/auth-search-bar";
+import { Logo } from "@/components/brand/logo";
 
 export default async function AuthLayout({
   children,
@@ -20,26 +21,7 @@ export default async function AuthLayout({
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center gap-8 text-center px-12 max-w-md">
-          <svg
-            width="56"
-            height="56"
-            viewBox="0 0 28 28"
-            fill="none"
-            aria-hidden="true"
-          >
-            <rect
-              x="3" y="9" width="22" height="15" rx="3.5"
-              stroke="white" strokeWidth="1.5" strokeOpacity="0.85"
-            />
-            <path
-              d="M10 9V7a4 4 0 0 1 8 0v2"
-              stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.85"
-            />
-            <path
-              d="M9.5 17l3 3 6.5-7"
-              stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
-            />
-          </svg>
+          <Logo variant="icon" className="[&_svg]:w-16 [&_svg]:h-16" />
 
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight leading-[1.15]">

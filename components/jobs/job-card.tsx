@@ -85,7 +85,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               className="h-9 w-9 rounded-lg object-contain"
             />
           ) : (
-            <Building2 className="h-4.5 w-4.5 text-muted-foreground/50" />
+            <Building2 className="h-5 w-5 text-muted-foreground/40" />
           )}
         </Link>
 
@@ -118,18 +118,18 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               )}
             </Link>
             {job.city && (
-              <span className="inline-flex items-center gap-1 text-muted-foreground/70">
-                <MapPin className="h-3 w-3 shrink-0" />
+              <span className="inline-flex items-center gap-1 text-muted-foreground/60">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
                 {job.city}
               </span>
             )}
-            <span className="inline-flex items-center gap-1 text-muted-foreground/60">
-              <Calendar className="h-3 w-3 shrink-0" />
+            <span className="inline-flex items-center gap-1 text-muted-foreground/50">
+              <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
               {formatDate(job.created_at, locale)}
             </span>
             {job.application_deadline && (
-              <span className="hidden sm:inline-flex items-center gap-1 text-muted-foreground/60">
-                <Clock className="h-3 w-3 shrink-0" />
+              <span className="hidden sm:inline-flex items-center gap-1 text-muted-foreground/50">
+                <Clock className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
                 {formatDate(job.application_deadline, locale)}
               </span>
             )}
@@ -140,7 +140,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             <div className="flex items-center gap-1.5 flex-wrap">
               {job.is_featured && (
                 <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
-                  <Star className="h-2.5 w-2.5" />
+                  <Star className="h-3 w-3" />
                   {translations.featured ?? "Featured"}
                 </span>
               )}
@@ -149,13 +149,13 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               </span>
               {job.is_remote && (
                 <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400">
-                  <Wifi className="h-2.5 w-2.5" />
+                  <Wifi className="h-3 w-3" />
                   {translations.remote}
                 </span>
               )}
               {matchScore != null && matchScore > 0 && (
                 <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-400">
-                  <Zap className="h-2.5 w-2.5" />
+                  <Zap className="h-3 w-3" />
                   {translations.match?.replace("{score}", String(matchScore)) ?? `${matchScore}%`}
                 </span>
               )}

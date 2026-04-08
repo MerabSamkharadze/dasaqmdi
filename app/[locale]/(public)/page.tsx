@@ -1,5 +1,3 @@
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
@@ -133,78 +131,70 @@ export default async function HomePage({
   if (searchParams.q) preservedParams.q = searchParams.q;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-
-      <main className="flex-1 w-full">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10">
-          {/* Filters */}
-          <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
-            <Suspense>
-              <JobFilters
-                categories={categoryOptions}
-                translations={filterTranslations}
-              />
-            </Suspense>
-          </div>
-
-          {/* Active filters summary */}
-          {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (
-            <div className="flex items-center gap-2 text-[12px] text-muted-foreground/60 mb-6">
-              <span>
-                {t("resultsCount", { count: totalCount })}
-                {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
-              </span>
-            </div>
-          )}
-
-          {/* Top matches for seekers — only on first page without filters */}
-          {isSeeker && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && page === 1 && (
-            <div className="mb-8">
-              {matchScores && matchScores.size > 0 ? (
-                <TopMatches
-                  jobs={jobs}
-                  matchScores={matchScores}
-                  savedJobIds={savedJobIds}
-                  locale={locale}
-                  translations={{
-                    title: tHome("topMatches"),
-                    noSkills: tHome("noSkills"),
-                    noSkillsCta: tHome("noSkillsCta"),
-                    ...jobTranslations,
-                  }}
-                />
-              ) : hasSkills ? null : (
-                <TopMatchesEmpty
-                  title={tHome("topMatches")}
-                  noSkills={tHome("noSkills")}
-                  noSkillsCta={tHome("noSkillsCta")}
-                />
-              )}
-            </div>
-          )}
-
-          {/* Job feed — exclude jobs already shown in TopMatches */}
-          <JobList
-            jobs={topMatchIds.size > 0 ? jobs.filter((j) => !topMatchIds.has(j.id)) : jobs}
-            locale={locale}
-            matchScores={matchScores}
-            savedJobIds={savedJobIds}
-            isLoggedIn={isLoggedIn}
-            translations={jobTranslations}
+    <>
+      {/* Filters */}
+      <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
+        <Suspense>
+          <JobFilters
+            categories={categoryOptions}
+            translations={filterTranslations}
           />
+        </Suspense>
+      </div>
 
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            basePath="/"
-            searchParams={preservedParams}
-          />
+      {/* Active filters summary */}
+      {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (
+        <div className="flex items-center gap-2 text-[12px] text-muted-foreground/60 mb-6">
+          <span>
+            {t("resultsCount", { count: totalCount })}
+            {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
+          </span>
         </div>
-      </main>
+      )}
 
-      <Footer />
-    </div>
+      {/* Top matches for seekers — only on first page without filters */}
+      {isSeeker && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && page === 1 && (
+        <div className="mb-8">
+          {matchScores && matchScores.size > 0 ? (
+            <TopMatches
+              jobs={jobs}
+              matchScores={matchScores}
+              savedJobIds={savedJobIds}
+              locale={locale}
+              translations={{
+                title: tHome("topMatches"),
+                noSkills: tHome("noSkills"),
+                noSkillsCta: tHome("noSkillsCta"),
+                ...jobTranslations,
+              }}
+            />
+          ) : hasSkills ? null : (
+            <TopMatchesEmpty
+              title={tHome("topMatches")}
+              noSkills={tHome("noSkills")}
+              noSkillsCta={tHome("noSkillsCta")}
+            />
+          )}
+        </div>
+      )}
+
+      {/* Job feed — exclude jobs already shown in TopMatches */}
+      <JobList
+        jobs={topMatchIds.size > 0 ? jobs.filter((j) => !topMatchIds.has(j.id)) : jobs}
+        locale={locale}
+        matchScores={matchScores}
+        savedJobIds={savedJobIds}
+        isLoggedIn={isLoggedIn}
+        translations={jobTranslations}
+      />
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        basePath="/"
+        searchParams={preservedParams}
+      />
+    </>
   );
 }
