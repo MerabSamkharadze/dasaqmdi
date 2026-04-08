@@ -1,6 +1,6 @@
 interface LogoProps {
-  /** "full" = icon + wordmark, "icon" = symbol only, "header" = white on light / normal on dark */
-  variant?: "full" | "icon" | "header";
+  /** "full" = icon + wordmark, "icon" = symbol only */
+  variant?: "full" | "icon";
   className?: string;
 }
 
@@ -45,11 +45,6 @@ export function Logo({ variant = "full", className }: LogoProps) {
     );
   }
 
-  const isHeader = variant === "header";
-  const strokeColor = isHeader ? "stroke-white/90 dark:stroke-foreground/80" : "stroke-foreground/80";
-  const checkColor = isHeader ? "stroke-white dark:stroke-primary" : "stroke-primary";
-  const textColor = isHeader ? "text-white dark:text-foreground" : "text-foreground";
-
   return (
     <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <svg
@@ -66,20 +61,20 @@ export function Logo({ variant = "full", className }: LogoProps) {
           width="22"
           height="15"
           rx="3.5"
-          className={strokeColor}
+          className="stroke-foreground/80"
           strokeWidth="1.5"
           fill="none"
         />
         <path
           d="M10 9V7a4 4 0 0 1 8 0v2"
-          className={strokeColor}
+          className="stroke-foreground/80"
           strokeWidth="1.5"
           strokeLinecap="round"
           fill="none"
         />
         <path
           d="M9.5 17l3 3 6.5-7"
-          className={checkColor}
+          className="stroke-primary"
           strokeWidth="1.8"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -87,7 +82,7 @@ export function Logo({ variant = "full", className }: LogoProps) {
         />
       </svg>
 
-      <span className={`text-[15px] font-semibold tracking-tight ${textColor}`}>
+      <span className="text-[15px] font-bold tracking-tight text-foreground">
         დასაქმდი
       </span>
     </span>

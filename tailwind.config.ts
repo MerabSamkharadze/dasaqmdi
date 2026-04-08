@@ -11,7 +11,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "var(--font-noto-georgian)", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "var(--font-noto-georgian)", "system-ui", "sans-serif"],
         georgian: ["var(--font-noto-georgian)", "system-ui", "sans-serif"],
       },
       colors: {
@@ -49,6 +49,7 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           foreground: "hsl(var(--gold-foreground))",
         },
+        header: "hsl(var(--header))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

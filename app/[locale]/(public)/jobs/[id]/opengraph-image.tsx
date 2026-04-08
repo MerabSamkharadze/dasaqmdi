@@ -23,7 +23,7 @@ export default async function OGImage({
   if (!job) {
     return new ImageResponse(
       (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#0f172a", color: "#f8fafc", fontSize: 48 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#020617", color: "#f8fafc", fontSize: 48 }}>
           dasakmdi.com
         </div>
       ),
@@ -51,7 +51,7 @@ export default async function OGImage({
           width: "100%",
           height: "100%",
           padding: "60px 80px",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          background: "linear-gradient(135deg, #020617 0%, #0f172a 100%)",
           color: "#f8fafc",
           fontFamily: "sans-serif",
         }}

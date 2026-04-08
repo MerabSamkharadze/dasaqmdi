@@ -1,5 +1,4 @@
-import { GeistSans } from "geist/font/sans";
-import { Noto_Sans_Georgian } from "next/font/google";
+import { Inter, Noto_Sans_Georgian } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
@@ -7,6 +6,12 @@ import NextTopLoader from "nextjs-toploader";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import type { Locale } from "@/lib/types/enums";
+
+const inter = Inter({
+  variable: "--font-inter",
+  display: "swap",
+  subsets: ["latin", "latin-ext"],
+});
 
 const notoGeorgian = Noto_Sans_Georgian({
   variable: "--font-noto-georgian",
@@ -33,7 +38,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${GeistSans.variable} ${notoGeorgian.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}
       >
         {/* L4 FIX: Skip to content link for keyboard/screen-reader users */}
         <a
@@ -47,13 +52,13 @@ export default async function LocaleLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
+            enableColorScheme
           >
             <NextTopLoader
-              color="hsl(195 82% 36%)"
+              color="hsl(239 84% 67%)"
               height={2}
               showSpinner={false}
-              shadow="0 0 10px hsl(195 82% 36% / 0.3), 0 0 5px hsl(195 82% 36% / 0.2)"
+              shadow="0 0 10px hsl(239 84% 67% / 0.3), 0 0 5px hsl(239 84% 67% / 0.2)"
             />
             {children}
           </ThemeProvider>
