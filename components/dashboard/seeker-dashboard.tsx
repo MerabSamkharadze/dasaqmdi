@@ -272,7 +272,7 @@ function ApplicationBadge({
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
+    <Badge variant="outline" className="text-[10px] font-normal">
       Pending
     </Badge>
   );

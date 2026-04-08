@@ -222,7 +222,7 @@ function JobStatusBadge({
   }
   if (status === "closed") {
     return (
-      <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
+      <Badge variant="outline" className="text-[10px] font-normal border-red-300/50 text-red-600 dark:border-red-500/30 dark:text-red-400">
         {t("closed")}
       </Badge>
     );
@@ -235,7 +235,7 @@ function JobStatusBadge({
     );
   }
   return (
-    <Badge variant="secondary" className="text-[10px] font-normal text-muted-foreground">
+    <Badge variant="outline" className="text-[10px] font-normal">
       {status}
     </Badge>
   );

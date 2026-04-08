@@ -5,6 +5,7 @@ import { getCategories } from "@/lib/queries/categories";
 import { SalaryFilters } from "@/components/salaries/salary-filters";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { TrendingUp, TrendingDown, BarChart3, Briefcase } from "lucide-react";
 import type { Metadata } from "next";
 import type { SalaryCurrency } from "@/lib/types/enums";
@@ -85,15 +86,20 @@ export default async function SalariesPage({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* Header */}
-      <div className="flex flex-col gap-1.5">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          {t("title")}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {t("subtitle")}
-        </p>
-      </div>
+      {/* Header + illustration */}
+      <section className="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-10">
+        <div className="flex-1 text-center md:text-left">
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">
+            {t("title")}
+          </h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {t("subtitle")}
+          </p>
+        </div>
+        <div className="w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] shrink-0 rounded-2xl overflow-hidden">
+          <HeroIllustration src="/illustrations/money.svg" />
+        </div>
+      </section>
 
       {/* Filters */}
       <Suspense>

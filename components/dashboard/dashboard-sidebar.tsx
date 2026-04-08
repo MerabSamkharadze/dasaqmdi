@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Logo } from "@/components/brand/logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -27,12 +28,9 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
 
   return (
     <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r border-border/30 bg-card/60 backdrop-blur-sm">
-      <div className="flex h-14 items-center border-b border-border/30 px-5">
-        <Link
-          href="/"
-          className="text-base font-semibold tracking-tight text-foreground transition-colors duration-200 hover:text-primary"
-        >
-          დასაქმდი
+      <div className="flex h-14 items-center border-b border-border/30 px-4">
+        <Link href="/" className="transition-opacity duration-200 hover:opacity-80">
+          <Logo />
         </Link>
       </div>
 

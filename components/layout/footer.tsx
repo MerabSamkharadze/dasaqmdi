@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import { Send } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 
@@ -49,9 +48,14 @@ export async function Footer() {
                 href="https://t.me/dasaqmdi_bot"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                className="group inline-flex items-center gap-2 rounded-lg bg-[#229ED9]/10 px-3 py-2 text-sm font-medium text-[#229ED9] transition-all duration-200 hover:bg-[#229ED9] hover:text-white hover:shadow-md"
               >
-                <Send className="h-4 w-4 text-muted-foreground/50" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+                  <path
+                    d="M22.05 1.577c-.393-.016-.784.08-1.117.235-2.093.94-17.648 7.583-19.77 8.5-.39.168-.883.44-.883 1.003 0 .385.22.694.567.867l4.948 1.993 1.79 5.86c.164.48.546.68.96.68.34 0 .625-.14.85-.37l2.56-2.37 4.987 3.74c.38.285.755.43 1.146.43.82 0 1.36-.58 1.5-1.36L23.85 3.147c.2-1.02-.43-1.57-1.3-1.57h-.5zM9.33 13.78l-.81 3.58-1.5-5.31 11.76-7.26L9.33 13.78z"
+                    className="fill-[#229ED9] transition-colors duration-200 group-hover:fill-white"
+                  />
+                </svg>
                 {t("telegramSubscribe")}
               </a>
               <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
