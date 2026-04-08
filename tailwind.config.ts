@@ -49,6 +49,10 @@ export default {
           DEFAULT: "hsl(var(--gold))",
           foreground: "hsl(var(--gold-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
         header: "hsl(var(--header))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -61,11 +65,19 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
       },
+      backgroundImage: {
+        "gradient-gold": "linear-gradient(135deg, #f5ebb4 0%, #C7AE6A 100%)",
+        "gradient-gold-reverse": "linear-gradient(135deg, #C7AE6A 0%, #f5ebb4 100%)",
+        "gradient-deep": "linear-gradient(135deg, #362828 0%, #543d3d 100%)",
+        "gradient-premium": "linear-gradient(135deg, #fbf7e1 0%, #f5ebb4 50%, #C7AE6A 100%)",
+      },
       boxShadow: {
         soft: "0 2px 15px rgb(0 0 0 / 0.03), 0 1px 3px rgb(0 0 0 / 0.02)",
         "soft-md": "0 4px 20px rgb(0 0 0 / 0.05), 0 2px 6px rgb(0 0 0 / 0.03)",
         "soft-lg": "0 8px 30px rgb(0 0 0 / 0.04), 0 4px 10px rgb(0 0 0 / 0.02)",
         "primary-glow": "0 4px 14px hsl(var(--primary) / 0.25)",
+        "gold-glow": "0 4px 20px rgba(199, 174, 106, 0.2)",
+        "inner-soft": "inset 0 2px 4px rgb(0 0 0 / 0.04)",
       },
       borderRadius: {
         lg: "var(--radius)",

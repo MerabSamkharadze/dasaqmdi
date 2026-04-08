@@ -5,79 +5,83 @@
 @layer base {
   :root {
     /*
-     * Light — "Warm Premium" palette
-     * Background: Soft Cream #fbf7e1 — warm, inviting, eye-comfort.
-     * Cards: Warm white #fffefa — subtle elevation on cream.
-     * Primary/CTA: Pale Gold #f5ebb4 — warm highlight, buttons, badges.
-     * Text: Dark Chocolate #362828 — rich, high-contrast headings.
-     * Secondary: Warm Brown #543d3d — subheadings, interactive.
-     * Muted: Rose-Brown #725252 — borders, metadata, icons.
+     * Light — "Warm Premium" refined palette
+     * Background: #fbf7e1 Soft Cream — warm, inviting.
+     * Cards: #fffefa Warm white — crisp elevation.
+     * Text: #160905 Deep Espresso — maximum readability (13:1 on cream).
+     * Primary/CTA: gradient #f5ebb4 → #C7AE6A — premium gold.
+     * Success: #153009 Deep Forest Green — growth, active states.
+     * Gold accent: #C7AE6A Deep Gold — refined, not flashy.
      */
-    --background: 48 81% 93%;           /* Cream     #fbf7e1 */
-    --foreground: 0 16% 18%;            /* Chocolate #362828 */
-    --card: 48 100% 99%;                /* Warm white #fffefa */
-    --card-foreground: 0 16% 18%;
+    --background: 48 81% 93%;           /* Cream       #fbf7e1 */
+    --foreground: 14 60% 5%;            /* Espresso    #160905 */
+    --card: 48 100% 99%;                /* Warm white  #fffefa */
+    --card-foreground: 14 60% 5%;
     --popover: 48 100% 99%;
-    --popover-foreground: 0 16% 18%;
-    --primary: 44 80% 83%;              /* Pale Gold #f5ebb4 */
-    --primary-foreground: 0 16% 18%;    /* Dark text on gold */
-    --secondary: 0 16% 28%;             /* Warm Brown #543d3d */
+    --popover-foreground: 14 60% 5%;
+    --primary: 42 44% 60%;              /* Deep Gold   #C7AE6A */
+    --primary-foreground: 14 60% 5%;    /* Espresso on gold */
+    --secondary: 0 16% 28%;             /* Warm Brown  #543d3d */
     --secondary-foreground: 48 81% 93%;
-    --muted: 44 50% 92%;                /* Lighter cream */
-    --muted-foreground: 0 16% 38%;      /* Rose-Brown #725252 */
-    --accent: 44 60% 90%;               /* Warm accent surface */
-    --accent-foreground: 0 16% 18%;
+    --muted: 44 50% 92%;
+    --muted-foreground: 0 16% 38%;      /* Rose-Brown  #725252 */
+    --accent: 44 60% 90%;
+    --accent-foreground: 14 60% 5%;
     --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 12% 78%;                /* Warm gray border */
-    --input: 0 12% 78%;
-    --ring: 44 80% 83%;                 /* Gold ring */
-    --gold: 44 80% 83%;
-    --gold-foreground: 0 16% 18%;
-    --header: 48 100% 99%;              /* Warm white header */
-    --chart-1: 0 16% 28%;              /* Warm Brown */
-    --chart-2: 44 80% 83%;             /* Gold */
-    --chart-3: 0 16% 38%;              /* Rose-Brown */
-    --chart-4: 24 30% 45%;             /* Warm mid */
-    --chart-5: 44 60% 70%;             /* Deep gold */
+    --success: 105 55% 12%;             /* Forest Green #153009 */
+    --success-foreground: 48 81% 93%;
+    --border: 0 8% 82%;
+    --input: 0 8% 82%;
+    --ring: 42 44% 60%;                 /* Deep Gold ring */
+    --gold: 42 44% 60%;
+    --gold-foreground: 14 60% 5%;
+    --header: 48 100% 99%;
+    --chart-1: 0 16% 28%;
+    --chart-2: 42 44% 60%;
+    --chart-3: 0 16% 38%;
+    --chart-4: 105 55% 12%;
+    --chart-5: 44 60% 70%;
     --radius: 0.75rem;
   }
 
   .dark {
     /*
      * Dark — "Dark Chocolate" premium mode
-     * Background: #362828 deep chocolate — warm, never cold black.
-     * Cards: #543d3d warm brown surface — subtle elevation.
-     * Primary: #f5ebb4 Pale Gold — bright CTA on dark.
-     * Text: #fbf7e1 Cream — warm, readable.
+     * Background: #160905 Deep Espresso — rich, warm black.
+     * Cards: #362828 Chocolate surface — subtle elevation.
+     * Text: #fbf7e1 Cream — warm, highly readable.
+     * Gold: #C7AE6A — luminous on dark.
      */
-    --background: 0 16% 18%;            /* Chocolate #362828 */
-    --foreground: 48 81% 93%;           /* Cream     #fbf7e1 */
-    --card: 0 16% 28%;                  /* Brown     #543d3d */
+    --background: 14 60% 5%;            /* Espresso    #160905 */
+    --foreground: 48 81% 93%;           /* Cream       #fbf7e1 */
+    --card: 0 16% 18%;                  /* Chocolate   #362828 */
     --card-foreground: 48 81% 93%;
-    --popover: 0 16% 28%;
+    --popover: 0 16% 18%;
     --popover-foreground: 48 81% 93%;
-    --primary: 44 80% 83%;              /* Pale Gold #f5ebb4 */
-    --primary-foreground: 0 16% 18%;
-    --secondary: 0 16% 24%;             /* Darker brown */
+    --primary: 42 44% 60%;              /* Deep Gold   #C7AE6A */
+    --primary-foreground: 14 60% 5%;
+    --secondary: 0 16% 24%;
     --secondary-foreground: 48 81% 93%;
-    --muted: 0 16% 24%;
-    --muted-foreground: 0 12% 60%;      /* Muted warm gray */
-    --accent: 0 16% 24%;
+    --muted: 0 16% 16%;
+    --muted-foreground: 0 10% 55%;
+    --accent: 0 16% 20%;
     --accent-foreground: 48 81% 93%;
     --destructive: 0 55% 38%;
     --destructive-foreground: 48 81% 93%;
-    --border: 0 14% 32%;                /* Subtle warm border */
-    --input: 0 14% 32%;
-    --ring: 44 80% 83%;
-    --gold: 44 80% 83%;
-    --gold-foreground: 0 16% 18%;
-    --header: 0 16% 28%;               /* Brown header */
-    --chart-1: 44 80% 83%;
-    --chart-2: 0 12% 60%;
+    --success: 105 40% 35%;
+    --success-foreground: 48 81% 93%;
+    --border: 0 12% 22%;
+    --input: 0 12% 22%;
+    --ring: 42 44% 60%;
+    --gold: 42 44% 60%;
+    --gold-foreground: 14 60% 5%;
+    --header: 0 16% 18%;
+    --chart-1: 42 44% 60%;
+    --chart-2: 0 10% 55%;
     --chart-3: 44 60% 70%;
-    --chart-4: 24 30% 50%;
-    --chart-5: 0 16% 48%;
+    --chart-4: 105 40% 35%;
+    --chart-5: 0 16% 40%;
   }
 }
 
@@ -106,9 +110,9 @@
     stroke-width: 1.5;
   }
 
-  /* Focus ring — accessible but subtle, no offset to avoid color clash on colored backgrounds */
+  /* Focus ring — gold accent, no offset */
   :focus-visible {
-    @apply outline-none ring-[1.5px] ring-primary/30;
+    @apply outline-none ring-[1.5px] ring-[#C7AE6A]/40;
   }
 
   /* Scrollbar — thin & elegant */
@@ -145,9 +149,25 @@
     text-wrap: balance;
   }
 
-  /* Gradient text helper */
+  /* Gradient text — espresso to gold */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(0 16% 28%), hsl(44 80% 60%));
+    background-image: linear-gradient(135deg, #543d3d, #C7AE6A);
+  }
+
+  /* Glassmorphism — warm cream tint */
+  .glass {
+    @apply bg-background/75 backdrop-blur-xl border border-border/40;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), inset 0 1px 0 rgb(255 255 255 / 0.3);
+  }
+
+  /* Gradient button — gold premium */
+  .btn-gradient {
+    background: linear-gradient(135deg, #f5ebb4 0%, #C7AE6A 100%);
+    @apply text-[#160905] font-semibold shadow-sm;
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(135deg, #C7AE6A 0%, #f5ebb4 100%);
+    @apply shadow-md;
   }
 }

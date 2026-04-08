@@ -51,13 +51,13 @@ export default async function OGImage({
           width: "100%",
           height: "100%",
           padding: "60px 80px",
-          background: "linear-gradient(135deg, #362828 0%, #543d3d 100%)",
+          background: "linear-gradient(135deg, #160905 0%, #362828 100%)",
           color: "#fbf7e1",
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <div style={{ fontSize: 22, color: "#f5ebb4", fontWeight: 600 }}>
+          <div style={{ fontSize: 22, color: "#C7AE6A", fontWeight: 600 }}>
             {companyName}
           </div>
           <div style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.2, maxWidth: "900px" }}>
@@ -70,7 +70,7 @@ export default async function OGImage({
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div style={{ fontSize: 28, fontWeight: 600, color: "#f5ebb4" }}>
+          <div style={{ fontSize: 28, fontWeight: 600, color: "#C7AE6A" }}>
             dasaqmdi.com
           </div>
           <div style={{ fontSize: 18, color: "#725252" }}>

@@ -48,7 +48,7 @@ export function HeaderClient({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl transition-shadow duration-300",
+        "sticky top-0 z-50 w-full border-b glass transition-shadow duration-300",
         scrolled
           ? "border-border/60 shadow-soft"
           : "border-transparent"
@@ -86,9 +86,9 @@ export function HeaderClient({
                     <Icon className="h-4 w-4" />
                   )}
                   {link.label}
-                  {/* Active underline indicator */}
+                  {/* Active gold underline */}
                   {isActive && (
-                    <span className="absolute -bottom-[calc(0.375rem+1px)] left-3 right-3 h-[2px] rounded-full bg-primary" />
+                    <span className="absolute -bottom-[calc(0.375rem+1px)] left-3 right-3 h-[2px] rounded-full bg-[#C7AE6A]" />
                   )}
                 </Link>
               );

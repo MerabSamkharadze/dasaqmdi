@@ -27,7 +27,7 @@ export default async function AuthLayout({
           <div>
             <h1 className="text-3xl font-bold text-secondary-foreground tracking-tight leading-[1.15]">
               {t("title")}{" "}
-              <span className="text-[#f5ebb4]">{t("titleAccent")}</span>
+              <span className="text-[#C7AE6A]">{t("titleAccent")}</span>
             </h1>
             <p className="mt-4 text-sm text-secondary-foreground/50 leading-relaxed">
               {t("subtitle")}

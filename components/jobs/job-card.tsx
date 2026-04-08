@@ -67,7 +67,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   return (
     <div
       onClick={() => router.push(`/jobs/${job.id}`)}
-      className="group relative block cursor-pointer rounded-xl border border-border/40 bg-card p-4 sm:p-5 transition-all duration-200 hover:shadow-soft-md hover:border-border/60 hover:-translate-y-1"
+      className="group relative block cursor-pointer rounded-xl border border-[#725252]/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-[#C7AE6A]/20 hover:-translate-y-1"
     >
       <div className="flex items-start gap-4">
         {/* Company Logo */}
@@ -163,7 +163,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
 
             {/* Salary — desktop */}
             {salary && (
-              <span className="hidden sm:block text-[13px] font-semibold text-foreground tabular-nums whitespace-nowrap">
+              <span className="hidden sm:block text-[13px] font-semibold text-success tabular-nums whitespace-nowrap">
                 {salary}
               </span>
             )}
@@ -172,7 +172,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
           {/* Mobile bottom row: salary + bookmark */}
           <div className="flex sm:hidden items-center justify-between pt-1">
             {salary ? (
-              <span className="text-[12px] font-semibold text-foreground tabular-nums">
+              <span className="text-[12px] font-semibold text-success tabular-nums">
                 {salary}
               </span>
             ) : (
