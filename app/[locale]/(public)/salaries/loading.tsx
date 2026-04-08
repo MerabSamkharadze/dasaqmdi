@@ -21,7 +21,7 @@ export default function SalariesLoading() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-border/60 bg-card p-5 shadow-soft"
+            className="rounded-xl border border-border/40 bg-card p-5 shadow-soft"
           >
             <Skeleton className="h-3 w-24 rounded-lg mb-3" />
             <Skeleton className="h-6 w-32 rounded-lg" />
@@ -37,7 +37,7 @@ export default function SalariesLoading() {
             {Array.from({ length: 2 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-border/60 bg-card p-5 shadow-soft"
+                className="rounded-xl border border-border/40 bg-card p-5 shadow-soft"
               >
                 <div className="flex justify-between mb-3">
                   <Skeleton className="h-3 w-16 rounded-lg" />

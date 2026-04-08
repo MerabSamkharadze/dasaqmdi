@@ -37,7 +37,10 @@
     "salaries": "Salaries",
     "billing": "Billing",
     "pricing": "Pricing",
-    "telegramSubscribe": "Subscribe via Telegram"
+    "telegramSubscribe": "Subscribe via Telegram",
+    "footerTagline": "Job search in Georgia — fast, simple.",
+    "footerQuickLinks": "Quick Links",
+    "footerResources": "Resources"
   },
   "home": {
     "title": "Find Your Dream",

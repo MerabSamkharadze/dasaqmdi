@@ -37,7 +37,10 @@
     "salaries": "ხელფასები",
     "billing": "გადახდა",
     "pricing": "ფასები",
-    "telegramSubscribe": "გამოიწერე ტელეგრამით"
+    "telegramSubscribe": "გამოიწერე ტელეგრამით",
+    "footerTagline": "სამუშაოს ძიება საქართველოში — სწრაფად, მარტივად.",
+    "footerQuickLinks": "სწრაფი ბმულები",
+    "footerResources": "რესურსები"
   },
   "home": {
     "title": "იპოვე შენი საოცნებო",

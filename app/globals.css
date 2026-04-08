@@ -100,6 +100,11 @@
     color: hsl(var(--foreground));
   }
 
+  /* Lucide icons — consistent 1.5 stroke for modern, clean feel */
+  svg.lucide {
+    stroke-width: 1.5;
+  }
+
   /* Focus ring — accessible but subtle, no offset to avoid color clash on colored backgrounds */
   :focus-visible {
     @apply outline-none ring-[1.5px] ring-primary/30;
