@@ -52,7 +52,7 @@ export default async function LocaleLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            enableColorScheme
+            disableTransitionOnChange
           >
             <NextTopLoader
               color="hsl(239 84% 67%)"
