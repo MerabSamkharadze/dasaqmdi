@@ -53,9 +53,11 @@ function LogoMark({ size = 32 }: { size?: number }) {
         className="logo-play"
       />
 
-      {/* Gold shimmer accent — visible on hover */}
-      <circle cx="75" cy="35" r="3" fill="#C7AE6A" fillOpacity="0" className="logo-sparkle logo-sparkle-1" />
-      <circle cx="40" cy="72" r="2" fill="#C7AE6A" fillOpacity="0" className="logo-sparkle logo-sparkle-2" />
+      {/* Stars — grow outward from behind on hover */}
+      <path d="M88 22l1.5 3 3 .5-2.2 2.1.5 3-2.8-1.5-2.8 1.5.5-3L84 26.5l3-.5z" fill="#C7AE6A" fillOpacity="0" className="logo-star logo-star-1" />
+      <path d="M30 28l1 2 2 .3-1.5 1.4.3 2-1.8-1-1.8 1 .3-2L27 30.3l2-.3z" fill="#C7AE6A" fillOpacity="0" className="logo-star logo-star-2" />
+      <path d="M94 62l1 2 2 .3-1.5 1.4.3 2-1.8-1-1.8 1 .3-2L91 64.3l2-.3z" fill="#C7AE6A" fillOpacity="0" className="logo-star logo-star-3" />
+      <path d="M24 58l.8 1.5 1.5.2-1.1 1.1.3 1.5-1.5-.8-1.5.8.3-1.5-1.1-1.1 1.5-.2z" fill="#C7AE6A" fillOpacity="0" className="logo-star logo-star-4" />
     </svg>
   );
 }

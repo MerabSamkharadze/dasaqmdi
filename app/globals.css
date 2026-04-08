@@ -155,55 +155,51 @@
     background-image: linear-gradient(135deg, #543d3d, #C7AE6A);
   }
 
-  /* Logo hover animation */
+  /* Logo hover — subtle, refined */
   .logo-hover .logo-mark {
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: transform 0.5s ease;
   }
   .logo-hover:hover .logo-mark {
-    transform: rotate(-8deg) scale(1.08);
+    transform: scale(1.04);
   }
 
-  .logo-hover .logo-shape {
-    transition: stroke 0.3s ease, stroke-width 0.3s ease;
-  }
-  .logo-hover:hover .logo-shape {
-    stroke: #C7AE6A;
-    stroke-width: 3;
-  }
-
+  .logo-hover .logo-shape,
+  .logo-hover .logo-line,
   .logo-hover .logo-play {
-    transition: transform 0.3s ease, fill 0.3s ease;
-    transform-origin: 57px 57px;
+    transition: stroke 0.5s ease, fill 0.5s ease;
   }
-  .logo-hover:hover .logo-play {
-    transform: scale(1.15);
-    fill: #fbf7e1;
-  }
-
-  .logo-hover .logo-line {
-    transition: stroke 0.3s ease, opacity 0.3s ease;
-  }
+  .logo-hover:hover .logo-shape,
   .logo-hover:hover .logo-line {
     stroke: #C7AE6A;
   }
-  .logo-hover:hover .logo-line-1 { transition-delay: 0ms; }
-  .logo-hover:hover .logo-line-2 { transition-delay: 50ms; }
-  .logo-hover:hover .logo-line-3 { transition-delay: 100ms; }
-  .logo-hover:hover .logo-line-4 { transition-delay: 150ms; }
+  .logo-hover:hover .logo-play {
+    fill: #fbf7e1;
+  }
 
-  .logo-hover .logo-sparkle {
-    transition: fill-opacity 0.4s ease, transform 0.4s ease;
+  .logo-hover .logo-star {
     transform-origin: center;
+    transform: scale(0);
+    transition: transform 0.4s ease, fill-opacity 0.4s ease;
   }
-  .logo-hover:hover .logo-sparkle-1 {
-    fill-opacity: 0.8;
-    transform: scale(1.5);
-    transition-delay: 100ms;
+  .logo-hover:hover .logo-star-1 {
+    fill-opacity: 0.9;
+    transform: scale(1);
+    transition-delay: 0ms;
   }
-  .logo-hover:hover .logo-sparkle-2 {
+  .logo-hover:hover .logo-star-2 {
+    fill-opacity: 0.7;
+    transform: scale(1);
+    transition-delay: 80ms;
+  }
+  .logo-hover:hover .logo-star-3 {
     fill-opacity: 0.6;
-    transform: scale(1.3);
-    transition-delay: 200ms;
+    transform: scale(1);
+    transition-delay: 160ms;
+  }
+  .logo-hover:hover .logo-star-4 {
+    fill-opacity: 0.5;
+    transform: scale(1);
+    transition-delay: 240ms;
   }
 
   /* Glassmorphism — warm cream tint */
