@@ -55,7 +55,9 @@
     "latestJobs": "Latest Jobs",
     "topMatches": "Picked for You",
     "noSkills": "Add skills to your profile to see matching jobs",
-    "noSkillsCta": "Complete your profile"
+    "noSkillsCta": "Complete your profile",
+    "refresh": "Refresh jobs",
+    "refreshing": "Refreshing..."
   },
   "jobs": {
     "title": "Job Listings",

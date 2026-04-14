@@ -333,6 +333,32 @@ function setupBotHandlers() {
   // Company callbacks: comp:{id}, comp:done, comp_page:{page}
   // (handled in the existing callback_query handler — extend it)
 
+  // Set localized command menus
+  bot.api.setMyCommands([
+    { command: "start", description: "გამოწერის დაწყება" },
+    { command: "categories", description: "კატეგორიების არჩევა" },
+    { command: "companies", description: "კომპანიების გამოწერა" },
+    { command: "language", description: "ენის შეცვლა (KA/EN)" },
+    { command: "stop", description: "გამოწერის გაუქმება" },
+  ], { language_code: "ka" }).catch(() => {});
+
+  bot.api.setMyCommands([
+    { command: "start", description: "Start subscription" },
+    { command: "categories", description: "Select categories" },
+    { command: "companies", description: "Follow companies" },
+    { command: "language", description: "Change language (KA/EN)" },
+    { command: "stop", description: "Unsubscribe" },
+  ], { language_code: "en" }).catch(() => {});
+
+  // Default (fallback for other languages)
+  bot.api.setMyCommands([
+    { command: "start", description: "გამოწერის დაწყება / Start" },
+    { command: "categories", description: "კატეგორიები / Categories" },
+    { command: "companies", description: "კომპანიები / Companies" },
+    { command: "language", description: "ენა / Language" },
+    { command: "stop", description: "გაუქმება / Unsubscribe" },
+  ]).catch(() => {});
+
   // Global error handler — prevents Telegram retries on crash
   bot.catch((err) => {
     console.error("Telegram bot error:", err);

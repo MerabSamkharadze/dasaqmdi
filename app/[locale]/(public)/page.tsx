@@ -11,6 +11,7 @@ import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
+import { RefreshButton } from "@/components/shared/refresh-button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -145,6 +146,7 @@ export default async function HomePage({
             <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md mx-auto md:mx-0">
               {tHome("subtitle")}
             </p>
+            <RefreshButton />
           </div>
           {/* Animated SVG illustration */}
           <div className="w-full max-w-[280px] sm:max-w-[320px] md:max-w-[380px] shrink-0 rounded-2xl overflow-hidden">
