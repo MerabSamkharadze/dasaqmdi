@@ -75,10 +75,15 @@ export default async function CompanyProfilePage({ params }: PageProps) {
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
             {company.is_verified && (
-              <Badge variant="secondary" className="gap-1 text-[12px] bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                <CheckCircle className="h-3 w-3" />
-                {t("verified")}
-              </Badge>
+              <>
+                {/* Desktop: badge with text */}
+                <Badge variant="secondary" className="hidden sm:inline-flex gap-1 text-[12px] bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
+                  <CheckCircle className="h-3 w-3" />
+                  {t("verified")}
+                </Badge>
+                {/* Mobile: icon only */}
+                <CheckCircle className="sm:hidden h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              </>
             )}
           </div>
 
@@ -97,7 +102,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
             )}
             {company.website && (
               <a
-                href={company.website}
+                href={company.website.startsWith("http") ? company.website : `https://${company.website}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1 text-primary/80 hover:text-primary transition-colors duration-200"
