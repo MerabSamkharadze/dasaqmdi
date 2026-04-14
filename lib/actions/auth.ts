@@ -116,6 +116,13 @@ export async function updatePasswordAction(
   }
 
   const supabase = createClient();
+
+  // Verify user is authenticated (via reset token)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Invalid or expired reset link. Please request a new one." };
+  }
+
   const { error } = await supabase.auth.updateUser({
     password: parsed.data.password,
   });

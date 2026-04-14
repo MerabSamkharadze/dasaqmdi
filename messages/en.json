@@ -143,6 +143,7 @@
     "updatePassword": "Update Password",
     "updatePasswordDescription": "Enter your new password",
     "newPassword": "New Password",
+    "requestNewLink": "Request a new reset link",
     "modalTitle": "Sign in required",
     "modalDescription": "To {action}, please sign in or create an account",
     "modalLogin": "Sign In",

@@ -56,7 +56,14 @@ export function UpdatePasswordForm({
                 />
               </div>
               {state.error && (
-                <p className="text-sm text-red-500">{state.error}</p>
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  <p>{state.error}</p>
+                  {state.error.includes("expired") && (
+                    <a href="/auth/forgot-password" className="underline mt-1 inline-block text-destructive/80 hover:text-destructive">
+                      {t("requestNewLink")}
+                    </a>
+                  )}
+                </div>
               )}
               <SubmitButton />
             </div>

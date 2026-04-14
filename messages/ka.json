@@ -143,6 +143,7 @@
     "updatePassword": "პაროლის განახლება",
     "updatePasswordDescription": "შეიყვანეთ ახალი პაროლი",
     "newPassword": "ახალი პაროლი",
+    "requestNewLink": "ახალი ბმულის მოთხოვნა",
     "modalTitle": "ავტორიზაცია საჭიროა",
     "modalDescription": "{action} საჭიროა ავტორიზაცია",
     "modalLogin": "შესვლა",
