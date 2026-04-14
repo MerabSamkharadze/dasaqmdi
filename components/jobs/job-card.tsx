@@ -102,7 +102,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <div className="hidden md:flex items-center shrink-0 -mt-0.5 -mr-1" onClick={(e) => e.stopPropagation()}>
               <ShareJobButton
-                jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+                jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
                 jobTitle={title}
               />
               <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
@@ -184,7 +184,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             )}
             <div className="flex items-center">
               <ShareJobButton
-                jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+                jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
                 jobTitle={title}
               />
               <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />

@@ -10,6 +10,7 @@ import { calculateMatchScores } from "@/lib/matching";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
+import Link from "next/link";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { RefreshButton } from "@/components/shared/refresh-button";
 import type { Metadata } from "next";
@@ -204,9 +205,9 @@ export default async function HomePage({
           <span className="text-[12px] text-primary font-medium">
             {tHome("personalizedFeed")}
           </span>
-          <a href="/?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
+          <Link href="/?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
             {tHome("showAll")}
-          </a>
+          </Link>
         </div>
       )}
 

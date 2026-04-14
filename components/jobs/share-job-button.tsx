@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Share2, Check, Copy, Facebook, Linkedin, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,19 +19,21 @@ type ShareJobButtonProps = {
 };
 
 export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobButtonProps) {
+  // Use current page URL as fallback if jobUrl is relative
+  const fullUrl = jobUrl.startsWith("http") ? jobUrl : (typeof window !== "undefined" ? `${window.location.origin}${jobUrl}` : jobUrl);
   const [copied, setCopied] = useState(false);
   const t = useTranslations("jobs");
 
   const shareText = `${jobTitle} — dasaqmdi.com`;
-  const encodedUrl = encodeURIComponent(jobUrl);
+  const encodedUrl = encodeURIComponent(fullUrl);
   const encodedText = encodeURIComponent(shareText);
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(jobUrl);
+      await navigator.clipboard.writeText(fullUrl);
     } catch {
       const input = document.createElement("input");
-      input.value = jobUrl;
+      input.value = fullUrl;
       document.body.appendChild(input);
       input.select();
       document.execCommand("copy");
@@ -44,7 +46,7 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
   async function handleNativeShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ title: jobTitle, text: shareText, url: jobUrl });
+        await navigator.share({ title: jobTitle, text: shareText, url: fullUrl });
       } catch {
         // User cancelled — ignore
       }
@@ -109,16 +111,8 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {/* Native share — mobile only */}
-        {"share" in navigator && (
-          <>
-            <DropdownMenuItem onClick={handleNativeShare} className="gap-2 text-[13px] cursor-pointer">
-              <Smartphone className="h-4 w-4" />
-              {t("share")}...
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </>
-        )}
+        {/* Native share — mobile only (client-side check to avoid hydration mismatch) */}
+        <NativeShareItem onShare={handleNativeShare} label={`${t("share")}...`} />
 
         {/* Copy link */}
         <DropdownMenuItem onClick={handleCopy} className="gap-2 text-[13px] cursor-pointer">
@@ -141,5 +135,26 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+// Client-only native share check — avoids SSR hydration mismatch
+function NativeShareItem({ onShare, label }: { onShare: () => void; label: string }) {
+  const [canShare, setCanShare] = useState(false);
+
+  useEffect(() => {
+    if ("share" in navigator) setCanShare(true);
+  }, []);
+
+  if (!canShare) return null;
+
+  return (
+    <>
+      <DropdownMenuItem onClick={onShare} className="gap-2 text-[13px] cursor-pointer">
+        <Smartphone className="h-4 w-4" />
+        {label}
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+    </>
   );
 }

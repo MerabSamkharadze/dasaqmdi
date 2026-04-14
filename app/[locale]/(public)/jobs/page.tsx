@@ -9,6 +9,7 @@ import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -174,9 +175,9 @@ export default async function JobsPage({
           <span className="text-[12px] text-primary font-medium">
             {tHome("personalizedFeed")}
           </span>
-          <a href="/jobs?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
+          <Link href="/jobs?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
             {tHome("showAll")}
-          </a>
+          </Link>
         </div>
       )}
 

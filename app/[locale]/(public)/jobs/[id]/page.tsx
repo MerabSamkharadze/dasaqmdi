@@ -245,7 +245,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               </Badge>
             )}
             <ShareJobButton
-              jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+              jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
               jobTitle={title}
               variant="button"
             />
@@ -282,7 +282,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
           ) : null}
           <ShareJobButton
-            jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+            jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
             jobTitle={title}
           />
           <BookmarkButton jobId={job.id} isSaved={isJobSaved} isLoggedIn={isLoggedIn} />
