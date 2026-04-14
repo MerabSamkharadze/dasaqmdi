@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getProfile } from "@/lib/queries/profile";
-import { getTranslations } from "next-intl/server";
+import { getCategories } from "@/lib/queries/categories";
+import { getTranslations, getLocale } from "next-intl/server";
 import { ProfilePageClient } from "@/components/dashboard/profile-page-client";
 import { UserX } from "lucide-react";
 import type { Metadata } from "next";
@@ -37,5 +38,11 @@ export default async function ProfilePage() {
     );
   }
 
-  return <ProfilePageClient profile={profile} email={user.email ?? ""} />;
+  const [categories, locale] = await Promise.all([getCategories(), getLocale()]);
+  const categoryOptions = categories.map((c) => ({
+    slug: c.slug,
+    label: locale === "ka" ? c.name_ka : c.name_en,
+  }));
+
+  return <ProfilePageClient profile={profile} email={user.email ?? ""} categories={categoryOptions} />;
 }

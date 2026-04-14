@@ -37,31 +37,23 @@ export default async function HomePage({
 
   const page = Number(searchParams.page) || 1;
 
-  // Fetch jobs, categories, and auth in parallel (biggest speed win)
+  // Step 1: Auth + categories in parallel
   const supabase = createClient();
-  const [{ jobs, totalPages, currentPage, totalCount }, categories, { data: { user } }] =
-    await Promise.all([
-      getJobs({
-        page,
-        category: searchParams.category,
-        city: searchParams.city,
-        type: searchParams.type,
-        q: searchParams.q,
-      }),
-      getCategories(),
-      supabase.auth.getUser(),
-    ]);
+  const [categories, { data: { user } }] = await Promise.all([
+    getCategories(),
+    supabase.auth.getUser(),
+  ]);
 
-  // Match scores + saved jobs for logged-in seekers
+  // Step 2: Profile (needed for preferred categories + match scores)
   let matchScores: Map<string, number> | null = null;
   let savedJobIds: Set<string> | null = null;
   let isLoggedIn = false;
   let isSeeker = false;
   let hasSkills = false;
+  let preferredCategories: string[] = [];
 
   if (user) {
     isLoggedIn = true;
-    // Profile + saved jobs in parallel (not sequential)
     const [profile, savedIds] = await Promise.all([
       getProfile(user.id),
       getSavedJobIds(user.id),
@@ -70,16 +62,33 @@ export default async function HomePage({
       isSeeker = true;
       savedJobIds = savedIds;
       hasSkills = (profile.skills?.length ?? 0) > 0;
-      if (hasSkills) {
-        const results = calculateMatchScores(
-          profile.skills,
-          jobs.map((j) => ({ id: j.id, tags: j.tags }))
-        );
-        matchScores = new Map<string, number>();
-        for (const [jobId, result] of results) {
-          if (result.score > 0) {
-            matchScores.set(jobId, result.score);
-          }
+      preferredCategories = profile.preferred_categories ?? [];
+    }
+  }
+
+  // Step 3: Fetch jobs — auto-filter by preferred categories if no manual filter
+  const hasManualFilter = !!(searchParams.category || searchParams.q || searchParams.type || searchParams.city);
+  const { jobs, totalPages, currentPage, totalCount } = await getJobs({
+    page,
+    category: searchParams.category,
+    categories: !hasManualFilter && preferredCategories.length > 0 ? preferredCategories : undefined,
+    city: searchParams.city,
+    type: searchParams.type,
+    q: searchParams.q,
+  });
+
+  // Step 4: Match scores for seekers
+  if (isSeeker && hasSkills) {
+    const profile = await getProfile(user!.id); // cached — no extra DB call
+    if (profile?.skills) {
+      const results = calculateMatchScores(
+        profile.skills,
+        jobs.map((j) => ({ id: j.id, tags: j.tags }))
+      );
+      matchScores = new Map<string, number>();
+      for (const [jobId, result] of results) {
+        if (result.score > 0) {
+          matchScores.set(jobId, result.score);
         }
       }
     }

@@ -11,6 +11,7 @@ export const updateProfileSchema = z.object({
   skills: z.array(z.string().max(50)).max(20).default([]),
   experience_years: z.coerce.number().int().min(0).max(50).optional(),
   preferred_language: z.enum(LOCALES).default("ka"),
+  preferred_categories: z.array(z.string().max(50)).max(20).default([]),
   avatar_url: z.string().max(500).optional().or(z.literal("")),
   resume_url: z.string().max(500).optional().or(z.literal("")),
   is_public: z.boolean().default(true),

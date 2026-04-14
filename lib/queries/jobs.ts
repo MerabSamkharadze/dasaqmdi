@@ -8,6 +8,7 @@ const JOBS_PER_PAGE = 20;
 type GetJobsParams = {
   page?: number;
   category?: string;
+  categories?: string[]; // multi-category filter for preferred categories
   city?: string;
   type?: string;
   q?: string;
@@ -22,7 +23,7 @@ type GetJobsResult = {
 
 // Cached version for public feed — 30 second cache
 const getJobsCached = unstable_cache(
-  async (page: number, category?: string, city?: string, type?: string, q?: string): Promise<GetJobsResult> => {
+  async (page: number, category?: string, categoriesJson?: string, city?: string, type?: string, q?: string): Promise<GetJobsResult> => {
     const supabase = createServiceClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -49,7 +50,12 @@ const getJobsCached = unstable_cache(
       .order("created_at", { ascending: false })
       .range(from, to);
 
-    if (category) query = query.eq("category.slug", category);
+    if (category) {
+      query = query.eq("category.slug", category);
+    } else if (categoriesJson) {
+      const cats = JSON.parse(categoriesJson) as string[];
+      if (cats.length > 0) query = query.in("category.slug", cats);
+    }
     if (city) query = query.ilike("city", `%${city}%`);
     if (type) query = query.eq("job_type", type);
     if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
@@ -75,11 +81,13 @@ const getJobsCached = unstable_cache(
 export async function getJobs({
   page = 1,
   category,
+  categories,
   city,
   type,
   q,
 }: GetJobsParams = {}): Promise<GetJobsResult> {
-  return getJobsCached(page, category, city, type, q);
+  const categoriesJson = categories && categories.length > 0 ? JSON.stringify(categories) : undefined;
+  return getJobsCached(page, category, categoriesJson, city, type, q);
 }
 
 export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[]> {

@@ -166,6 +166,8 @@
     "shareProfile": "Share Profile",
     "linkCopied": "Link copied",
     "sparseProfile": "This profile doesn't have any information yet",
+    "preferredCategories": "Preferred Categories",
+    "preferredCategoriesHint": "Jobs from these categories will appear first in your feed",
     "settingsTitle": "Settings",
     "publicProfile": "Public profile — others can view my profile",
     "emailDigest": "Daily jobs digest — receive matching jobs via email"

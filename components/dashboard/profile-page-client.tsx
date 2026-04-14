@@ -8,12 +8,15 @@ import { Button } from "@/components/ui/button";
 import { Pencil, ArrowLeft } from "lucide-react";
 import type { Profile } from "@/lib/types";
 
+type CategoryOption = { slug: string; label: string };
+
 type ProfilePageClientProps = {
   profile: Profile;
   email: string;
+  categories: CategoryOption[];
 };
 
-export function ProfilePageClient({ profile, email }: ProfilePageClientProps) {
+export function ProfilePageClient({ profile, email, categories }: ProfilePageClientProps) {
   const [editing, setEditing] = useState(false);
   const t = useTranslations("profile");
   const tc = useTranslations("common");
@@ -34,7 +37,7 @@ export function ProfilePageClient({ profile, email }: ProfilePageClientProps) {
           </Button>
         </div>
         <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">
-          <ProfileForm profile={profile} />
+          <ProfileForm profile={profile} categories={categories} />
         </div>
       </div>
     );

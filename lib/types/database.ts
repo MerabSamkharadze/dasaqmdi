@@ -27,6 +27,7 @@ export type Database = {
           experience_years: number | null;
           resume_url: string | null;
           preferred_language: "ka" | "en";
+          preferred_categories: string[];
           is_public: boolean;
           email_digest: boolean;
           created_at: string;
@@ -46,6 +47,7 @@ export type Database = {
           experience_years?: number | null;
           resume_url?: string | null;
           preferred_language?: "ka" | "en";
+          preferred_categories?: string[];
           is_public?: boolean;
           email_digest?: boolean;
           created_at?: string;
@@ -65,6 +67,7 @@ export type Database = {
           experience_years?: number | null;
           resume_url?: string | null;
           preferred_language?: "ka" | "en";
+          preferred_categories?: string[];
           is_public?: boolean;
           email_digest?: boolean;
           created_at?: string;
