@@ -9,8 +9,13 @@ import type { Metadata } from "next";
 export const revalidate = 3600; // O4: Revalidate every hour
 
 export const metadata: Metadata = {
-  title: "Companies — dasaqmdi.com",
-  description: "Browse companies hiring in Georgia",
+  title: "კომპანიები — dasaqmdi.com",
+  description: "იპოვე საუკეთესო დამსაქმებლები საქართველოში",
+  openGraph: {
+    title: "კომპანიები — dasaqmdi.com",
+    description: "იპოვე საუკეთესო დამსაქმებლები საქართველოში",
+    type: "website",
+  },
 };
 
 export default async function CompaniesPage() {

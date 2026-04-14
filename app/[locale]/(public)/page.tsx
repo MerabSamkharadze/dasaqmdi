@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   title: "დასაქმდი — ვაკანსიები საქართველოში | dasaqmdi.com",
   description:
     "იპოვე სამუშაო საქართველოში. უახლესი ვაკანსიები IT, მარკეტინგი, ფინანსები, ადმინისტრაცია და სხვა სფეროებში.",
+  openGraph: {
+    title: "დასაქმდი — ვაკანსიები საქართველოში",
+    description: "იპოვე სამუშაო საქართველოში. IT, მარკეტინგი, ფინანსები და სხვა სფეროები.",
+    url: "https://www.dasaqmdi.com",
+    siteName: "dasaqmdi.com",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "დასაქმდი — ვაკანსიები საქართველოში",
+    description: "იპოვე სამუშაო საქართველოში.",
+  },
 };
 
 export default async function HomePage({

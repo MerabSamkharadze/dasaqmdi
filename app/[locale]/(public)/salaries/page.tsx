@@ -6,6 +6,7 @@ import { SalaryFilters } from "@/components/salaries/salary-filters";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
+import { SalaryRangeChart, SalaryComparisonChart } from "@/components/salaries/salary-chart";
 import { TrendingUp, TrendingDown, BarChart3, Briefcase } from "lucide-react";
 import type { Metadata } from "next";
 import type { SalaryCurrency } from "@/lib/types/enums";
@@ -15,6 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: t("title"),
     description: t("subtitle"),
+    openGraph: {
+      title: t("title"),
+      description: t("subtitle"),
+      type: "website",
+    },
   };
 }
 
@@ -150,6 +156,51 @@ export default async function SalariesPage({
               />
             </div>
           )}
+
+          {/* Charts */}
+          {(() => {
+            // Aggregate per category for charts
+            const chartData = [...byCategory.entries()].map(([slug, items]) => {
+              const catName = locale === "ka" ? items[0].category_name_ka : items[0].category_name_en;
+              const totalCount = items.reduce((s, i) => s + i.job_count, 0);
+              const avgMin = Math.round(items.reduce((s, i) => s + i.avg_min * i.job_count, 0) / totalCount);
+              const avgMax = Math.round(items.reduce((s, i) => s + i.avg_max * i.job_count, 0) / totalCount);
+              const minVal = Math.min(...items.map((i) => i.min_salary));
+              const maxVal = Math.max(...items.map((i) => i.max_salary));
+              return {
+                name: catName,
+                min: minVal,
+                max: maxVal - avgMax, // stacked: remainder after avg
+                avg: avgMax - minVal, // stacked: avg portion
+                count: totalCount,
+                _avgRaw: Math.round((avgMin + avgMax) / 2),
+                _minRaw: minVal,
+                _maxRaw: maxVal,
+              };
+            });
+
+            // For comparison chart — flat data
+            const compData = chartData.map((d) => ({
+              name: d.name,
+              min: d._minRaw,
+              max: d._maxRaw,
+              avg: d._avgRaw,
+              count: d.count,
+            }));
+
+            return (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <SalaryComparisonChart
+                  data={compData}
+                  labels={{ title: t("salaryByCategory") }}
+                />
+                <SalaryRangeChart
+                  data={compData}
+                  labels={{ title: t("salaryRange"), avg: t("avgSalary") }}
+                />
+              </div>
+            );
+          })()}
 
           {/* Category breakdown */}
           <div className="flex flex-col gap-6">

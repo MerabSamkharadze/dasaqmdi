@@ -325,6 +325,8 @@
     "noDataDescription": "No jobs with salary information match these filters",
     "basedOn": "Based on {count} listings",
     "range": "Range",
+    "salaryByCategory": "Salary by Category",
+    "salaryRange": "Salary Ranges",
     "disclaimer": "Data based on job listings published on this site with specified salary ranges"
   },
   "pricing": {
