@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 export const revalidate = 3600; // O4: Revalidate every hour
 
 export const metadata: Metadata = {
-  title: "Companies — dasakmdi.com",
+  title: "Companies — dasaqmdi.com",
   description: "Browse companies hiring in Georgia",
 };
 

@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = localized(job, "description", params.locale)?.slice(0, 160);
 
   return {
-    title: `${title} — ${companyName} | dasakmdi.com`,
+    title: `${title} — ${companyName} | dasaqmdi.com`,
     description,
     openGraph: {
       title,

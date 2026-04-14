@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = localized(company, "description", params.locale)?.slice(0, 160);
 
   return {
-    title: `${name} — dasakmdi.com`,
+    title: `${name} — dasaqmdi.com`,
     description,
   };
 }

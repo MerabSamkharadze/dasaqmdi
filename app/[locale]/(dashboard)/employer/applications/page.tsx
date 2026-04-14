@@ -9,7 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
 import { ApplicationDetails } from "@/components/dashboard/application-details";
 import { ApplicationFilters } from "@/components/dashboard/application-filters";
-import { User, Calendar, Briefcase, ExternalLink } from "lucide-react";
+import { MarkViewedOnLoad } from "@/components/dashboard/mark-viewed-on-load";
+import { ResumeLink } from "@/components/dashboard/resume-link";
+import { User, Calendar, Briefcase, Circle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -43,11 +45,8 @@ export default async function EmployerAllApplicationsPage({
   const t = await getTranslations("applications");
   const allApplications = await getAllEmployerApplications(user.id);
 
-  // O9: Batch mark all unviewed as viewed
+  // Collect unviewed IDs — mark after render (client-side)
   const unviewedIds = allApplications.filter((a) => !a.is_viewed).map((a) => a.id);
-  if (unviewedIds.length > 0) {
-    await markApplicationsBatchViewedAction(unviewedIds);
-  }
 
   // Generate signed URLs for resumes
   const resumeUrls = new Map<string, string | null>();
@@ -134,7 +133,11 @@ export default async function EmployerAllApplicationsPage({
             return (
               <div
                 key={app.id}
-                className="rounded-xl border border-border/60 bg-card px-5 py-4 sm:px-6 shadow-sm animate-fade-in"
+                className={`rounded-xl border bg-card px-5 py-4 sm:px-6 shadow-sm animate-fade-in ${
+                  !app.is_viewed
+                    ? "border-primary/40 bg-primary/[0.03]"
+                    : "border-border/60"
+                }`}
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -154,7 +157,10 @@ export default async function EmployerAllApplicationsPage({
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-semibold tracking-tight text-foreground truncate">
+                      <p className="text-[14px] font-semibold tracking-tight text-foreground truncate flex items-center gap-1.5">
+                        {!app.is_viewed && (
+                          <Circle className="h-2 w-2 fill-primary text-primary shrink-0" />
+                        )}
                         {applicantName}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground/60">
@@ -195,14 +201,12 @@ export default async function EmployerAllApplicationsPage({
                   {/* Resume link */}
                   {resumeUrls.get(app.id) && (
                     <div className="shrink-0">
-                      <a
+                      <ResumeLink
                         href={resumeUrls.get(app.id)!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[12px] text-primary/80 hover:text-primary hover:underline transition-colors duration-200"
-                      >
-                        {t("resume")} <ExternalLink className="h-3 w-3" />
-                      </a>
+                        label={t("resume")}
+                        applicationId={app.id}
+                        isViewed={app.is_viewed}
+                      />
                     </div>
                   )}
 
@@ -219,12 +223,17 @@ export default async function EmployerAllApplicationsPage({
                 <ApplicationDetails
                   coverLetter={app.cover_letter}
                   label={t("viewDetails")}
+                  applicationId={app.id}
+                  isViewed={app.is_viewed}
                 />
               </div>
             );
           })}
         </div>
       )}
+
+      {/* Mark unviewed as viewed after page renders */}
+      {unviewedIds.length > 0 && <MarkViewedOnLoad ids={unviewedIds} />}
     </div>
   );
 }

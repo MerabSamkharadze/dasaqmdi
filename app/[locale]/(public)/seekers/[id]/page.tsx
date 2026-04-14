@@ -19,10 +19,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const skills = profile.skills?.slice(0, 5).join(", ") ?? "";
 
   return {
-    title: `${name} — dasakmdi.com`,
-    description: skills ? `${name} — ${skills}` : `${name} on dasakmdi.com`,
+    title: `${name} — dasaqmdi.com`,
+    description: skills ? `${name} — ${skills}` : `${name} on dasaqmdi.com`,
     openGraph: {
-      title: `${name} — dasakmdi.com`,
+      title: `${name} — dasaqmdi.com`,
       description: skills ? `Skills: ${skills}` : `View ${name}'s profile`,
       type: "profile",
     },
@@ -39,7 +39,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const fullName = localized(profile, "full_name", locale) || t("anonymous");
   const bio = localized(profile, "bio", locale);
 
-  const profileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "https://dasakmdi.com" : "http://localhost:3000"}/seekers/${params.id}`;
+  const profileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "https://dasaqmdi.com" : "http://localhost:3000"}/seekers/${params.id}`;
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto">

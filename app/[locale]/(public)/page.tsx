@@ -15,7 +15,7 @@ import { RefreshButton } from "@/components/shared/refresh-button";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "დასაქმდი — ვაკანსიები საქართველოში | dasakmdi.com",
+  title: "დასაქმდი — ვაკანსიები საქართველოში | dasaqmdi.com",
   description:
     "იპოვე სამუშაო საქართველოში. უახლესი ვაკანსიები IT, მარკეტინგი, ფინანსები, ადმინისტრაცია და სხვა სფეროებში.",
 };

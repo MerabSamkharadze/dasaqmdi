@@ -31,7 +31,7 @@ export function ApplicationStatusBadge({
       className={cn("text-[11px] font-medium", statusColors[displayStatus])}
     >
       {isViewed && status === "pending" && (
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5" />
+        <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-blue-400 mr-1.5" />
       )}
       {displayLabel}
     </Badge>

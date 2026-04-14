@@ -345,18 +345,18 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| N5.1 | `/employer/email-templates` გვერდი | 2 ტაბი (accepted, rejected). Subject + Body textarea, variable hints | ❌ |
-| N5.2 | Live preview | ტექსტის ცვლილებაზე real-time preview placeholders-ის ჩანაცვლებით | ❌ |
-| N5.3 | Save action | `updateEmailTemplateAction` — company_id ownership check | ❌ |
-| N5.4 | "Reset to default" | Default template-ის აღდგენის ღილაკი | ❌ |
-| N5.5 | Nav ლინკი | `nav-items.ts` — employer nav-ში "Email Templates" ლინკი | ❌ |
+| N5.1 | `/employer/email-templates` გვერდი | 2 ტაბი (accepted/rejected), subject/body EN+KA | ✅ |
+| N5.2 | Live preview | real-time preview, variables replaced with sample data | ✅ |
+| N5.3 | Save action | `upsertEmailTemplateAction` + `deleteEmailTemplateAction` — ownership check | ✅ |
+| N5.4 | "Reset to default" | `deleteEmailTemplateAction` — წაშლის custom, default აბრუნებს | ✅ |
+| N5.5 | Nav ლინკი | `nav-items.ts` — Mail icon, "Email Templates" / "ელფოსტის შაბლონები" | ✅ |
 
 ### N6 — i18n
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| N6.1 | Nav key | `nav.emailTemplates` — "Email Templates" / "ელფოსტის შაბლონები" | ❌ |
-| N6.2 | Template editor keys | `dashboard.emailTemplates.*` — ტაბების, ფორმის, preview-ის ტექსტები | ❌ |
+| N6.1 | Nav key | `nav.emailTemplates` ka/en | ✅ |
+| N6.2 | Template editor keys | `dashboard.emailTemplates*`, `template*` 12 key ka/en | ✅ |
 
 ### შესრულების თანმიმდევრობა
 

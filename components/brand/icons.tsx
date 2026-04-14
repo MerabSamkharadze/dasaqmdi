@@ -1,5 +1,5 @@
 /**
- * Custom icon library for dasakmdi.com
+ * Custom icon library for dasaqmdi.com
  *
  * All icons: 24x24 grid, stroke-width 1.5, stroke-linecap/linejoin round.
  * Uses currentColor so they inherit text color from parent.

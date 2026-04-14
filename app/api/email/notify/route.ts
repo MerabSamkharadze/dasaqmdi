@@ -17,7 +17,15 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { application_id, status } = await req.json();
+  let application_id: string;
+  let status: string;
+  try {
+    const body = await req.json();
+    application_id = body.application_id;
+    status = body.status;
+  } catch {
+    return Response.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   // Only send for accepted/rejected
   if (!application_id || !["accepted", "rejected"].includes(status)) {

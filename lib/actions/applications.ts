@@ -194,7 +194,8 @@ export async function markApplicationsBatchViewedAction(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/seeker/applications");
+  revalidatePath("/employer/applications");
+  revalidatePath("/dashboard");
   return { error: null };
 }
 
@@ -229,7 +230,8 @@ export async function markApplicationViewedAction(
     return { error: error.message };
   }
 
-  revalidatePath("/seeker/applications");
+  revalidatePath("/employer/applications");
+  revalidatePath("/dashboard");
   return { error: null };
 }
 

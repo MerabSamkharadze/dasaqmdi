@@ -2,6 +2,13 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type ApplicationFiltersProps = {
   jobs: { id: string; title: string }[];
@@ -23,7 +30,7 @@ export function ApplicationFilters({ jobs, translations }: ApplicationFiltersPro
   const updateParam = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
+      if (value && value !== "all") {
         params.set(key, value);
       } else {
         params.delete(key);
@@ -36,32 +43,44 @@ export function ApplicationFilters({ jobs, translations }: ApplicationFiltersPro
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Filter by job */}
-      <select
-        value={searchParams.get("job") ?? ""}
-        onChange={(e) => updateParam("job", e.target.value)}
-        className="h-9 rounded-lg border border-border/60 bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors flex-1 sm:flex-none sm:min-w-[200px]"
+      <Select
+        defaultValue={searchParams.get("job") ?? "all"}
+        onValueChange={(v) => updateParam("job", v)}
       >
-        <option value="">{translations.allJobs}</option>
-        {jobs.map((j) => (
-          <option key={j.id} value={j.id}>
-            {j.title}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full sm:w-[220px] h-9 text-[13px] truncate">
+          <SelectValue placeholder={translations.allJobs} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[13px]">
+            {translations.allJobs}
+          </SelectItem>
+          {jobs.map((j) => (
+            <SelectItem key={j.id} value={j.id} className="text-[13px]" title={j.title}>
+              <span className="block max-w-[240px] sm:max-w-[180px] truncate">{j.title}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* Filter by status */}
-      <select
-        value={searchParams.get("status") ?? ""}
-        onChange={(e) => updateParam("status", e.target.value)}
-        className="h-9 rounded-lg border border-border/60 bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
+      <Select
+        defaultValue={searchParams.get("status") ?? "all"}
+        onValueChange={(v) => updateParam("status", v)}
       >
-        <option value="">{translations.allStatuses}</option>
-        {STATUS_OPTIONS.map((s) => (
-          <option key={s} value={s}>
-            {translations.statuses[s] ?? s}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full sm:w-[160px] h-9 text-[13px] truncate">
+          <SelectValue placeholder={translations.allStatuses} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[13px]">
+            {translations.allStatuses}
+          </SelectItem>
+          {STATUS_OPTIONS.map((s) => (
+            <SelectItem key={s} value={s} className="text-[13px]">
+              {translations.statuses[s] ?? s}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

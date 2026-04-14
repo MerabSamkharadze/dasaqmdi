@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/dashboard/", "/profile/", "/admin/", "/employer/", "/seeker/"],
       },
     ],
-    sitemap: "https://dasakmdi.com/sitemap.xml",
+    sitemap: "https://dasaqmdi.com/sitemap.xml",
   };
 }

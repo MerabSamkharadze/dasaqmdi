@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       const { subject, html } = buildDigestEmail(entry);
 
       const { error } = await resend.emails.send({
-        from: "dasakmdi.com <digest@dasakmdi.com>",
+        from: "dasaqmdi.com <digest@dasaqmdi.com>",
         to: entry.seeker.email,
         subject,
         html,

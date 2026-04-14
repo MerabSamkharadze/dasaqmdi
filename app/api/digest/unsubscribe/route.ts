@@ -25,6 +25,6 @@ export async function GET(request: Request) {
   }
 
   // Redirect to a simple confirmation page
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dasakmdi.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dasaqmdi.com";
   return NextResponse.redirect(`${siteUrl}?unsubscribed=true`);
 }

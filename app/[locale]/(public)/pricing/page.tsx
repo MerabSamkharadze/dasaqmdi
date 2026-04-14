@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     title: locale === "ka"
-      ? "ფასები — დასაქმდი | dasakmdi.com"
-      : "Pricing — dasakmdi.com",
+      ? "ფასები — დასაქმდი | dasaqmdi.com"
+      : "Pricing — dasaqmdi.com",
     description: t("subtitle"),
   };
 }

@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("jobs");
   return {
     title: t("title"),
-    description: "Browse and search all job listings on dasakmdi.com",
+    description: "Browse and search all job listings on dasaqmdi.com",
   };
 }
 
