@@ -98,6 +98,7 @@ function TemplateForm({
   const [previewLocale, setPreviewLocale] = useState<"en" | "ka">("en");
   const [showPreview, setShowPreview] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const sampleData = {
     en: { name: "John Doe", job: "Frontend Developer", company: "TechCorp" },
@@ -119,11 +120,13 @@ function TemplateForm({
     .replace(/\{company_name\}/g, sample.company);
 
   async function handleResetConfirm() {
+    setResetting(true);
     await deleteEmailTemplateAction(companyId, type);
     setSubject(defaults.subject);
     setSubjectKa(defaults.subject_ka);
     setBody(defaults.body);
     setBodyKa(defaults.body_ka);
+    setResetting(false);
     setShowResetDialog(false);
   }
 
@@ -256,6 +259,7 @@ function TemplateForm({
                 variant="outline"
                 className="flex-1 rounded-xl border-border bg-card text-foreground hover:bg-muted hover:text-foreground"
                 onClick={() => setShowResetDialog(false)}
+                disabled={resetting}
               >
                 {tc("cancel")}
               </Button>
@@ -264,8 +268,14 @@ function TemplateForm({
                 variant="destructive"
                 className="flex-1 rounded-xl"
                 onClick={handleResetConfirm}
+                disabled={resetting}
               >
-                {t("templateReset")}
+                {resetting ? (
+                  <span className="flex items-center gap-1.5">
+                    <RotateCcw className="h-3.5 w-3.5 animate-spin" />
+                    ...
+                  </span>
+                ) : t("templateReset")}
               </Button>
             </div>
           </div>
