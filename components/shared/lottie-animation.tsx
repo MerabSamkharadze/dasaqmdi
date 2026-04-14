@@ -14,8 +14,12 @@ export function LottieAnimation({ src, className, loop = true }: LottieAnimation
 
   useEffect(() => {
     fetch(src)
-      .then((res) => res.json())
-      .then(setData);
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((json) => { if (json) setData(json); })
+      .catch(() => {});
   }, [src]);
 
   if (!data) return null;

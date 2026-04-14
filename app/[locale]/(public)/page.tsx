@@ -29,6 +29,7 @@ export default async function HomePage({
     city?: string;
     type?: string;
     q?: string;
+    all?: string;
   };
 }) {
   const locale = await getLocale();
@@ -68,10 +69,11 @@ export default async function HomePage({
 
   // Step 3: Fetch jobs — auto-filter by preferred categories if no manual filter
   const hasManualFilter = !!(searchParams.category || searchParams.q || searchParams.type || searchParams.city);
+  const showAll = searchParams.all === "1";
   const { jobs, totalPages, currentPage, totalCount } = await getJobs({
     page,
     category: searchParams.category,
-    categories: !hasManualFilter && preferredCategories.length > 0 ? preferredCategories : undefined,
+    categories: !hasManualFilter && !showAll && preferredCategories.length > 0 ? preferredCategories : undefined,
     city: searchParams.city,
     type: searchParams.type,
     q: searchParams.q,
@@ -181,6 +183,18 @@ export default async function HomePage({
             {t("resultsCount", { count: totalCount })}
             {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
           </span>
+        </div>
+      )}
+
+      {/* Personalized feed indicator */}
+      {!hasManualFilter && !showAll && preferredCategories.length > 0 && (
+        <div className="flex items-center justify-between mb-6 px-3 py-2 rounded-lg bg-primary/5 border border-primary/15">
+          <span className="text-[12px] text-primary font-medium">
+            {tHome("personalizedFeed")}
+          </span>
+          <a href="/?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
+            {tHome("showAll")}
+          </a>
         </div>
       )}
 

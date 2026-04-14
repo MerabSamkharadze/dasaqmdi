@@ -2,6 +2,7 @@
 
 import { useRef, useCallback } from "react";
 import { useFormState } from "react-dom";
+import { useScrollOnSave } from "@/lib/hooks/use-scroll-on-save";
 import { useTranslations } from "next-intl";
 import { createJobAction, updateJobAction } from "@/lib/actions/jobs";
 import { Input } from "@/components/ui/input";
@@ -78,8 +79,11 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
     }
   }, []);
 
+  const formRef = useRef<HTMLFormElement>(null);
+  useScrollOnSave(state, formRef);
+
   return (
-    <form action={formAction} className="space-y-6">
+    <form ref={formRef} action={formAction} className="space-y-6">
       <input type="hidden" name="company_id" value={companyId} />
       {job && <input type="hidden" name="job_id" value={job.id} />}
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -37,6 +37,13 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const updateParams = useCallback(
     (key: string, value: string) => {
@@ -76,7 +83,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
         defaultValue={searchParams.get("category") ?? "all"}
         onValueChange={(v) => updateParams("category", v)}
       >
-        <SelectTrigger className="w-full sm:w-[172px] h-9 text-[13px]">
+        <SelectTrigger className="w-full sm:w-[172px] h-9 text-[13px] truncate">
           <SelectValue placeholder={translations.allCategories} />
         </SelectTrigger>
         <SelectContent>
@@ -84,8 +91,8 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
             {translations.allCategories}
           </SelectItem>
           {categories.map((cat) => (
-            <SelectItem key={cat.slug} value={cat.slug} className="text-[13px]">
-              {cat.label}
+            <SelectItem key={cat.slug} value={cat.slug} className="text-[13px]" title={cat.label}>
+              <span className="block max-w-[240px] sm:max-w-[120px] truncate">{cat.label}</span>
             </SelectItem>
           ))}
         </SelectContent>
@@ -96,7 +103,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
         defaultValue={searchParams.get("type") ?? "all"}
         onValueChange={(v) => updateParams("type", v)}
       >
-        <SelectTrigger className="w-full sm:w-[140px] h-9 text-[13px]">
+        <SelectTrigger className="w-full sm:w-[140px] h-9 text-[13px] truncate">
           <SelectValue placeholder={translations.allTypes} />
         </SelectTrigger>
         <SelectContent>
@@ -104,29 +111,25 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
             {translations.allTypes}
           </SelectItem>
           {JOB_TYPES.map((type) => (
-            <SelectItem key={type} value={type} className="text-[13px]">
-              {translations.types[type] ?? type}
+            <SelectItem key={type} value={type} className="text-[13px]" title={translations.types[type] ?? type}>
+              <span className="block max-w-[240px] sm:max-w-[100px] truncate">{translations.types[type] ?? type}</span>
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
 
-      {/* City */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.currentTarget);
-          const city = (formData.get("city") as string)?.trim();
-          updateParams("city", city);
+      {/* City — debounced like search */}
+      <Input
+        defaultValue={searchParams.get("city") ?? ""}
+        placeholder={translations.location}
+        className="w-full sm:w-[130px] h-9 text-[13px]"
+        onChange={(e) => {
+          if (debounceRef.current) clearTimeout(debounceRef.current);
+          debounceRef.current = setTimeout(() => {
+            updateParams("city", e.target.value.trim());
+          }, 350);
         }}
-      >
-        <Input
-          name="city"
-          defaultValue={searchParams.get("city") ?? ""}
-          placeholder={translations.location}
-          className="w-full sm:w-[130px] h-9 text-[13px]"
-        />
-      </form>
+      />
     </div>
   );
 }

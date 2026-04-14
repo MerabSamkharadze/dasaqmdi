@@ -57,7 +57,9 @@
     "noSkills": "Add skills to your profile to see matching jobs",
     "noSkillsCta": "Complete your profile",
     "refresh": "Refresh jobs",
-    "refreshing": "Refreshing..."
+    "refreshing": "Refreshing...",
+    "personalizedFeed": "Showing jobs from your preferred categories",
+    "showAll": "Show all jobs"
   },
   "jobs": {
     "title": "Job Listings",

@@ -28,31 +28,27 @@ export default async function JobsPage({
     city?: string;
     type?: string;
     q?: string;
+    all?: string;
   };
 }) {
   const locale = await getLocale();
   const t = await getTranslations("jobs");
+  const tHome = await getTranslations("home");
 
   const page = Number(searchParams.page) || 1;
 
+  // Step 1: Auth + categories in parallel
   const supabase = createClient();
-  const [{ jobs, totalPages, currentPage, totalCount }, categories, { data: { user } }] =
-    await Promise.all([
-      getJobs({
-        page,
-        category: searchParams.category,
-        city: searchParams.city,
-        type: searchParams.type,
-        q: searchParams.q,
-      }),
-      getCategories(),
-      supabase.auth.getUser(),
-    ]);
+  const [categories, { data: { user } }] = await Promise.all([
+    getCategories(),
+    supabase.auth.getUser(),
+  ]);
 
-  // Match scores + saved jobs for logged-in seekers
+  // Step 2: Profile for preferred categories + match scores
   let matchScores: Map<string, number> | null = null;
   let savedJobIds: Set<string> | null = null;
   let isLoggedIn = false;
+  let preferredCategories: string[] = [];
 
   if (user) {
     isLoggedIn = true;
@@ -62,16 +58,34 @@ export default async function JobsPage({
     ]);
     if (profile?.role === "seeker") {
       savedJobIds = savedIds;
-      if (profile.skills?.length > 0) {
-        const results = calculateMatchScores(
-          profile.skills,
-          jobs.map((j) => ({ id: j.id, tags: j.tags }))
-        );
-        matchScores = new Map<string, number>();
-        for (const [jobId, result] of results) {
-          if (result.score > 0) {
-            matchScores.set(jobId, result.score);
-          }
+      preferredCategories = profile.preferred_categories ?? [];
+    }
+  }
+
+  // Step 3: Fetch jobs — auto-filter by preferred categories if no manual filter
+  const hasManualFilter = !!(searchParams.category || searchParams.q || searchParams.type || searchParams.city);
+  const showAll = searchParams.all === "1";
+  const { jobs, totalPages, currentPage, totalCount } = await getJobs({
+    page,
+    category: searchParams.category,
+    categories: !hasManualFilter && !showAll && preferredCategories.length > 0 ? preferredCategories : undefined,
+    city: searchParams.city,
+    type: searchParams.type,
+    q: searchParams.q,
+  });
+
+  // Step 4: Match scores
+  if (isLoggedIn && user) {
+    const profile = await getProfile(user.id);
+    if (profile?.role === "seeker" && profile.skills?.length > 0) {
+      const results = calculateMatchScores(
+        profile.skills,
+        jobs.map((j) => ({ id: j.id, tags: j.tags }))
+      );
+      matchScores = new Map<string, number>();
+      for (const [jobId, result] of results) {
+        if (result.score > 0) {
+          matchScores.set(jobId, result.score);
         }
       }
     }
@@ -142,9 +156,21 @@ export default async function JobsPage({
       {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (
         <div className="flex items-center gap-2 text-[12px] text-muted-foreground/60">
           <span>
-            {totalCount} {totalCount === 1 ? "result" : "results"}
-            {searchParams.q && <> for &ldquo;{searchParams.q}&rdquo;</>}
+            {t("resultsCount", { count: totalCount })}
+            {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
           </span>
+        </div>
+      )}
+
+      {/* Personalized feed indicator */}
+      {!hasManualFilter && !showAll && preferredCategories.length > 0 && (
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-primary/5 border border-primary/15">
+          <span className="text-[12px] text-primary font-medium">
+            {tHome("personalizedFeed")}
+          </span>
+          <a href="/jobs?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
+            {tHome("showAll")}
+          </a>
         </div>
       )}
 

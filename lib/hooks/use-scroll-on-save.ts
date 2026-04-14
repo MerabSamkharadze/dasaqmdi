@@ -1,21 +1,24 @@
 import { useEffect, useRef, type RefObject } from "react";
-import type { ActionResult } from "@/lib/types";
 
-const initialState: ActionResult = { error: null };
-
+/**
+ * Scrolls to the top of a form when server action state changes (success or error).
+ * Temporarily sets scroll-margin-top to clear the sticky header (56px = h-14).
+ */
 export function useScrollOnSave(
-  state: ActionResult,
+  state: { error: string | null },
   formRef: RefObject<HTMLFormElement | null>,
 ) {
-  const isFirstRender = useRef(true);
+  const prevStateRef = useRef(state);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    if (state === initialState) return;
+    if (prevStateRef.current === state) return;
+    prevStateRef.current = state;
 
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const el = formRef.current;
+    if (!el) return;
+
+    // Set scroll-margin so sticky header doesn't cover the form top
+    el.style.scrollMarginTop = "80px";
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [state, formRef]);
 }

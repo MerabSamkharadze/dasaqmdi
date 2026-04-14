@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
+import { useScrollOnSave } from "@/lib/hooks/use-scroll-on-save";
 import { useTranslations } from "next-intl";
 import { createCompanyAction, updateCompanyAction } from "@/lib/actions/company";
 import { Input } from "@/components/ui/input";
@@ -34,9 +35,11 @@ export function CompanyForm({ company, mode, userId }: CompanyFormProps) {
   const t = useTranslations("company");
   const tc = useTranslations("common");
   const [logoUrl, setLogoUrl] = useState(company?.logo_url ?? "");
+  const formRef = useRef<HTMLFormElement>(null);
+  useScrollOnSave(state, formRef);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form ref={formRef} action={formAction} className="space-y-6">
       {company && <input type="hidden" name="company_id" value={company.id} />}
       <input type="hidden" name="logo_url" value={logoUrl} />
 
