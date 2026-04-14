@@ -17,7 +17,7 @@ export function ApplyButton({ jobId, label, isLoggedIn }: ApplyButtonProps) {
     return (
       <Button
         size="lg"
-        className="rounded-xl"
+        className="rounded-xl px-4 sm:px-8 text-[13px] sm:text-sm"
         onClick={() => authModal.open("apply", `/jobs/${jobId}`)}
       >
         {label}

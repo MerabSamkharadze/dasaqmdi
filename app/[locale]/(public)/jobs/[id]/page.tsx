@@ -234,7 +234,7 @@ export default async function JobDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="hidden sm:flex items-center gap-2.5 shrink-0">
             {matchResult && (
               <Badge
                 variant="outline"
@@ -264,6 +264,34 @@ export default async function JobDetailPage({ params }: PageProps) {
               <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
             ) : null}
           </div>
+        </div>
+
+        {/* Mobile: Apply + actions row */}
+        <div className="flex sm:hidden items-center gap-2 mt-4">
+          {isExpired ? (
+            <Badge variant="destructive" className="text-[12px] px-2.5 py-1">{t("jobClosed")}</Badge>
+          ) : hasApplied ? (
+            <Badge
+              variant="outline"
+              className="text-[12px] font-medium gap-1 border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-400 px-2.5 py-1"
+            >
+              <CheckCircle className="h-3 w-3" />
+              {t("alreadyApplied")}
+            </Badge>
+          ) : !hasApplied ? (
+            <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
+          ) : null}
+          <ShareJobButton
+            jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+            jobTitle={title}
+          />
+          <BookmarkButton jobId={job.id} isSaved={isJobSaved} isLoggedIn={isLoggedIn} />
+          {matchResult && (
+            <Badge variant="outline" className="text-[11px] font-medium gap-1 border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-500/30 dark:bg-violet-500/10 dark:text-violet-400 px-2 py-0.5">
+              <Zap className="h-3 w-3" />
+              {matchResult.score}%
+            </Badge>
+          )}
         </div>
 
         {/* Key details grid inside hero */}
