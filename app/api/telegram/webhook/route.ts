@@ -139,6 +139,7 @@ function setupBotHandlers() {
       const { data: allCompanies } = await supabase
         .from("companies")
         .select("id, name, name_ka")
+        .eq("is_verified", true)
         .order("name");
 
       const companyList = (allCompanies ?? []).map((c) => ({
