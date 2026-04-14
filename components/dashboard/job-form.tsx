@@ -29,9 +29,10 @@ type JobFormProps = {
   categories: Category[];
   locale: string;
   mode: "create" | "edit";
+  canUseAI?: boolean;
 };
 
-export function JobForm({ job, companyId, categories, locale, mode }: JobFormProps) {
+export function JobForm({ job, companyId, categories, locale, mode, canUseAI = false }: JobFormProps) {
   const action = mode === "create" ? createJobAction : updateJobAction;
   const [state, formAction] = useFormState(action, initialState);
   const t = useTranslations("jobs");
@@ -94,8 +95,8 @@ export function JobForm({ job, companyId, categories, locale, mode }: JobFormPro
         </div>
       )}
 
-      {/* AI Draft */}
-      {mode === "create" && (
+      {/* AI Draft — only for Pro/Verified plans */}
+      {mode === "create" && canUseAI && (
         <AIDraftButton onDraftComplete={handleAIDraft} />
       )}
 

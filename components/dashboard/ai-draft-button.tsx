@@ -91,12 +91,11 @@ export function AIDraftButton({ onDraftComplete }: AIDraftButtonProps) {
     return (
       <Button
         type="button"
-        variant="outline"
         size="sm"
         onClick={() => setIsOpen(true)}
-        className="gap-1.5 text-[13px] border-primary/20 text-primary/80 hover:text-primary hover:bg-primary/5"
+        className="gap-1.5 text-[13px] bg-gradient-to-r from-violet-600 to-primary text-white hover:from-violet-700 hover:to-primary/90 shadow-md hover:shadow-lg transition-all duration-200"
       >
-        <Sparkles className="h-3 w-3" />
+        <Sparkles className="h-3.5 w-3.5" />
         Draft with AI
       </Button>
     );

@@ -11,7 +11,8 @@
     "loading": "Loading...",
     "noResults": "No results found",
     "backToHome": "Back to Home",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "cropImage": "Crop Photo"
   },
   "nav": {
     "jobs": "Jobs",
@@ -95,7 +96,10 @@
     "noMatchData": "Add skills to your profile to see match scores",
     "requirements": "Requirements",
     "descriptionLabel": "Description",
-    "subscribeTelegram": "Get similar jobs on Telegram"
+    "subscribeTelegram": "Get similar jobs on Telegram",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied!"
   },
   "categories": {
     "it-software": "IT & Software",

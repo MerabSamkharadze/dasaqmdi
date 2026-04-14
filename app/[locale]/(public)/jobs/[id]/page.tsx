@@ -25,6 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ViewTracker } from "@/components/jobs/view-tracker";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
+import { ShareJobButton } from "@/components/jobs/share-job-button";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import type { Metadata } from "next";
 
@@ -240,6 +241,11 @@ export default async function JobDetailPage({ params }: PageProps) {
                 {t("match", { score: matchResult.score })}
               </Badge>
             )}
+            <ShareJobButton
+              jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+              jobTitle={title}
+              variant="button"
+            />
             {isSeeker && (
               <BookmarkButton jobId={job.id} isSaved={isJobSaved} />
             )}

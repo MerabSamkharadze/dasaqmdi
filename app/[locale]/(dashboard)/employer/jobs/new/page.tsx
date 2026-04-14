@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getCompanyByOwner } from "@/lib/queries/companies";
 import { getCategories } from "@/lib/queries/categories";
+import { getActivePlan } from "@/lib/queries/subscriptions";
+import { canUseAIDraft } from "@/lib/subscription-helpers";
 import { getTranslations, getLocale } from "next-intl/server";
 import { JobForm } from "@/components/dashboard/job-form";
 import Link from "next/link";
@@ -38,7 +40,10 @@ export default async function CreateJobPage() {
     );
   }
 
-  const categories = await getCategories();
+  const [categories, plan] = await Promise.all([
+    getCategories(),
+    getActivePlan(company.id),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -49,6 +54,7 @@ export default async function CreateJobPage() {
           categories={categories}
           locale={locale}
           mode="create"
+          canUseAI={canUseAIDraft(plan)}
         />
       </div>
     </div>

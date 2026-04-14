@@ -4,6 +4,7 @@ import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
 import { BadgeCheck, Building2, Calendar, Clock, MapPin, Star, Zap, Wifi } from "lucide-react";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
+import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -98,11 +99,16 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             </h3>
 
             {/* Desktop bookmark */}
-            {isLoggedIn && (
-              <div className="hidden md:block shrink-0 -mt-0.5 -mr-1">
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <div className="hidden md:flex items-center shrink-0 -mt-0.5 -mr-1" onClick={(e) => e.stopPropagation()}>
+              <ShareJobButton
+                jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+                jobTitle={title}
+              />
+              {isLoggedIn && (
                 <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Company + Location + Date meta row */}

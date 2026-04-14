@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Cropper from "react-easy-crop";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 
@@ -30,6 +31,16 @@ export function ImageCropDialog({
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const t = useTranslations("common");
+
+  // ESC to close
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onCancel]);
 
   const onCropChange = useCallback((_: unknown, croppedPixels: Area) => {
     setCroppedAreaPixels(croppedPixels);
@@ -84,7 +95,7 @@ export function ImageCropDialog({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border/60">
           <p className="text-[14px] font-semibold tracking-tight">
-            {cropShape === "round" ? "Crop Photo" : "Crop Image"}
+            {t("cropImage")}
           </p>
           <button
             type="button"
@@ -126,10 +137,10 @@ export function ImageCropDialog({
         {/* Actions */}
         <div className="flex items-center justify-end gap-2 px-5 py-3 border-t border-border/60">
           <Button type="button" variant="outline" size="sm" onClick={onCancel}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button type="button" size="sm" onClick={handleSave}>
-            Save
+            {t("save")}
           </Button>
         </div>
       </div>
