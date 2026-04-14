@@ -173,8 +173,8 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             )}
           </div>
 
-          {/* Mobile bottom row: salary + bookmark */}
-          <div className="flex sm:hidden items-center justify-between pt-1">
+          {/* Mobile bottom row: salary + share + bookmark */}
+          <div className="flex sm:hidden items-center justify-between pt-1" onClick={(e) => e.stopPropagation()}>
             {salary ? (
               <span className="text-[12px] font-semibold text-success tabular-nums">
                 {salary}
@@ -182,7 +182,13 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             ) : (
               <span />
             )}
-            <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
+            <div className="flex items-center">
+              <ShareJobButton
+                jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
+                jobTitle={title}
+              />
+              <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
+            </div>
           </div>
         </div>
       </div>
