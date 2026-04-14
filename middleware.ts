@@ -1,7 +1,7 @@
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
@@ -25,7 +25,6 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
     const redirectResponse = NextResponse.redirect(url);
-    // Preserve session cookies on the redirect
     supabaseResponse.cookies.getAll().forEach((cookie) => {
       redirectResponse.cookies.set(cookie.name, cookie.value);
     });
@@ -35,7 +34,8 @@ export async function middleware(request: NextRequest) {
   // Step 3: Handle locale routing (rewrites /jobs → /ka/jobs, etc.)
   const intlResponse = intlMiddleware(request);
 
-  // Step 4: Merge Supabase session cookies into the intl response
+  // Step 4: Merge ALL Supabase session cookies into the intl response
+  // This is critical — without this, locale switching drops the auth session
   supabaseResponse.cookies.getAll().forEach((cookie) => {
     intlResponse.cookies.set(cookie.name, cookie.value);
   });

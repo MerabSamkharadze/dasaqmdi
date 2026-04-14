@@ -2,6 +2,13 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type SalaryFiltersProps = {
   categories: { slug: string; label: string }[];
@@ -23,7 +30,7 @@ export function SalaryFilters({ categories, cities, translations }: SalaryFilter
   const updateParam = useCallback(
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
+      if (value && value !== "all") {
         params.set(key, value);
       } else {
         params.delete(key);
@@ -36,44 +43,62 @@ export function SalaryFilters({ categories, cities, translations }: SalaryFilter
   return (
     <div className="flex flex-col sm:flex-row gap-3">
       {/* Category */}
-      <select
-        value={searchParams.get("category") ?? ""}
-        onChange={(e) => updateParam("category", e.target.value)}
-        className="h-9 rounded-lg border border-border/60 bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
+      <Select
+        defaultValue={searchParams.get("category") ?? "all"}
+        onValueChange={(v) => updateParam("category", v)}
       >
-        <option value="">{translations.allCategories}</option>
-        {categories.map((c) => (
-          <option key={c.slug} value={c.slug}>
-            {c.label}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full sm:w-[172px] h-9 text-[13px] truncate">
+          <SelectValue placeholder={translations.allCategories} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[13px]">
+            {translations.allCategories}
+          </SelectItem>
+          {categories.map((c) => (
+            <SelectItem key={c.slug} value={c.slug} className="text-[13px]" title={c.label}>
+              <span className="block max-w-[240px] sm:max-w-[120px] truncate">{c.label}</span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* City */}
-      <select
-        value={searchParams.get("city") ?? ""}
-        onChange={(e) => updateParam("city", e.target.value)}
-        className="h-9 rounded-lg border border-border/60 bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
+      <Select
+        defaultValue={searchParams.get("city") ?? "all"}
+        onValueChange={(v) => updateParam("city", v)}
       >
-        <option value="">{translations.allCities}</option>
-        {cities.map((c) => (
-          <option key={c} value={c}>
-            {c}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full sm:w-[160px] h-9 text-[13px] truncate">
+          <SelectValue placeholder={translations.allCities} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[13px]">
+            {translations.allCities}
+          </SelectItem>
+          {cities.map((c) => (
+            <SelectItem key={c} value={c} className="text-[13px]">
+              {c}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       {/* Currency */}
-      <select
-        value={searchParams.get("currency") ?? ""}
-        onChange={(e) => updateParam("currency", e.target.value)}
-        className="h-9 rounded-lg border border-border/60 bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-colors"
+      <Select
+        defaultValue={searchParams.get("currency") ?? "all"}
+        onValueChange={(v) => updateParam("currency", v)}
       >
-        <option value="">{translations.allCurrencies}</option>
-        <option value="GEL">GEL (₾)</option>
-        <option value="USD">USD ($)</option>
-        <option value="EUR">EUR (€)</option>
-      </select>
+        <SelectTrigger className="w-full sm:w-[140px] h-9 text-[13px] truncate">
+          <SelectValue placeholder={translations.allCurrencies} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all" className="text-[13px]">
+            {translations.allCurrencies}
+          </SelectItem>
+          <SelectItem value="GEL" className="text-[13px]">GEL (₾)</SelectItem>
+          <SelectItem value="USD" className="text-[13px]">USD ($)</SelectItem>
+          <SelectItem value="EUR" className="text-[13px]">EUR (€)</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

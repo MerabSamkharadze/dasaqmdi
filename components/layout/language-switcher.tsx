@@ -2,6 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,9 +17,14 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
 
   function switchLocale(value: string) {
-    router.replace(pathname, { locale: value });
+    if (value === locale) return;
+    startTransition(() => {
+      router.replace(pathname, { locale: value });
+      router.refresh();
+    });
   }
 
   return (
