@@ -59,7 +59,8 @@
     "refresh": "Refresh jobs",
     "refreshing": "Refreshing...",
     "personalizedFeed": "Showing jobs from your preferred categories",
-    "showAll": "Show all jobs"
+    "showAll": "Show all jobs",
+    "backToJobs": "Browse Jobs"
   },
   "jobs": {
     "title": "Job Listings",

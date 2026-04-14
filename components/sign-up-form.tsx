@@ -40,7 +40,7 @@ export function SignUpForm({
     <div className={cn("flex flex-col", className)} {...props}>
       {/* Mobile logo — hidden on desktop (branding panel handles it) */}
       <div className="flex lg:hidden justify-center mb-10">
-        <Logo />
+        <Logo className="[&_svg]:w-14 [&_svg]:h-14" />
       </div>
 
       {/* Header */}

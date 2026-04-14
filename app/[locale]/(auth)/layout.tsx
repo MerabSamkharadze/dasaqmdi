@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
 import { AuthSearchBar } from "@/components/auth/auth-search-bar";
 import { Logo } from "@/components/brand/logo";
 import { LottieAnimation } from "@/components/shared/lottie-animation";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
 
 export default async function AuthLayout({
   children,
@@ -15,8 +17,10 @@ export default async function AuthLayout({
   const { data: { user } } = await supabase.auth.getUser();
   if (user) redirect("/dashboard");
 
+  const locale = await getLocale();
   const t = await getTranslations("home");
   const tJobs = await getTranslations("jobs");
+  const homeHref = locale === "en" ? "/en" : "/";
 
   return (
     <div className="flex min-h-svh w-full">
@@ -29,7 +33,7 @@ export default async function AuthLayout({
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center gap-8 text-center px-12 max-w-md">
-          <Logo variant="icon" className="[&_svg]:w-16 [&_svg]:h-16" />
+          <Logo variant="icon" className="[&_svg]:w-24 [&_svg]:h-24" />
 
           <div>
             <h1 className="text-3xl font-bold text-secondary-foreground tracking-tight leading-[1.15]">
@@ -57,7 +61,14 @@ export default async function AuthLayout({
       </div>
 
       {/* ── Right form panel ── */}
-      <div className="flex w-full lg:w-[55%] flex-col items-center justify-center px-6 py-12 sm:px-12 lg:px-20">
+      <div className="flex w-full lg:w-[55%] flex-col items-center justify-center px-6 pt-16 pb-12 sm:px-12 lg:px-20 relative">
+        <Link
+          href={homeHref}
+          className="absolute top-4 left-4 sm:top-6 sm:left-8 inline-flex items-center gap-1 rounded-xl border border-border/60 bg-card/80 backdrop-blur-sm px-3 py-1.5 text-[12px] font-medium text-muted-foreground hover:text-foreground hover:border-border hover:shadow-sm transition-all duration-200"
+        >
+          <ChevronLeft className="h-3.5 w-3.5 shrink-0" />
+          {t("backToJobs")}
+        </Link>
         <div className="w-full max-w-[440px]">{children}</div>
       </div>
     </div>
