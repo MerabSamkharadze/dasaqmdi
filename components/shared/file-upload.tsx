@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { uploadFile, deleteFile, getFilePath } from "@/lib/storage";
+import { ImageCropDialog } from "@/components/shared/image-crop-dialog";
 import { Upload, X, Loader2 } from "lucide-react";
 
 /**
@@ -48,7 +49,38 @@ export function FileUpload({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentUrl ?? null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Should we show crop dialog for this bucket?
+  const enableCrop = bucket === "avatars" || bucket === "company-logos";
+  const cropShape = bucket === "avatars" ? "round" as const : "rect" as const;
+
+  async function uploadBlob(blob: Blob, fileName: string) {
+    setUploading(true);
+
+    // Delete old file
+    if (previewUrl) {
+      const oldPath = extractStoragePath(previewUrl);
+      await deleteFile(bucket, oldPath);
+    }
+
+    const file = new File([blob], fileName, { type: blob.type });
+    const path = getFilePath(userId, fileName, prefix);
+    const result = await uploadFile(bucket, path, file);
+
+    setUploading(false);
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    if (result.url) {
+      setPreviewUrl(result.url);
+      onUploadComplete(result.url);
+    }
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -60,9 +92,18 @@ export function FileUpload({
     }
 
     setError(null);
+
+    // Show crop dialog for images
+    if (enableCrop && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = () => setCropSrc(reader.result as string);
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    // Direct upload for non-image files
     setUploading(true);
 
-    // Delete old file before uploading new one (prevents storage bloat)
     if (previewUrl) {
       const oldPath = extractStoragePath(previewUrl);
       await deleteFile(bucket, oldPath);
@@ -84,6 +125,17 @@ export function FileUpload({
     }
   }
 
+  const handleCropComplete = useCallback((croppedBlob: Blob) => {
+    setCropSrc(null);
+    const fileName = `${prefix ?? "file"}.webp`;
+    uploadBlob(croppedBlob, fileName);
+  }, [prefix]);
+
+  const handleCropCancel = useCallback(() => {
+    setCropSrc(null);
+    if (inputRef.current) inputRef.current.value = "";
+  }, []);
+
   async function handleRemove() {
     // Delete file from storage when user removes it
     if (previewUrl) {
@@ -100,6 +152,16 @@ export function FileUpload({
 
   return (
     <div className="space-y-3">
+      {/* Crop dialog */}
+      {cropSrc && (
+        <ImageCropDialog
+          imageSrc={cropSrc}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+          aspect={1}
+          cropShape={cropShape}
+        />
+      )}
       {previewUrl && isImage && (
         <div className="relative inline-block">
           <img
