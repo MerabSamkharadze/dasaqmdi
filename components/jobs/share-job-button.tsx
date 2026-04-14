@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Share2, Check, Copy, Facebook, Linkedin } from "lucide-react";
+import { Share2, Check, Copy, Facebook, Linkedin, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -40,6 +41,16 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
     setTimeout(() => setCopied(false), 2000);
   }
 
+  async function handleNativeShare() {
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: jobTitle, text: shareText, url: jobUrl });
+      } catch {
+        // User cancelled — ignore
+      }
+    }
+  }
+
   const socialLinks = [
     {
       label: "Facebook",
@@ -70,13 +81,13 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
       href: `https://wa.me/?text=${encodedText}%20${encodedUrl}`,
     },
     {
-      label: "Messenger",
+      label: "Telegram",
       icon: () => (
         <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" aria-hidden="true">
-          <path d="M12 0C5.373 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.654V24l4.088-2.242c1.092.301 2.246.464 3.443.464 6.627 0 12-4.974 12-11.111S18.627 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8.2l3.131 3.259L19.752 8.2l-6.561 6.763z" />
+          <path d="M22.05 1.577c-.393-.016-.784.08-1.117.235-2.093.94-17.648 7.583-19.77 8.5-.39.168-.883.44-.883 1.003 0 .385.22.694.567.867l4.948 1.993 1.79 5.86c.164.48.546.68.96.68.34 0 .625-.14.85-.37l2.56-2.37 4.987 3.74c.38.285.755.43 1.146.43.82 0 1.36-.58 1.5-1.36L23.85 3.147c.2-1.02-.43-1.57-1.3-1.57h-.5zM9.33 13.78l-.81 3.58-1.5-5.31 11.76-7.26L9.33 13.78z" />
         </svg>
       ),
-      href: `https://www.facebook.com/dialog/send?link=${encodedUrl}&app_id=291494419107518&redirect_uri=${encodedUrl}`,
+      href: `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`,
     },
   ];
 
@@ -98,6 +109,17 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
+        {/* Native share — mobile only */}
+        {"share" in navigator && (
+          <>
+            <DropdownMenuItem onClick={handleNativeShare} className="gap-2 text-[13px] cursor-pointer">
+              <Smartphone className="h-4 w-4" />
+              {t("share")}...
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
+        )}
+
         {/* Copy link */}
         <DropdownMenuItem onClick={handleCopy} className="gap-2 text-[13px] cursor-pointer">
           {copied ? (

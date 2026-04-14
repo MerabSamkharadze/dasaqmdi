@@ -369,6 +369,37 @@ export type Database = {
           updated_at?: string;
         };
       };
+      email_templates: {
+        Row: {
+          id: string;
+          company_id: string;
+          type: "accepted" | "rejected";
+          subject: string;
+          subject_ka: string | null;
+          body: string;
+          body_ka: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          company_id: string;
+          type: "accepted" | "rejected";
+          subject: string;
+          subject_ka?: string | null;
+          body: string;
+          body_ka?: string | null;
+          is_active?: boolean;
+        };
+        Update: {
+          subject?: string;
+          subject_ka?: string | null;
+          body?: string;
+          body_ka?: string | null;
+          is_active?: boolean;
+        };
+      };
     };
     Enums: {
       job_type: "full-time" | "part-time" | "contract" | "internship" | "remote";

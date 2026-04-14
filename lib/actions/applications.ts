@@ -130,6 +130,22 @@ export async function updateApplicationStatusAction(
 
   if (error) return { error: error.message };
 
+  // N4.2: Send email notification for accepted/rejected (fire-and-forget)
+  if (["accepted", "rejected"].includes(parsed.data.status) && process.env.CRON_SECRET) {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
+    fetch(`${baseUrl}/api/email/notify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CRON_SECRET}`,
+      },
+      body: JSON.stringify({
+        application_id: parsed.data.application_id,
+        status: parsed.data.status,
+      }),
+    }).catch(() => {});
+  }
+
   revalidatePath("/employer/jobs");
   return { error: null };
 }

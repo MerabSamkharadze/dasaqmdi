@@ -303,3 +303,65 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 
 ### Domain: `www.dasaqmdi.com` (Vercel)
 ### Bot: `@dasaqmdi_bot` (Telegram)
+
+---
+
+## Phase 12: Email Notifications (Resend)
+
+**მიზანი**: აპლიკანტს ეცნობება როცა **მიიღეს (accepted)** ან **უარყვეს (rejected)**. სხვა სტატუსებზე (pending, reviewed, shortlisted) email არ იგზავნება. Employer-ს შეუძლია templates-ის კასტომიზაცია.
+
+### N1 — DB: Email Templates
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N1.1 | Migration `010_email_templates.sql` | `email_templates` table + RLS + unique(company_id, type) | ✅ |
+| N1.2 | Default templates | `lib/email/default-templates.ts` — accepted/rejected en/ka + `renderTemplate()` | ✅ |
+| N1.3 | Types | `database.ts` — EmailTemplate Row/Insert/Update | ✅ |
+
+### N2 — Resend Setup
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N2.1 | `npm install resend` | Resend SDK | ✅ |
+| N2.2 | Domain verification | `dasaqmdi.com` DNS records — **შენ უნდა გააკეთო resend.com-ზე** | ⏳ შენზეა |
+| N2.3 | Env var | `RESEND_API_KEY` — **შენ უნდა დაამატო .env.local + Vercel-ში** | ⏳ შენზეა |
+
+### N3 — Email HTML Template
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N3.1 | HTML template | `lib/email/application-status-template.ts` — dark bg, gold accent, job link button | ✅ |
+| N3.2 | Variable substitution | `{applicant_name}`, `{job_title}`, `{company_name}` → `renderTemplate()` | ✅ |
+| N3.3 | ენის არჩევა | `preferred_language`-ის მიხედვით ka/en subject + body | ✅ |
+
+### N4 — API Route + Action Hook
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N4.1 | `/api/email/notify` route | POST, CRON_SECRET, fetch app+profile+job+company → custom/default template → Resend | ✅ |
+| N4.2 | Action hook | `updateApplicationStatusAction` — accepted/rejected → fire-and-forget notify | ✅ |
+
+### N5 — Employer Template Editor UI
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N5.1 | `/employer/email-templates` გვერდი | 2 ტაბი (accepted, rejected). Subject + Body textarea, variable hints | ❌ |
+| N5.2 | Live preview | ტექსტის ცვლილებაზე real-time preview placeholders-ის ჩანაცვლებით | ❌ |
+| N5.3 | Save action | `updateEmailTemplateAction` — company_id ownership check | ❌ |
+| N5.4 | "Reset to default" | Default template-ის აღდგენის ღილაკი | ❌ |
+| N5.5 | Nav ლინკი | `nav-items.ts` — employer nav-ში "Email Templates" ლინკი | ❌ |
+
+### N6 — i18n
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| N6.1 | Nav key | `nav.emailTemplates` — "Email Templates" / "ელფოსტის შაბლონები" | ❌ |
+| N6.2 | Template editor keys | `dashboard.emailTemplates.*` — ტაბების, ფორმის, preview-ის ტექსტები | ❌ |
+
+### შესრულების თანმიმდევრობა
+
+```
+N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 → N4.1 → N4.2 → N5.1 → N5.2 → N5.3 → N5.4 → N5.5 → N6.1 → N6.2
+```
+
+**რეკომენდებული სტარტი**: N1 (DB) → N2 (Resend setup) → N3 (template) → N4 (hook) — ეს 4 ნაბიჯი საკმარისია default templates-ით მუშაობისთვის. N5 (UI editor) მოგვიანებით.
