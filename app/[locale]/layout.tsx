@@ -5,6 +5,8 @@ import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
+import { AuthModal } from "@/components/shared/auth-modal";
 import type { Locale } from "@/lib/types/enums";
 
 const inter = Inter({
@@ -60,7 +62,10 @@ export default async function LocaleLayout({
               showSpinner={false}
               shadow="0 0 10px rgba(199,174,106,0.3), 0 0 5px rgba(199,174,106,0.2)"
             />
-            {children}
+            <AuthModalProvider>
+              {children}
+              <AuthModal />
+            </AuthModalProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

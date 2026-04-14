@@ -142,7 +142,14 @@
     "resetSent": "აღდგენის ბმული გაგზავნილია! შეამოწმეთ ელ-ფოსტა.",
     "updatePassword": "პაროლის განახლება",
     "updatePasswordDescription": "შეიყვანეთ ახალი პაროლი",
-    "newPassword": "ახალი პაროლი"
+    "newPassword": "ახალი პაროლი",
+    "modalTitle": "ავტორიზაცია საჭიროა",
+    "modalDescription": "{action} საჭიროა ავტორიზაცია",
+    "modalLogin": "შესვლა",
+    "modalSignUp": "რეგისტრაცია",
+    "actionApply": "განაცხადის გასაგზავნად",
+    "actionSave": "ვაკანსიის შესანახად",
+    "actionBookmark": "ვაკანსიის ჩასანიშნად"
   },
   "profile": {
     "title": "ჩემი პროფილი",

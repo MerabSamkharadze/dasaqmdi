@@ -142,7 +142,14 @@
     "resetSent": "Reset link sent! Check your email.",
     "updatePassword": "Update Password",
     "updatePasswordDescription": "Enter your new password",
-    "newPassword": "New Password"
+    "newPassword": "New Password",
+    "modalTitle": "Sign in required",
+    "modalDescription": "To {action}, please sign in or create an account",
+    "modalLogin": "Sign In",
+    "modalSignUp": "Create Account",
+    "actionApply": "apply to this job",
+    "actionSave": "save this job",
+    "actionBookmark": "bookmark this job"
   },
   "profile": {
     "title": "My Profile",

@@ -105,9 +105,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
                 jobUrl={`https://www.dasaqmdi.com${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
                 jobTitle={title}
               />
-              {isLoggedIn && (
-                <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
-              )}
+              <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
             </div>
           </div>
 
@@ -184,9 +182,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             ) : (
               <span />
             )}
-            {isLoggedIn && (
-              <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} />
-            )}
+            <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
           </div>
         </div>
       </div>

@@ -26,6 +26,7 @@ import Link from "next/link";
 import { ViewTracker } from "@/components/jobs/view-tracker";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
+import { ApplyButton } from "@/components/jobs/apply-button";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import type { Metadata } from "next";
 
@@ -115,6 +116,7 @@ export default async function JobDetailPage({ params }: PageProps) {
   let matchResult: { score: number; matchedSkills: string[] } | null = null;
   let hasApplied = false;
   let isSeeker = false;
+  let isLoggedIn = false;
   let isJobSaved = false;
 
   const supabase = createClient();
@@ -123,6 +125,7 @@ export default async function JobDetailPage({ params }: PageProps) {
   } = await supabase.auth.getUser();
 
   if (user) {
+    isLoggedIn = true;
     const profile = await getProfile(user.id);
     isSeeker = profile?.role === "seeker";
 
@@ -246,9 +249,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               jobTitle={title}
               variant="button"
             />
-            {isSeeker && (
-              <BookmarkButton jobId={job.id} isSaved={isJobSaved} />
-            )}
+            <BookmarkButton jobId={job.id} isSaved={isJobSaved} isLoggedIn={isLoggedIn} />
             {isExpired ? (
               <Badge variant="destructive" className="text-sm px-3 py-1">{t("jobClosed")}</Badge>
             ) : hasApplied ? (
@@ -259,10 +260,8 @@ export default async function JobDetailPage({ params }: PageProps) {
                 <CheckCircle className="h-3.5 w-3.5" />
                 {t("alreadyApplied")}
               </Badge>
-            ) : isSeeker ? (
-              <Button asChild size="lg" className="rounded-xl">
-                <Link href={`/jobs/${job.id}/apply`}>{t("applyNow")}</Link>
-              </Button>
+            ) : !hasApplied ? (
+              <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
             ) : null}
           </div>
         </div>

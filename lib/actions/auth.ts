@@ -31,7 +31,12 @@ export async function loginAction(
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  // Validate returnUrl — only allow relative paths (prevent open redirect)
+  const rawReturnUrl = (formData.get("returnUrl") as string) || "";
+  const returnUrl = rawReturnUrl.startsWith("/") && !rawReturnUrl.startsWith("//")
+    ? rawReturnUrl
+    : "/dashboard";
+  redirect(returnUrl);
 }
 
 export async function signUpAction(

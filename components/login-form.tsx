@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/brand/logo";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 
 const initialState: ActionResult = { error: null };
@@ -30,6 +31,8 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [state, formAction] = useFormState(loginAction, initialState);
   const t = useTranslations("auth");
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl") ?? "";
 
   return (
     <div className={cn("flex flex-col", className)} {...props}>
@@ -48,6 +51,7 @@ export function LoginForm({
 
       {/* Form */}
       <form action={formAction} className="flex flex-col gap-5">
+        {returnUrl && <input type="hidden" name="returnUrl" value={returnUrl} />}
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email" className="text-[13px]">
