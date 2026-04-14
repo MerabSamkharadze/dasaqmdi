@@ -20,6 +20,11 @@ export const CATEGORIES = [
   { slug: "finance", label_en: "Finance", label_ka: "ფინანსები" },
   { slug: "hospitality", label_en: "Hospitality", label_ka: "ჰოსპიტალობა" },
   { slug: "construction", label_en: "Construction", label_ka: "მშენებლობა" },
+  { slug: "food-service", label_en: "Food & Service", label_ka: "კვება და სერვისი" },
+  { slug: "retail", label_en: "Retail & Sales", label_ka: "ვაჭრობა" },
+  { slug: "beauty-wellness", label_en: "Beauty & Wellness", label_ka: "სილამაზე და ჯანმრთელობა" },
+  { slug: "logistics", label_en: "Logistics & Transport", label_ka: "ლოჯისტიკა და ტრანსპორტი" },
+  { slug: "healthcare", label_en: "Healthcare", label_ka: "ჯანდაცვა" },
 ] as const;
 
 export function buildCategoryKeyboard(

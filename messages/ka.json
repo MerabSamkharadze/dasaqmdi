@@ -103,7 +103,12 @@
     "administration": "ადმინისტრაცია",
     "finance": "ფინანსები",
     "hospitality": "სტუმართმოყვარეობა",
-    "construction": "მშენებლობა"
+    "construction": "მშენებლობა",
+    "food-service": "კვება და სერვისი",
+    "retail": "ვაჭრობა",
+    "beauty-wellness": "სილამაზე და ჯანმრთელობა",
+    "logistics": "ლოჯისტიკა და ტრანსპორტი",
+    "healthcare": "ჯანდაცვა"
   },
   "auth": {
     "login": "შესვლა",

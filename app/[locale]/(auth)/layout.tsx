@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { AuthSearchBar } from "@/components/auth/auth-search-bar";
 import { Logo } from "@/components/brand/logo";
@@ -8,6 +10,11 @@ export default async function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Redirect authenticated users to dashboard
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) redirect("/dashboard");
+
   const t = await getTranslations("home");
   const tJobs = await getTranslations("jobs");
 

@@ -58,12 +58,6 @@ export async function Footer() {
                 </svg>
                 {t("telegramSubscribe")}
               </a>
-              <Link href="/auth/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-                {t("login")}
-              </Link>
-              <Link href="/auth/sign-up" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
-                {t("signUp")}
-              </Link>
             </nav>
           </div>
         </div>

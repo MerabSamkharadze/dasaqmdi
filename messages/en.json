@@ -103,7 +103,12 @@
     "administration": "Administration",
     "finance": "Finance",
     "hospitality": "Hospitality",
-    "construction": "Construction"
+    "construction": "Construction",
+    "food-service": "Food & Service",
+    "retail": "Retail & Sales",
+    "beauty-wellness": "Beauty & Wellness",
+    "logistics": "Logistics & Transport",
+    "healthcare": "Healthcare"
   },
   "auth": {
     "login": "Log In",
