@@ -1,26 +1,32 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function HeroIllustration({ src = "/illustrations/hero.svg" }: { src?: string }) {
-  const ref = useRef<HTMLIFrameElement>(null);
+  const [svg, setSvg] = useState<string>("");
+  const [key, setKey] = useState(0);
 
-  function replay() {
-    const iframe = ref.current;
-    if (!iframe) return;
-    const s = iframe.src;
-    iframe.src = "";
-    iframe.src = s;
-  }
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch(src, { cache: "no-store" });
+      const text = await res.text();
+      setSvg(text);
+      setKey((k) => k + 1);
+    } catch {
+      // ignore — fallback is empty placeholder
+    }
+  }, [src]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   return (
-    <iframe
-      ref={ref}
-      src={src}
-      title="Illustration"
-      className="w-full aspect-square border-0"
-      style={{ background: "transparent" }}
-      onMouseEnter={replay}
+    <div
+      key={key}
+      onMouseEnter={load}
+      className="w-full aspect-square [&>svg]:w-full [&>svg]:h-full"
+      dangerouslySetInnerHTML={{ __html: svg }}
     />
   );
 }
