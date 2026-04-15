@@ -5,6 +5,7 @@ import { loadNotoGeorgian, georgianFontConfig } from "@/lib/og-fonts";
 import { siteConfig } from "@/lib/config";
 
 export const runtime = "edge";
+export const dynamic = "force-dynamic";
 export const alt = `Job posting on ${siteConfig.domain}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -27,14 +28,33 @@ export default async function OGImage({
   const fontConfig = georgianFontConfig(notoGeorgian);
 
   const locale = params.locale ?? "ka";
-  const supabase = publicClient();
-  const { data: job } = await supabase
-    .from("jobs")
-    .select(
-      "title, title_ka, city, job_type, salary_min, salary_max, salary_currency, company:companies!inner(name, name_ka, logo_url)",
-    )
-    .eq("id", params.id)
-    .single();
+
+  type JobRow = {
+    title: string;
+    title_ka: string | null;
+    city: string | null;
+    job_type: string;
+    salary_min: number | null;
+    salary_max: number | null;
+    salary_currency: string;
+    company: { name: string; name_ka: string | null; logo_url: string | null };
+  };
+
+  // Wrap query — on edge, any unexpected throw becomes an opaque 404
+  let job: JobRow | null = null;
+  try {
+    const supabase = publicClient();
+    const { data } = await supabase
+      .from("jobs")
+      .select(
+        "title, title_ka, city, job_type, salary_min, salary_max, salary_currency, company:companies!inner(name, name_ka, logo_url)",
+      )
+      .eq("id", params.id)
+      .single();
+    job = data as unknown as JobRow;
+  } catch {
+    job = null;
+  }
 
   if (!job) {
     return new ImageResponse(
@@ -123,48 +143,23 @@ export default async function OGImage({
         />
 
         <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
-          {companyObj.logo_url ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 64,
-                height: 64,
-                borderRadius: 14,
-                background: "rgba(199,174,106,0.08)",
-                border: "1px solid rgba(199,174,106,0.2)",
-                overflow: "hidden",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={companyObj.logo_url}
-                alt=""
-                width={52}
-                height={52}
-                style={{ objectFit: "contain", borderRadius: 8 }}
-              />
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: 64,
-                height: 64,
-                borderRadius: 14,
-                background: "rgba(199,174,106,0.1)",
-                border: "1px solid rgba(199,174,106,0.2)",
-                fontSize: 28,
-                color: "#C7AE6A",
-                fontWeight: 700,
-              }}
-            >
-              {companyName.charAt(0).toUpperCase()}
-            </div>
-          )}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 64,
+              height: 64,
+              borderRadius: 14,
+              background: "rgba(199,174,106,0.1)",
+              border: "1px solid rgba(199,174,106,0.2)",
+              fontSize: 28,
+              color: "#C7AE6A",
+              fontWeight: 700,
+            }}
+          >
+            {companyName.charAt(0).toUpperCase()}
+          </div>
           <div style={{ fontSize: 24, color: "#C7AE6A", fontWeight: 600 }}>
             {companyName}
           </div>
