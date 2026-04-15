@@ -7,6 +7,7 @@ import { calculateMatch } from "@/lib/matching";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
 import { ApplicationDetails } from "@/components/dashboard/application-details";
 import { User, Calendar, ExternalLink, Zap } from "lucide-react";
@@ -102,9 +103,7 @@ export default async function JobApplicationsPage({
         <h1 className="text-lg font-semibold tracking-tight">
           {t("applicants")} — {title}
         </h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
-          {applications.length}
-        </span>
+        <CountBadge>{applications.length}</CountBadge>
       </div>
 
       <div className="flex flex-col gap-2.5">

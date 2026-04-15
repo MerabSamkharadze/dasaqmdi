@@ -2,6 +2,7 @@ import { getAllJobs } from "@/lib/queries/admin";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { AdminDeleteJobButton } from "@/components/dashboard/admin-delete-job-button";
 import { Calendar } from "lucide-react";
 import type { Metadata } from "next";
@@ -25,7 +26,7 @@ export default async function AdminJobsPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("manageJobs")}</h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">{jobs.length}</span>
+        <CountBadge>{jobs.length}</CountBadge>
       </div>
 
       <div className="flex flex-col gap-2">

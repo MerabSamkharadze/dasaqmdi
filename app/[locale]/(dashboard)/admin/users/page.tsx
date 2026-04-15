@@ -1,6 +1,7 @@
 import { getAllUsers } from "@/lib/queries/admin";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { AdminRoleSelect } from "@/components/dashboard/admin-role-select";
 import { User } from "lucide-react";
 import Image from "next/image";
@@ -24,7 +25,7 @@ export default async function AdminUsersPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("users")}</h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">{users.length}</span>
+        <CountBadge>{users.length}</CountBadge>
       </div>
 
       <div className="flex flex-col gap-2">

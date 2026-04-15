@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { APPLICATION_STATUSES } from "@/lib/types/enums";
 import { Loader2, Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ActionResult } from "@/lib/types";
 
 type StatusUpdateProps = {
@@ -20,6 +21,7 @@ type StatusUpdateProps = {
 
 // O12: Optimistic — auto-submit on select change, no Update button needed
 export function ApplicationStatusUpdate({ applicationId, currentStatus }: StatusUpdateProps) {
+  const t = useTranslations("applications.status");
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -54,7 +56,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
         <SelectContent>
           {APPLICATION_STATUSES.map((status) => (
             <SelectItem key={status} value={status} className="text-[12px]">
-              {status.charAt(0).toUpperCase() + status.slice(1)}
+              {t(status)}
             </SelectItem>
           ))}
         </SelectContent>

@@ -6,6 +6,7 @@ import { markApplicationsBatchViewedAction } from "@/lib/actions/applications";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { ApplicationStatusUpdate } from "@/components/dashboard/application-status-update";
 import { ApplicationDetails } from "@/components/dashboard/application-details";
 import { ApplicationFilters } from "@/components/dashboard/application-filters";
@@ -105,9 +106,9 @@ export default async function EmployerAllApplicationsPage({
     <div className="flex flex-col gap-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("title")}</h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
+        <CountBadge>
           {filtered.length}{filtered.length !== allApplications.length ? ` / ${allApplications.length}` : ""}
-        </span>
+        </CountBadge>
       </div>
 
       {/* Filters */}

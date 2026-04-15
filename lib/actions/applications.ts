@@ -125,6 +125,8 @@ export async function updateApplicationStatusAction(
     .update({
       status: parsed.data.status,
       employer_notes: parsed.data.employer_notes || null,
+      is_viewed: true,
+      viewed_at: new Date().toISOString(),
     })
     .eq("id", parsed.data.application_id);
 
@@ -147,6 +149,8 @@ export async function updateApplicationStatusAction(
   }
 
   revalidatePath("/employer/jobs");
+  revalidatePath("/employer/applications");
+  revalidatePath("/dashboard");
   return { error: null };
 }
 

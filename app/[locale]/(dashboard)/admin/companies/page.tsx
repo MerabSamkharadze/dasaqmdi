@@ -2,6 +2,7 @@ import { getAllCompaniesAdmin } from "@/lib/queries/admin";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { AdminVerifyButton } from "@/components/dashboard/admin-verify-button";
 import { Building2, CheckCircle } from "lucide-react";
 import Image from "next/image";
@@ -20,9 +21,7 @@ export default async function AdminCompaniesPage() {
         <h1 className="text-lg font-semibold tracking-tight">
           {t("manageCompanies")}
         </h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
-          {companies.length}
-        </span>
+        <CountBadge>{companies.length}</CountBadge>
       </div>
 
       <div className="flex flex-col gap-2">

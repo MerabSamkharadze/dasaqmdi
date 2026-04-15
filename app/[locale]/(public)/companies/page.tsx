@@ -2,6 +2,7 @@ import { getAllCompanies } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Building2, MapPin, Users, CheckCircle } from "lucide-react";
+import { CountBadge } from "@/components/shared/count-badge";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -43,9 +44,7 @@ export default async function CompaniesPage() {
         <h1 className="text-lg font-semibold tracking-tight">
           {t("companies")}
         </h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
-          {companies.length}
-        </span>
+        <CountBadge>{companies.length}</CountBadge>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

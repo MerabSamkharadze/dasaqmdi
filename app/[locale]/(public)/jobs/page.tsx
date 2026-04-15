@@ -4,6 +4,7 @@ import { getProfile } from "@/lib/queries/profile";
 import { createClient } from "@/lib/supabase/server";
 import { calculateMatchScores } from "@/lib/matching";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
+import { CountBadge } from "@/components/shared/count-badge";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
@@ -143,9 +144,7 @@ export default async function JobsPage({
           <h1 className="text-lg font-semibold tracking-tight text-foreground">
             {t("title")}
           </h1>
-          <span className="text-xs text-muted-foreground/60 tabular-nums">
-            {totalCount}
-          </span>
+          <CountBadge>{totalCount}</CountBadge>
         </div>
       </div>
 

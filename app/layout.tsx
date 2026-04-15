@@ -8,11 +8,11 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.dasaqmdi.com"),
   title: {
-    default: "დასაქმდი — სამუშაოს ძიება საქართველოში",
-    template: "%s | დასაქმდი",
+    default: "დასაქმდი — ვაკანსიები და სამუშაოს ძიება საქართველოში | dasaqmdi.com",
+    template: "%s | დასაქმდი — ვაკანსიები საქართველოში",
   },
   description:
-    "იპოვე შენი საოცნებო სამუშაო საქართველოში. ათასობით ვაკანსია საუკეთესო დამსაქმებლებისგან.",
+    "იპოვე სამუშაო საქართველოში. უახლესი ვაკანსიები IT, მარკეტინგი, ფინანსები, კვება, ლოჯისტიკა და სხვა სფეროებში. AI-ით ვაკანსიების შექმნა, Smart Matching და Telegram შეტყობინებები.",
   openGraph: {
     siteName: "dasaqmdi.com",
     locale: "ka_GE",

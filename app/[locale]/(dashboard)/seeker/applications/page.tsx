@@ -6,6 +6,7 @@ import { localized, cn } from "@/lib/utils";
 import { ApplicationStatusBadge } from "@/components/applications/application-status-badge";
 import { DeleteApplicationButton } from "@/components/applications/delete-application-button";
 import { Badge } from "@/components/ui/badge";
+import { CountBadge } from "@/components/shared/count-badge";
 import { Building2, Calendar } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,9 +58,7 @@ export default async function SeekerApplicationsPage() {
     <div className="flex-1 flex flex-col gap-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("myApplications")}</h1>
-        <span className="text-[12px] text-muted-foreground/70 tabular-nums">
-          {applications.length}
-        </span>
+        <CountBadge>{applications.length}</CountBadge>
       </div>
 
       <div className="flex flex-col gap-2.5">

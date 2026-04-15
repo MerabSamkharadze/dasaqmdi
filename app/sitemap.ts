@@ -25,6 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .order("created_at", { ascending: false })
     .limit(5000);
 
+  console.log()
+
   const jobPages: MetadataRoute.Sitemap = (jobs ?? []).flatMap((job) => [
     {
       url: `${BASE_URL}/jobs/${job.id}`,
