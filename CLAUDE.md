@@ -265,6 +265,10 @@ components/
 - Nav items: single source `components/dashboard/nav-items.ts`
 - All i18n in `messages/ka.json` + `messages/en.json` — no hardcoded text
 - **No hardcoded brand/URL strings** — always use `siteConfig` from `@/lib/config`. Never write `"dasaqmdi.com"`, `"https://www.dasaqmdi.com"`, `"https://t.me/dasaqmdi_bot"`, or email from-addresses inline. Use `siteConfig.url`, `siteConfig.domain`, `siteConfig.brand.name`, `siteConfig.social.telegramBot`, `siteConfig.email.from`, `siteConfig.email.noreply`. If a new brand-related constant is needed, **add it to `lib/config.ts` first**, then import it
+- **Email HTML templates must escape user-supplied data** — always wrap user data (names, titles, bodies) with `escapeHtml()` from `@/lib/email/escape` before interpolating into HTML. URLs get `encodeURI()`. Never insert raw DB strings into `<p>${x}</p>`
+- **Webhook endpoints must verify signatures** — Telegram: `x-telegram-bot-api-secret-token` header; Lemon Squeezy: HMAC via `crypto.timingSafeEqual`. New webhooks must fail closed on missing/invalid signatures
+- **File ownership must be verified server-side** — when a client submits a storage path (resume, avatar, logo), check it starts with `${user.id}/` before accepting. Never trust client-supplied URLs/paths
+- **New migrations must enable RLS + explicit policies** — `ALTER TABLE ... ENABLE ROW LEVEL SECURITY;` + separate SELECT/INSERT/UPDATE/DELETE policies. Never rely on implicit blocking
 - Storage buckets: `avatars`, `resumes` (private), `company-logos` — whitelist in `lib/storage.ts`
 - Password minimum: 8 characters
 - Caching: `React.cache()` for profile, `unstable_cache` for categories (1hr) + jobs (30s), `revalidate: 3600` on company pages, ISR 60s on job detail

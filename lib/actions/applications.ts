@@ -68,6 +68,10 @@ export async function applyToJobAction(
     return { error: parsed.error.issues[0].message };
   }
 
+  if (parsed.data.resume_url && !parsed.data.resume_url.startsWith(`${user.id}/`)) {
+    return { error: "Invalid resume" };
+  }
+
   // Check if already applied
   const { data: existing } = await supabase
     .from("applications")

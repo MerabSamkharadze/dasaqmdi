@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/config";
+import { escapeHtml } from "@/lib/email/escape";
 
 export function buildStatusEmailHtml({
   subject,
@@ -20,11 +21,14 @@ export function buildStatusEmailHtml({
     ? `ეს წერილი გამოგზავნილია ${siteConfig.domain}-იდან`
     : `This email was sent from ${siteConfig.domain}`;
 
-  // Convert plain text body to HTML paragraphs
   const bodyHtml = body
     .split("\n\n")
-    .map((p) => `<p style="margin:0 0 16px;line-height:1.6;color:#e2e0d5;">${p.replace(/\n/g, "<br>")}</p>`)
+    .map((p) => `<p style="margin:0 0 16px;line-height:1.6;color:#e2e0d5;">${escapeHtml(p).replace(/\n/g, "<br>")}</p>`)
     .join("");
+
+  const safeSubject = escapeHtml(subject);
+  const safeJobTitle = escapeHtml(jobTitle);
+  const safeJobUrl = encodeURI(jobUrl);
 
   return `
 <!DOCTYPE html>
@@ -32,7 +36,7 @@ export function buildStatusEmailHtml({
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>${subject}</title>
+  <title>${safeSubject}</title>
 </head>
 <body style="margin:0;padding:0;background:#1a1614;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#1a1614;padding:32px 16px;">
@@ -58,8 +62,8 @@ export function buildStatusEmailHtml({
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;">
                 <tr>
                   <td align="center">
-                    <a href="${jobUrl}" style="display:inline-block;background:linear-gradient(135deg,#C7AE6A,#b89d5a);color:#1a1614;text-decoration:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;">
-                      ${viewJobLabel}: ${jobTitle}
+                    <a href="${safeJobUrl}" style="display:inline-block;background:linear-gradient(135deg,#C7AE6A,#b89d5a);color:#1a1614;text-decoration:none;padding:12px 28px;border-radius:10px;font-size:14px;font-weight:600;">
+                      ${viewJobLabel}: ${safeJobTitle}
                     </a>
                   </td>
                 </tr>

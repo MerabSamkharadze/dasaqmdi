@@ -1,6 +1,8 @@
 import type { DigestEntry } from "@/lib/queries/digest";
 import { localized } from "@/lib/utils";
 import { siteConfig } from "@/lib/config";
+import { escapeHtml } from "@/lib/email/escape";
+import { signUnsubscribe } from "@/lib/email/tokens";
 
 const SITE_URL = siteConfig.url;
 const BRAND_DOMAIN = siteConfig.domain;
@@ -54,24 +56,25 @@ export function buildDigestEmail(entry: DigestEntry): { subject: string; html: s
     || entry.seeker.full_name_ka
     || "";
 
-  const unsubscribeUrl = `${SITE_URL}/api/digest/unsubscribe?id=${entry.seeker.id}`;
+  const unsubscribeUrl = `${SITE_URL}/api/digest/unsubscribe?id=${entry.seeker.id}&token=${signUnsubscribe(entry.seeker.id)}`;
 
   const jobRows = entry.topJobs
     .map(({ job, score, matchedSkills }) => {
-      const title = localized(job, "title", lang);
-      const company = localized(job.company, "name", lang);
-      const salary = formatSalary(job.salary_min, job.salary_max, job.salary_currency);
-      const jobUrl = `${SITE_URL}/jobs/${job.id}`;
+      const title = escapeHtml(localized(job, "title", lang));
+      const company = escapeHtml(localized(job.company, "name", lang));
+      const city = job.city ? escapeHtml(job.city) : "";
+      const salary = escapeHtml(formatSalary(job.salary_min, job.salary_max, job.salary_currency));
+      const jobUrl = encodeURI(`${SITE_URL}/jobs/${job.id}`);
 
       return `
         <tr>
           <td style="padding: 16px 0; border-bottom: 1px solid #e8e0c8;">
             <a href="${jobUrl}" style="text-decoration: none; color: inherit;">
               <div style="font-size: 15px; font-weight: 600; color: #160905; margin-bottom: 4px;">${title}</div>
-              <div style="font-size: 13px; color: #725252; margin-bottom: 6px;">${company}${job.city ? ` · ${job.city}` : ""}${salary ? ` · ${salary}` : ""}</div>
+              <div style="font-size: 13px; color: #725252; margin-bottom: 6px;">${company}${city ? ` · ${city}` : ""}${salary ? ` · ${salary}` : ""}</div>
               <div style="display: inline-flex; gap: 6px; flex-wrap: wrap;">
                 <span style="display: inline-block; background: #f5ebb4; color: #362828; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 6px;">${s.matchLabel}: ${score}%</span>
-                ${matchedSkills.slice(0, 3).map((sk) => `<span style="display: inline-block; background: #fbf7e1; color: #543d3d; font-size: 11px; padding: 2px 8px; border-radius: 6px;">${sk}</span>`).join("")}
+                ${matchedSkills.slice(0, 3).map((sk) => `<span style="display: inline-block; background: #fbf7e1; color: #543d3d; font-size: 11px; padding: 2px 8px; border-radius: 6px;">${escapeHtml(sk)}</span>`).join("")}
               </div>
             </a>
           </td>
@@ -93,7 +96,7 @@ export function buildDigestEmail(entry: DigestEntry): { subject: string; html: s
     <!-- Card -->
     <div style="background: #fffefa; border-radius: 12px; border: 1px solid #e8e0c8; padding: 24px 24px 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
       <div style="font-size: 15px; color: #160905; margin-bottom: 4px;">
-        ${s.greeting}${name ? `, ${name}` : ""}!
+        ${s.greeting}${name ? `, ${escapeHtml(name)}` : ""}!
       </div>
       <div style="font-size: 13px; color: #725252; margin-bottom: 20px;">
         ${s.intro}
