@@ -377,7 +377,12 @@ function setupBotHandlers() {
 // Initialize handlers once
 const bot = setupBotHandlers();
 
-// Grammy webhook handler for Next.js
 const handler = webhookCallback(bot, "std/http");
 
-export const POST = handler;
+export async function POST(req: Request) {
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
+  if (secret && req.headers.get("x-telegram-bot-api-secret-token") !== secret) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+  return handler(req);
+}

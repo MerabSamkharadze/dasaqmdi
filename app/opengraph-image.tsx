@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 import { siteConfig } from "@/lib/config";
+import { loadNotoGeorgian } from "@/lib/og-fonts";
 
 export const runtime = "edge";
 export const alt = `${siteConfig.domain} — ვაკანსიები საქართველოში`;
@@ -7,10 +8,7 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OGImage() {
-  // Load Georgian font for proper rendering
-  const notoGeorgian = await fetch(
-    new URL("https://fonts.gstatic.com/s/notosansgeorgian/v44/PlIaFke5O6RzLfvNNVSitxkr76PRHBC4Ytyq-Gof7PUs4S7zWn-8YDB09HFNdpvnzFj-f5WK0OQV.woff2")
-  ).then((res) => res.arrayBuffer());
+  const notoGeorgian = await loadNotoGeorgian();
 
   return new ImageResponse(
     (

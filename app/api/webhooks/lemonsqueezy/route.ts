@@ -3,18 +3,18 @@ import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SubscriptionPlan } from "@/lib/types";
 
-const WEBHOOK_SECRET = process.env.LEMONSQUEEZY_WEBHOOK_SECRET!;
-
 function verifySignature(rawBody: string, signature: string): boolean {
-  const hash = crypto
-    .createHmac("sha256", WEBHOOK_SECRET)
-    .update(rawBody)
-    .digest("hex");
+  const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET;
+  if (!secret) {
+    console.error("LEMONSQUEEZY_WEBHOOK_SECRET is not configured");
+    return false;
+  }
 
-  return crypto.timingSafeEqual(
-    Buffer.from(hash),
-    Buffer.from(signature)
-  );
+  const hash = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+  const hashBuf = Buffer.from(hash);
+  const sigBuf = Buffer.from(signature);
+  if (hashBuf.length !== sigBuf.length) return false;
+  return crypto.timingSafeEqual(hashBuf, sigBuf);
 }
 
 function variantToPlan(variantId: string): SubscriptionPlan {

@@ -4,8 +4,10 @@
  * so we want to avoid Google Fonts latency on cold requests.
  */
 
+// Satori supports TTF/OTF/WOFF (NOT WOFF2). jsDelivr serves the fontsource
+// package directly — more reliable than Google Fonts CDN for edge fetches.
 const NOTO_GEORGIAN_URL =
-  "https://fonts.gstatic.com/s/notosansgeorgian/v44/PlIaFke5O6RzLfvNNVSitxkr76PRHBC4Ytyq-Gof7PUs4S7zWn-8YDB09HFNdpvnzFj-f5WK0OQV.woff2";
+  "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-georgian@5.0.11/files/noto-sans-georgian-georgian-500-normal.woff";
 
 export async function loadNotoGeorgian(): Promise<ArrayBuffer> {
   const res = await fetch(NOTO_GEORGIAN_URL, {
@@ -15,7 +17,14 @@ export async function loadNotoGeorgian(): Promise<ArrayBuffer> {
   if (!res.ok) {
     throw new Error(`Failed to load Noto Sans Georgian: ${res.status}`);
   }
-  return res.arrayBuffer();
+  const buffer = await res.arrayBuffer();
+  // Sanity check — Satori will reject HTML error pages with a cryptic
+  // "Unsupported OpenType signature <!DO" message, so surface it clearly.
+  const header = new Uint8Array(buffer.slice(0, 4));
+  if (header[0] === 0x3c) {
+    throw new Error("Font CDN returned HTML instead of binary font file");
+  }
+  return buffer;
 }
 
 export function georgianFontConfig(data: ArrayBuffer) {
