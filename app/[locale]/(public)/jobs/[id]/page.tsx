@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const path = `/jobs/${params.id}`;
   const alternates = buildAlternates(path, params.locale);
   const fullTitle = `${title} — ${companyName}`;
+  const ogImageUrl = `/api/og/job/${params.id}?locale=${params.locale}`;
 
   return {
     title: fullTitle,
@@ -61,13 +62,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: alternates.canonical as string,
       siteName: siteConfig.domain,
       locale: params.locale === "ka" ? "ka_GE" : "en_US",
-      // images intentionally omitted — Next.js auto-injects opengraph-image.tsx
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: fullTitle }],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      // images auto-injected from opengraph-image.tsx
+      images: [ogImageUrl],
     },
   };
 }
