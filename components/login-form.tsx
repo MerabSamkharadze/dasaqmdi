@@ -6,7 +6,7 @@ import type { ActionResult } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Logo } from "@/components/brand/logo";
+import { HeroIllustration } from "@/components/shared/hero-illustration";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
@@ -36,9 +36,11 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col", className)} {...props}>
-      {/* Mobile logo */}
-      <div className="flex lg:hidden justify-center mb-10">
-        <Logo className="[&_svg]:w-14 [&_svg]:h-14" />
+      {/* Illustration */}
+      <div className="flex justify-center mb-6">
+        <div className="w-36">
+          <HeroIllustration src="/illustrations/laptop.svg" />
+        </div>
       </div>
 
       {/* Header */}
