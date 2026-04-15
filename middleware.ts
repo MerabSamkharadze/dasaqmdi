@@ -16,7 +16,25 @@ function isPublicPath(pathname: string): boolean {
   );
 }
 
+// Metadata routes (og image / twitter / icons / sitemap) must pass through
+// locale rewriting, but skip auth and session work — crawlers have no cookies.
+function isMetadataRoute(pathname: string): boolean {
+  return (
+    pathname.endsWith("/opengraph-image") ||
+    pathname.endsWith("/twitter-image") ||
+    pathname.endsWith("/icon") ||
+    pathname.endsWith("/apple-icon") ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/robots.txt"
+  );
+}
+
 export async function middleware(request: NextRequest) {
+  // Metadata routes: only intl rewrite, no auth/session
+  if (isMetadataRoute(request.nextUrl.pathname)) {
+    return intlMiddleware(request);
+  }
+
   // Step 1: Refresh Supabase session (reads/writes auth cookies)
   const { user, supabaseResponse } = await updateSession(request);
 
@@ -45,6 +63,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|opengraph-image|twitter-image|icon|apple-icon|sitemap.xml|robots.txt|.*/opengraph-image|.*/twitter-image|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
