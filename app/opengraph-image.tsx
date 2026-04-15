@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
+import { siteConfig } from "@/lib/config";
 
 export const runtime = "edge";
-export const alt = "dasaqmdi.com — ვაკანსიები საქართველოში";
+export const alt = `${siteConfig.domain} — ვაკანსიები საქართველოში`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -59,7 +60,7 @@ export default async function OGImage() {
 
         {/* Brand name */}
         <div style={{ fontSize: 56, fontWeight: 800, color: "#C7AE6A", letterSpacing: "2px", marginBottom: "16px" }}>
-          dasaqmdi.com
+          {siteConfig.domain}
         </div>
 
         {/* Tagline — Georgian */}

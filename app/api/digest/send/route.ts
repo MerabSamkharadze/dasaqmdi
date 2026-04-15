@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { buildDigestData } from "@/lib/queries/digest";
 import { buildDigestEmail } from "@/lib/email/digest-template";
+import { siteConfig } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       const { subject, html } = buildDigestEmail(entry);
 
       const { error } = await resend.emails.send({
-        from: "dasaqmdi.com <digest@dasaqmdi.com>",
+        from: siteConfig.email.from,
         to: entry.seeker.email,
         subject,
         html,

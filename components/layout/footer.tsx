@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
+import { siteConfig } from "@/lib/config";
 
 export async function Footer() {
   const t = await getTranslations("nav");
@@ -45,7 +46,7 @@ export async function Footer() {
             </h4>
             <nav className="flex flex-col gap-2">
               <a
-                href="https://t.me/dasaqmdi_bot"
+                href={siteConfig.social.telegramBot}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-2 rounded-lg bg-[#229ED9]/10 px-3 py-2 text-sm font-medium text-[#229ED9] transition-all duration-200 hover:bg-[#229ED9] hover:text-white hover:shadow-md"
@@ -65,7 +66,7 @@ export async function Footer() {
         {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-border/20">
           <p className="text-xs text-muted-foreground/40 tracking-normal">
-            &copy; {new Date().getFullYear()} დასაქმდი &mdash; dasaqmdi.com
+            &copy; {new Date().getFullYear()} {siteConfig.brand.name} &mdash; {siteConfig.domain}
           </p>
         </div>
       </div>

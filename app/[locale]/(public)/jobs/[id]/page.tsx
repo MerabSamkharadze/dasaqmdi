@@ -6,6 +6,8 @@ import { createClient } from "@/lib/supabase/server";
 import { calculateMatch } from "@/lib/matching";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,15 +42,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = localized(job, "title", params.locale);
   const companyName = localized(job.company, "name", params.locale);
-  const description = localized(job, "description", params.locale)?.slice(0, 160);
+  const rawDescription = localized(job, "description", params.locale) ?? "";
+  const description =
+    rawDescription.replace(/\s+/g, " ").trim().slice(0, 160) || undefined;
+
+  const path = `/jobs/${params.id}`;
+  const alternates = buildAlternates(path, params.locale);
+  const fullTitle = `${title} — ${companyName}`;
 
   return {
-    title: `${title} — ${companyName} | dasaqmdi.com`,
+    title: fullTitle,
     description,
+    alternates,
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       type: "article",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: params.locale === "ka" ? "ka_GE" : "en_US",
+      // images intentionally omitted — Next.js auto-injects opengraph-image.tsx
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
+      // images auto-injected from opengraph-image.tsx
     },
   };
 }
@@ -395,7 +414,7 @@ export default async function JobDetailPage({ params }: PageProps) {
 
       {/* ── Telegram CTA ── */}
       <a
-        href="https://t.me/dasaqmdi_bot"
+        href={siteConfig.social.telegramBot}
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center gap-2 rounded-xl border border-border/60 bg-card py-4 text-[13px] text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-200"

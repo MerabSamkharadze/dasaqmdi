@@ -14,24 +14,42 @@ import Link from "next/link";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { RefreshButton } from "@/components/shared/refresh-button";
 import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
-export const metadata: Metadata = {
-  title: "დასაქმდი — ვაკანსიები საქართველოში | dasaqmdi.com",
-  description:
-    "იპოვე სამუშაო საქართველოში. უახლესი ვაკანსიები IT, მარკეტინგი, ფინანსები, ადმინისტრაცია და სხვა სფეროებში.",
-  openGraph: {
-    title: "დასაქმდი — ვაკანსიები საქართველოში",
-    description: "იპოვე სამუშაო საქართველოში. IT, მარკეტინგი, ფინანსები და სხვა სფეროები.",
-    url: "https://www.dasaqmdi.com",
-    siteName: "dasaqmdi.com",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "დასაქმდი — ვაკანსიები საქართველოში",
-    description: "იპოვე სამუშაო საქართველოში.",
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const isKa = params.locale === "ka";
+  const title = isKa
+    ? "დასაქმდი — ვაკანსიები საქართველოში"
+    : "dasaqmdi — Jobs in Georgia";
+  const description = isKa
+    ? "იპოვე სამუშაო საქართველოში. უახლესი ვაკანსიები IT, მარკეტინგი, ფინანსები, ადმინისტრაცია და სხვა სფეროებში."
+    : "Find your next job in Georgia. Latest openings in IT, marketing, finance, administration and more.";
+  const alternates = buildAlternates("/", params.locale);
+
+  return {
+    title,
+    description,
+    alternates,
+    openGraph: {
+      title,
+      description,
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function HomePage({
   searchParams,

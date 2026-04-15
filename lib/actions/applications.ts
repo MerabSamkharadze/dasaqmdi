@@ -8,6 +8,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "@/lib/types";
+import { siteConfig } from "@/lib/config";
 
 async function verifyApplicationOwnership(
   supabase: ReturnType<typeof createClient>,
@@ -134,7 +135,7 @@ export async function updateApplicationStatusAction(
 
   // N4.2: Send email notification for accepted/rejected (fire-and-forget)
   if (["accepted", "rejected"].includes(parsed.data.status) && process.env.CRON_SECRET) {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
+    const baseUrl = siteConfig.url;
     fetch(`${baseUrl}/api/email/notify`, {
       method: "POST",
       headers: {

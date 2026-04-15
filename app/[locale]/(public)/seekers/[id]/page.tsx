@@ -6,6 +6,8 @@ import { ShareButton } from "@/components/shared/share-button";
 import { User, MapPin, Calendar, Briefcase, Code2 } from "lucide-react";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
 type PageProps = {
   params: { id: string; locale: string };
@@ -17,14 +19,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const name = profile.full_name || profile.full_name_ka || "User";
   const skills = profile.skills?.slice(0, 5).join(", ") ?? "";
+  const description = skills ? `${name} — ${skills}` : `${name} on ${siteConfig.domain}`;
+  const alternates = buildAlternates(`/seekers/${params.id}`, params.locale);
+  const isKa = params.locale === "ka";
 
   return {
-    title: `${name} — dasaqmdi.com`,
-    description: skills ? `${name} — ${skills}` : `${name} on dasaqmdi.com`,
+    title: name,
+    description,
+    alternates,
     openGraph: {
-      title: `${name} — dasaqmdi.com`,
-      description: skills ? `Skills: ${skills}` : `View ${name}'s profile`,
+      title: name,
+      description,
       type: "profile",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+      ...(profile.avatar_url && { images: [profile.avatar_url] }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
     },
   };
 }
@@ -39,7 +54,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const fullName = localized(profile, "full_name", locale) || t("anonymous");
   const bio = localized(profile, "bio", locale);
 
-  const profileUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL ? "https://dasaqmdi.com" : "http://localhost:3000"}/seekers/${params.id}`;
+  const profileUrl = `${siteConfig.url}/seekers/${params.id}`;
 
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto">

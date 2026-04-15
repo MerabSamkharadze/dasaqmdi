@@ -1,5 +1,4 @@
-// HTML email template for application status notifications
-// Quiet Design: dark header, gold accent, clean typography
+import { siteConfig } from "@/lib/config";
 
 export function buildStatusEmailHtml({
   subject,
@@ -18,8 +17,8 @@ export function buildStatusEmailHtml({
 }): string {
   const viewJobLabel = locale === "ka" ? "ვაკანსიის ნახვა" : "View Job";
   const footerText = locale === "ka"
-    ? "ეს წერილი გამოგზავნილია dasaqmdi.com-იდან"
-    : "This email was sent from dasaqmdi.com";
+    ? `ეს წერილი გამოგზავნილია ${siteConfig.domain}-იდან`
+    : `This email was sent from ${siteConfig.domain}`;
 
   // Convert plain text body to HTML paragraphs
   const bodyHtml = body
@@ -45,7 +44,7 @@ export function buildStatusEmailHtml({
           <tr>
             <td style="padding:28px 32px 20px;text-align:center;border-bottom:1px solid rgba(199,174,106,0.1);">
               <p style="margin:0;font-size:18px;font-weight:700;color:#C7AE6A;letter-spacing:0.5px;">
-                dasaqmdi.com
+                ${siteConfig.domain}
               </p>
             </td>
           </tr>

@@ -9,16 +9,33 @@ import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { TrendingUp, TrendingDown, BarChart3, Briefcase } from "lucide-react";
 import type { Metadata } from "next";
 import type { SalaryCurrency } from "@/lib/types/enums";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations("salaries");
+  const alternates = buildAlternates("/salaries", params.locale);
+  const isKa = params.locale === "ka";
   return {
     title: t("title"),
     description: t("subtitle"),
+    alternates,
     openGraph: {
       title: t("title"),
       description: t("subtitle"),
       type: "website",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("subtitle"),
     },
   };
 }

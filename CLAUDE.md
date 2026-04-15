@@ -264,6 +264,7 @@ components/
 - Queries: auth-enforced where needed (`requireAdmin()`, `getMyApplications()`)
 - Nav items: single source `components/dashboard/nav-items.ts`
 - All i18n in `messages/ka.json` + `messages/en.json` — no hardcoded text
+- **No hardcoded brand/URL strings** — always use `siteConfig` from `@/lib/config`. Never write `"dasaqmdi.com"`, `"https://www.dasaqmdi.com"`, `"https://t.me/dasaqmdi_bot"`, or email from-addresses inline. Use `siteConfig.url`, `siteConfig.domain`, `siteConfig.brand.name`, `siteConfig.social.telegramBot`, `siteConfig.email.from`, `siteConfig.email.noreply`. If a new brand-related constant is needed, **add it to `lib/config.ts` first**, then import it
 - Storage buckets: `avatars`, `resumes` (private), `company-logos` — whitelist in `lib/storage.ts`
 - Password minimum: 8 characters
 - Caching: `React.cache()` for profile, `unstable_cache` for categories (1hr) + jobs (30s), `revalidate: 3600` on company pages, ISR 60s on job detail

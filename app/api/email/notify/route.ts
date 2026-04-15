@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 import { DEFAULT_TEMPLATES, renderTemplate } from "@/lib/email/default-templates";
 import { buildStatusEmailHtml } from "@/lib/email/application-status-template";
+import { siteConfig } from "@/lib/config";
 
 function getServiceClient() {
   return createClient(
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
   const subject = renderTemplate(rawSubject, variables);
   const body = renderTemplate(rawBody, variables);
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
+  const baseUrl = siteConfig.url;
   const jobUrl = locale === "ka" ? `${baseUrl}/jobs/${job.id}` : `${baseUrl}/en/jobs/${job.id}`;
 
   const html = buildStatusEmailHtml({
@@ -121,7 +122,7 @@ export async function POST(req: Request) {
 
   try {
     await resend.emails.send({
-      from: "dasaqmdi.com <noreply@dasaqmdi.com>",
+      from: siteConfig.email.noreply,
       to: email,
       subject,
       html,

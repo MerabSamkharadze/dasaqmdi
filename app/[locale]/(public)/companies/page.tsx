@@ -6,18 +6,41 @@ import { CountBadge } from "@/components/shared/count-badge";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
 export const revalidate = 3600; // O4: Revalidate every hour
 
-export const metadata: Metadata = {
-  title: "კომპანიები — dasaqmdi.com",
-  description: "იპოვე საუკეთესო დამსაქმებლები საქართველოში",
-  openGraph: {
-    title: "კომპანიები — dasaqmdi.com",
-    description: "იპოვე საუკეთესო დამსაქმებლები საქართველოში",
-    type: "website",
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
+  const isKa = params.locale === "ka";
+  const title = isKa ? "კომპანიები" : "Companies";
+  const description = isKa
+    ? "იპოვე საუკეთესო დამსაქმებლები საქართველოში."
+    : "Discover top employers hiring in Georgia.";
+  const alternates = buildAlternates("/companies", params.locale);
+  return {
+    title,
+    description,
+    alternates,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function CompaniesPage() {
   const locale = await getLocale();

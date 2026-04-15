@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { getBot, MESSAGES } from "@/lib/telegram/bot";
 import { localized } from "@/lib/utils";
+import { siteConfig } from "@/lib/config";
 
 function getServiceClient() {
   return createClient(
@@ -67,7 +68,7 @@ export async function POST(req: Request) {
   }
 
   const bot = getBot();
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
+  const baseUrl = siteConfig.url;
   let sentCount = 0;
 
   // Escape Markdown special characters in user-generated text

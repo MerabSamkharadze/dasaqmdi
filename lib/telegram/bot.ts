@@ -1,4 +1,5 @@
 import { Bot, InlineKeyboard } from "grammy";
+import { siteConfig } from "@/lib/config";
 
 // Singleton bot instance
 let bot: Bot | null = null;
@@ -74,7 +75,7 @@ export function buildCompanyKeyboard(
 
 export const MESSAGES = {
   ka: {
-    welcome: "👋 გამარჯობა! მე ვარ dasaqmdi.com-ის ბოტი.\n\nაირჩიე კატეგორიები და მიიღე ახალი ვაკანსიები რეალურ დროში.\n\n/categories — კატეგორიების არჩევა\n/companies — კომპანიების გამოწერა",
+    welcome: `👋 გამარჯობა! მე ვარ ${siteConfig.domain}-ის ბოტი.\n\nაირჩიე კატეგორიები და მიიღე ახალი ვაკანსიები რეალურ დროში.\n\n/categories — კატეგორიების არჩევა\n/companies — კომპანიების გამოწერა`,
     selectCategories: "📋 აირჩიე კატეგორიები:",
     selectCompanies: "🏢 აირჩიე კომპანიები:",
     saved: "✅ გამოწერა შენახულია!",
@@ -89,7 +90,7 @@ export const MESSAGES = {
     newJob: "📢 ახალი ვაკანსია",
   },
   en: {
-    welcome: "👋 Hello! I'm the dasaqmdi.com bot.\n\nChoose categories and get new job postings in real time.\n\n/categories — select categories\n/companies — follow companies",
+    welcome: `👋 Hello! I'm the ${siteConfig.domain} bot.\n\nChoose categories and get new job postings in real time.\n\n/categories — select categories\n/companies — follow companies`,
     selectCategories: "📋 Select categories:",
     selectCompanies: "🏢 Select companies to follow:",
     saved: "✅ Subscription saved!",

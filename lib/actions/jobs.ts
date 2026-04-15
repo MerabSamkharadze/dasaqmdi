@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { getActivePlan } from "@/lib/queries/subscriptions";
 import { canPostJob } from "@/lib/subscription-helpers";
 import type { ActionResult } from "@/lib/types";
+import { siteConfig } from "@/lib/config";
 
 function extractJobFields(formData: FormData) {
   return {
@@ -78,7 +79,7 @@ export async function createJobAction(
 
   // TB3.3: Notify Telegram subscribers (non-blocking)
   if (newJob?.id && process.env.CRON_SECRET) {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dasaqmdi.com";
+    const baseUrl = siteConfig.url;
     fetch(`${baseUrl}/api/telegram/notify`, {
       method: "POST",
       headers: {

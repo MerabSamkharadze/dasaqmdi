@@ -12,17 +12,36 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations("jobs");
-  const description = "Browse and search all job listings on dasaqmdi.com";
+  const isKa = params.locale === "ka";
+  const description = isKa
+    ? `დაათვალიერე და მოძებნე ყველა ვაკანსია ${siteConfig.domain}-ზე.`
+    : `Browse and search all job listings on ${siteConfig.domain}.`;
+  const alternates = buildAlternates("/jobs", params.locale);
   return {
     title: t("title"),
     description,
+    alternates,
     openGraph: {
       title: t("title"),
       description,
       type: "website",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description,
     },
   };
 }

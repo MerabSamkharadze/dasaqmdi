@@ -4,16 +4,37 @@ import { createClient } from "@/lib/supabase/server";
 import { getActivePlan } from "@/lib/queries/subscriptions";
 import type { Metadata } from "next";
 import type { SubscriptionPlan } from "@/lib/types";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { locale: string };
+}): Promise<Metadata> {
   const t = await getTranslations("pricing");
-  const locale = await getLocale();
+  const isKa = params.locale === "ka";
+  const title = isKa ? "ფასები" : "Pricing";
+  const description = t("subtitle");
+  const alternates = buildAlternates("/pricing", params.locale);
 
   return {
-    title: locale === "ka"
-      ? "ფასები — დასაქმდი | dasaqmdi.com"
-      : "Pricing — dasaqmdi.com",
-    description: t("subtitle"),
+    title,
+    description,
+    alternates,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

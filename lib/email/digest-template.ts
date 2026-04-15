@@ -1,7 +1,9 @@
 import type { DigestEntry } from "@/lib/queries/digest";
 import { localized } from "@/lib/utils";
+import { siteConfig } from "@/lib/config";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://dasaqmdi.com";
+const SITE_URL = siteConfig.url;
+const BRAND_DOMAIN = siteConfig.domain;
 
 type TemplateStrings = {
   subject: string;
@@ -16,24 +18,24 @@ type TemplateStrings = {
 
 const STRINGS: Record<"ka" | "en", TemplateStrings> = {
   ka: {
-    subject: "შენთვის შერჩეული ვაკანსიები — dasaqmdi.com",
+    subject: `შენთვის შერჩეული ვაკანსიები — ${BRAND_DOMAIN}`,
     greeting: "გამარჯობა",
     intro: "ბოლო 24 საათში გამოქვეყნდა ვაკანსიები, რომლებიც შენს უნარებს ემთხვევა:",
     matchLabel: "თავსებადობა",
     viewJob: "ნახვა",
     viewAll: "ყველა ვაკანსიის ნახვა",
     unsubscribe: "გამოწერის გაუქმება",
-    footer: "ეს შეტყობინება ავტომატურად გაიგზავნა dasaqmdi.com-დან",
+    footer: `ეს შეტყობინება ავტომატურად გაიგზავნა ${BRAND_DOMAIN}-დან`,
   },
   en: {
-    subject: "Jobs picked for you — dasaqmdi.com",
+    subject: `Jobs picked for you — ${BRAND_DOMAIN}`,
     greeting: "Hi",
     intro: "New jobs matching your skills were posted in the last 24 hours:",
     matchLabel: "Match",
     viewJob: "View",
     viewAll: "View all jobs",
     unsubscribe: "Unsubscribe",
-    footer: "This email was sent automatically from dasaqmdi.com",
+    footer: `This email was sent automatically from ${BRAND_DOMAIN}`,
   },
 };
 

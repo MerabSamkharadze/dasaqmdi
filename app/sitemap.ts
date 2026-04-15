@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
+import { siteConfig } from "@/lib/config";
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://dasaqmdi.com";
+const BASE_URL = siteConfig.url;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient();
@@ -24,8 +25,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .gte("expires_at", new Date().toISOString())
     .order("created_at", { ascending: false })
     .limit(5000);
-
-  console.log()
 
   const jobPages: MetadataRoute.Sitemap = (jobs ?? []).flatMap((job) => [
     {

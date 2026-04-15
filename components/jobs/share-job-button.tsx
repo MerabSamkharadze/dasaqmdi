@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { siteConfig } from "@/lib/config";
 
 type ShareJobButtonProps = {
   jobUrl: string;
@@ -24,7 +25,7 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
   const [copied, setCopied] = useState(false);
   const t = useTranslations("jobs");
 
-  const shareText = `${jobTitle} — dasaqmdi.com`;
+  const shareText = `${jobTitle} — ${siteConfig.domain}`;
   const encodedUrl = encodeURIComponent(fullUrl);
   const encodedText = encodeURIComponent(shareText);
 

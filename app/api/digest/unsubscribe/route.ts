@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { siteConfig } from "@/lib/config";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -24,7 +25,5 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Failed to unsubscribe" }, { status: 500 });
   }
 
-  // Redirect to a simple confirmation page
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dasaqmdi.com";
-  return NextResponse.redirect(`${siteUrl}?unsubscribed=true`);
+  return NextResponse.redirect(`${siteConfig.url}?unsubscribed=true`);
 }

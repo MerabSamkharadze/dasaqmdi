@@ -3,6 +3,8 @@ export const revalidate = 3600; // O4: Revalidate every hour
 import { getCompanyBySlug } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
+import { buildAlternates } from "@/lib/seo";
+import { siteConfig } from "@/lib/config";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,11 +30,30 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!company) return { title: "Company Not Found" };
 
   const name = localized(company, "name", params.locale);
-  const description = localized(company, "description", params.locale)?.slice(0, 160);
+  const rawDescription = localized(company, "description", params.locale) ?? "";
+  const description =
+    rawDescription.replace(/\s+/g, " ").trim().slice(0, 160) || undefined;
+  const alternates = buildAlternates(`/companies/${params.slug}`, params.locale);
+  const isKa = params.locale === "ka";
 
   return {
-    title: `${name} — dasaqmdi.com`,
+    title: name,
     description,
+    alternates,
+    openGraph: {
+      title: name,
+      description,
+      type: "profile",
+      url: alternates.canonical as string,
+      siteName: siteConfig.domain,
+      locale: isKa ? "ka_GE" : "en_US",
+      ...(company.logo_url && { images: [company.logo_url] }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: name,
+      description,
+    },
   };
 }
 
