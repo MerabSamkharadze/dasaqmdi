@@ -228,6 +228,9 @@ components/
 007_telegram_company_subscriptions.sql  # company_ids on telegram_subscriptions
 008_new_categories.sql           # 5 new categories (food, retail, beauty, logistics, healthcare)
 009_preferred_categories.sql     # preferred_categories on profiles
+010_email_templates.sql          # email_templates per company (custom accepted/rejected)
+011_telegram_rls.sql             # enable RLS on telegram_subscriptions (service_role only)
+012_profiles_privacy_rls.sql     # profile SELECT enforces is_public / own / admin / employer-applicant
 ```
 
 ### Roles: `seeker` (apply, track, save), `employer` (post, review, billing), `admin` (moderate all)
