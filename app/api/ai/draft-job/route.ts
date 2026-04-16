@@ -96,11 +96,20 @@ export async function POST(req: Request) {
         ? "Write the entire response in Georgian (ქართული)."
         : "Write the entire response in English.";
 
+  // Fetch categories for AI to suggest the best match
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("slug, name_en")
+    .order("name_en");
+  const categoryList = (categories ?? []).map((c) => c.slug).join(", ");
+
   const outputSchema = z.object({
     description: z.string().describe("Job description in English: Responsibilities (5-7 bullet points) + Benefits (4-5 bullet points). Plain text with line breaks, no markdown."),
     description_ka: z.string().describe("იგივე აღწერა ქართულად: მოვალეობები (5-7 პუნქტი) + ბენეფიტები (4-5 პუნქტი). უბრალო ტექსტი."),
     requirements: z.string().describe("Requirements in English: Required skills (5-7 bullet points) + Nice to Have (3-4 bullet points). Plain text."),
     requirements_ka: z.string().describe("მოთხოვნები ქართულად: საჭირო უნარები (5-7 პუნქტი) + სასურველი (3-4 პუნქტი). უბრალო ტექსტი."),
+    suggested_category: z.string().describe(`The single best matching category slug from this list: ${categoryList}. Pick the most relevant one for the job title and skills.`),
+    suggested_tags: z.array(z.string()).min(10).max(15).describe("10-15 relevant skill tags for this job. Mix of technical/hard skills (e.g. React, SQL, Figma) and soft skills (e.g. Communication, Teamwork, Problem Solving). Use English. Short labels, no sentences."),
   });
 
   const result = await generateObject({
@@ -113,7 +122,9 @@ Job Title: ${title}
 Seniority Level: ${seniority}
 Core Skills: ${skills.join(", ")}
 
-For each field, write professional, detailed content. Georgian text must be natural Georgian, not a machine translation.`,
+Available categories: ${categoryList}
+
+For each field, write professional, detailed content. Georgian text must be natural Georgian, not a machine translation. For suggested_category, pick the single most relevant category slug from the list above.`,
   });
 
   return Response.json(result.object);

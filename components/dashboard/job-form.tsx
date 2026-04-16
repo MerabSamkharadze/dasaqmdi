@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useFormState } from "react-dom";
 import { useScrollOnSave } from "@/lib/hooks/use-scroll-on-save";
 import { useTranslations } from "next-intl";
@@ -24,6 +24,12 @@ import type { ActionResult } from "@/lib/types";
 
 const initialState: ActionResult = { error: null };
 
+function defaultDeadline(): string {
+  const d = new Date();
+  d.setMonth(d.getMonth() + 1);
+  return d.toISOString().slice(0, 16);
+}
+
 type JobFormProps = {
   job?: Job;
   companyId: string;
@@ -39,6 +45,9 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
   const t = useTranslations("jobs");
   const tc = useTranslations("common");
   const tt = useTranslations("jobs.types");
+  const [categoryId, setCategoryId] = useState<string | undefined>(
+    job?.category_id?.toString(),
+  );
   const titleRef = useRef<HTMLInputElement>(null);
   const tagsRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLTextAreaElement>(null);
@@ -53,6 +62,7 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
     description_ka: string;
     requirements: string;
     requirements_ka: string;
+    suggested_category?: string;
   }) => {
     // Fill title and tags from AI input fields
     if (titleRef.current && data.title) {
@@ -77,7 +87,15 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
         ref.current.dispatchEvent(new Event("input", { bubbles: true }));
       }
     }
-  }, []);
+
+    // Auto-select category by slug
+    if (data.suggested_category) {
+      const match = categories.find((c) => c.slug === data.suggested_category);
+      if (match) {
+        setCategoryId(match.id.toString());
+      }
+    }
+  }, [categories]);
 
   const formRef = useRef<HTMLFormElement>(null);
   useScrollOnSave(state, formRef);
@@ -132,7 +150,8 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
           <Label htmlFor="category_id">Category</Label>
           <Select
             name="category_id"
-            defaultValue={job?.category_id?.toString()}
+            value={categoryId}
+            onValueChange={setCategoryId}
           >
             <SelectTrigger>
               <SelectValue />
@@ -228,7 +247,7 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
             defaultValue={
               job?.application_deadline
                 ? job.application_deadline.slice(0, 16)
-                : ""
+                : defaultDeadline()
             }
           />
         </div>

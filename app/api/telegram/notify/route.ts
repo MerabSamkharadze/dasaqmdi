@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { InlineKeyboard } from "grammy";
 import { getBot, MESSAGES } from "@/lib/telegram/bot";
 import { localized } from "@/lib/utils";
 import { siteConfig } from "@/lib/config";
@@ -100,16 +101,21 @@ export async function POST(req: Request) {
     const safeTitle = escapeMarkdown(title);
     const safeCompany = escapeMarkdown(company);
 
-    let text = `${msg.newJob}\n\n`;
+    let text = `${escapeMarkdown(msg.newJob)}\n\n`;
     text += `💼 *${safeTitle}*\n`;
     text += `🏢 ${safeCompany}\n`;
-    text += `📂 ${category}\n`;
+    text += `📂 ${escapeMarkdown(category)}\n`;
     if (job.city) text += `📍 ${escapeMarkdown(job.city)}\n`;
-    if (salary) text += `💰 ${salary}\n`;
-    text += `\n🔗 [${locale === "ka" ? "ნახე ვაკანსია" : "View job"}](${jobUrl})`;
+    if (salary) text += `💰 ${escapeMarkdown(salary)}\n`;
+
+    const linkLabel = locale === "ka" ? "ნახე ვაკანსია" : "View job";
+    const keyboard = new InlineKeyboard().url(linkLabel, jobUrl);
 
     try {
-      await bot.api.sendMessage(sub.chat_id, text, { parse_mode: "Markdown" });
+      await bot.api.sendMessage(sub.chat_id, text, {
+        parse_mode: "MarkdownV2",
+        reply_markup: keyboard,
+      });
       sentCount++;
     } catch (err) {
       console.error(`Failed to send to chat ${sub.chat_id}:`, err);

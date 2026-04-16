@@ -20,6 +20,7 @@ type DraftResult = {
   description_ka: string;
   requirements: string;
   requirements_ka: string;
+  suggested_category?: string;
 };
 
 type AIDraftButtonProps = {
@@ -74,10 +75,12 @@ export function AIDraftButton({ onDraftComplete }: AIDraftButtonProps) {
       }
 
       setCompletion(`EN: ${data.description.substring(0, 100)}...\nKA: ${data.description_ka.substring(0, 100)}...`);
+      const aiTags = Array.isArray(data.suggested_tags) ? data.suggested_tags.join(", ") : "";
       onDraftComplete({
         ...data,
         title: title.trim(),
-        tags: skills.trim(),
+        tags: aiTags || skills.trim(),
+        suggested_category: data.suggested_category,
       });
     } catch (err) {
       console.error("AI draft generation failed:", err);
