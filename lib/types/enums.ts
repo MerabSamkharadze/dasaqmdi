@@ -4,7 +4,7 @@ export type UserRole = (typeof USER_ROLES)[number];
 export const JOB_TYPES = ["full-time", "part-time", "contract", "internship", "remote"] as const;
 export type JobType = (typeof JOB_TYPES)[number];
 
-export const JOB_STATUSES = ["draft", "active", "closed", "archived"] as const;
+export const JOB_STATUSES = ["draft", "pending", "active", "closed", "archived", "rejected"] as const;
 export type JobStatus = (typeof JOB_STATUSES)[number];
 
 export const APPLICATION_STATUSES = ["pending", "reviewed", "shortlisted", "rejected", "accepted"] as const;

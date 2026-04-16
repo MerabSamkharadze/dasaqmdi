@@ -11,6 +11,7 @@ import {
   CreditCard,
   Mail,
   BarChart3,
+  ShieldCheck,
 } from "lucide-react";
 import type { UserRole } from "@/lib/types/enums";
 
@@ -59,6 +60,7 @@ const adminNav: NavItem[] = [
   { href: "/admin/companies", labelKey: "manageCompanies", icon: Building2 },
   { href: "/admin/analytics", labelKey: "analytics", icon: BarChart3 },
   { href: "/admin/subscriptions", labelKey: "subscriptions", icon: CreditCard },
+  { href: "/admin/moderation", labelKey: "moderation", icon: ShieldCheck },
 ];
 
 export function getNavItems(role: UserRole): NavItem[] {

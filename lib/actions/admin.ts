@@ -57,6 +57,77 @@ export async function updateUserRoleAction(
   return { error: null };
 }
 
+export async function approveJobAction(jobId: string): Promise<ActionResult> {
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+
+  // Only pending jobs can be approved
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, status")
+    .eq("id", jobId)
+    .single();
+
+  if (!job) return { error: "Job not found" };
+  if (job.status !== "pending") return { error: "Only pending jobs can be approved" };
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({ status: "active" })
+    .eq("id", jobId);
+
+  if (error) return { error: error.message };
+
+  // Telegram notify on approval (fire-and-forget)
+  if (process.env.CRON_SECRET) {
+    const { siteConfig } = await import("@/lib/config");
+    fetch(`${siteConfig.url}/api/telegram/notify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.CRON_SECRET}`,
+      },
+      body: JSON.stringify({ job_id: jobId }),
+    }).catch(() => {});
+  }
+
+  revalidatePath("/admin/moderation");
+  revalidatePath("/admin/jobs");
+  revalidatePath("/employer/jobs");
+  revalidatePath("/jobs");
+  return { error: null };
+}
+
+export async function rejectJobAction(jobId: string): Promise<ActionResult> {
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, status")
+    .eq("id", jobId)
+    .single();
+
+  if (!job) return { error: "Job not found" };
+  if (job.status !== "pending") return { error: "Only pending jobs can be rejected" };
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({ status: "rejected" })
+    .eq("id", jobId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/moderation");
+  revalidatePath("/admin/jobs");
+  revalidatePath("/employer/jobs");
+  return { error: null };
+}
+
 export async function deleteJobAdminAction(jobId: string): Promise<ActionResult> {
   const adminId = await verifyAdmin();
   if (!adminId) return { error: "Unauthorized" };

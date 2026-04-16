@@ -99,6 +99,7 @@ export default async function SeekerApplicationsPage() {
                       alt={companyName}
                       width={32}
                       height={32}
+                    sizes="32px"
                       className="h-8 w-8 rounded-md object-contain"
                     />
                   ) : (

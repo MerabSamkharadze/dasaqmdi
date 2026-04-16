@@ -69,6 +69,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
                 alt={fullName}
                 width={80}
                 height={80}
+                    sizes="80px"
                 className="h-20 w-20 rounded-full object-cover"
               />
             ) : (

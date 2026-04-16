@@ -44,6 +44,7 @@
     "about": "ჩვენს შესახებ",
     "analytics": "ანალიტიკა",
     "subscriptions": "გამოწერები",
+    "moderation": "მოდერაცია",
     "telegramSubscribe": "გამოიწერე ტელეგრამით",
     "footerTagline": "სამუშაოს ძიება საქართველოში — სწრაფად, მარტივად.",
     "footerQuickLinks": "სწრაფი ბმულები",
@@ -283,6 +284,7 @@
     "editCompany": "რედაქტირება",
     "createCompany": "კომპანიის შექმნა",
     "renew": "განახლება",
+    "pending": "მოლოდინში",
     "searchJobs": "ვაკანსიების ძიება...",
     "allStatuses": "ყველა სტატუსი",
     "active": "აქტიური",
@@ -347,7 +349,12 @@
     "allPlans": "ყველა გეგმა",
     "subscriptionCancelled": "გაუქმებული",
     "subscriptionPastDue": "ვადაგადაცილებული",
-    "subscriptions": "გამოწერები"
+    "subscriptions": "გამოწერები",
+    "moderationTitle": "ვაკანსიების მოდერაცია",
+    "noPendingJobs": "მოლოდინში მყოფი ვაკანსიები არ არის",
+    "pending": "მოლოდინში",
+    "rejected": "უარყოფილი",
+    "moderation": "მოდერაცია"
   },
   "salaries": {
     "title": "ხელფასები საქართველოში",

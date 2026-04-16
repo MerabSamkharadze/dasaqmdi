@@ -299,6 +299,26 @@ export async function getAllSubscriptions(filters?: AdminSubscriptionFilters): P
   return (data as unknown as AdminSubscription[]) ?? [];
 }
 
+// --- Moderation ---
+
+export type PendingJob = {
+  id: string;
+  title: string;
+  title_ka: string | null;
+  created_at: string;
+  company: { name: string; name_ka: string | null; slug: string } | null;
+};
+
+export async function getPendingJobs(): Promise<PendingJob[]> {
+  const supabase = await requireAdmin();
+  const { data } = await supabase
+    .from("jobs")
+    .select("id, title, title_ka, created_at, company:companies(name, name_ka, slug)")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+  return (data as unknown as PendingJob[]) ?? [];
+}
+
 export async function getAllCompaniesAdmin(): Promise<Company[]> {
   const supabase = await requireAdmin();
 

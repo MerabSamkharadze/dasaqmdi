@@ -68,17 +68,20 @@ export async function createJobAction(
     return { error: parsed.error.issues[0].message };
   }
 
+  const moderationEnabled = process.env.MODERATION_ENABLED === "true";
+  const initialStatus = moderationEnabled ? "pending" : "active";
+
   const { data: newJob, error } = await supabase.from("jobs").insert({
     ...parsed.data,
     company_id: companyId,
     posted_by: user.id,
-    status: "active",
+    status: initialStatus,
   }).select("id").single();
 
   if (error) return { error: error.message };
 
-  // TB3.3: Notify Telegram subscribers (non-blocking)
-  if (newJob?.id && process.env.CRON_SECRET) {
+  // TB3.3: Notify Telegram subscribers (non-blocking) — only when auto-approved
+  if (!moderationEnabled && newJob?.id && process.env.CRON_SECRET) {
     const baseUrl = siteConfig.url;
     fetch(`${baseUrl}/api/telegram/notify`, {
       method: "POST",

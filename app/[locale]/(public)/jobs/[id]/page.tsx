@@ -235,6 +235,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                   alt={companyName}
                   width={40}
                   height={40}
+                    sizes="40px"
                   className="h-10 w-10 rounded-lg object-contain"
                 />
               ) : (

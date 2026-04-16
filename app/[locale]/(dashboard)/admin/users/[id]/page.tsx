@@ -64,6 +64,7 @@ export default async function AdminUserDetailPage({
                 alt={name}
                 width={64}
                 height={64}
+                    sizes="64px"
                 className="h-16 w-16 rounded-full object-cover"
               />
             ) : (

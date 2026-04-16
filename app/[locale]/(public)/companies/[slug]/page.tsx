@@ -85,6 +85,7 @@ export default async function CompanyProfilePage({ params }: PageProps) {
               alt={name}
               width={40}
               height={40}
+                    sizes="40px"
               className="h-10 w-10 rounded-lg object-contain"
             />
           ) : (

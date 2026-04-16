@@ -30,6 +30,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [status, setStatus] = useState(currentStatus);
 
   function handleChange(newStatus: string) {
     // Confirm before sensitive status changes
@@ -40,6 +41,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
       if (!confirmed) return;
     }
 
+    setStatus(newStatus);
     setError(null);
     setSaved(false);
     startTransition(async () => {
@@ -50,6 +52,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
       );
       if (result.error) {
         setError(result.error);
+        setStatus(currentStatus); // Revert on error
       } else {
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
@@ -61,14 +64,14 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
     <form ref={formRef} className="flex items-center gap-1.5">
       <input type="hidden" name="application_id" value={applicationId} />
 
-      <Select name="status" defaultValue={currentStatus} onValueChange={handleChange}>
+      <Select name="status" value={status} onValueChange={handleChange}>
         <SelectTrigger className="w-[130px] h-8 text-[12px]" disabled={isPending}>
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {APPLICATION_STATUSES.map((status) => (
-            <SelectItem key={status} value={status} className="text-[12px]">
-              {t(status)}
+          {APPLICATION_STATUSES.map((s) => (
+            <SelectItem key={s} value={s} className="text-[12px]">
+              {t(s)}
             </SelectItem>
           ))}
         </SelectContent>

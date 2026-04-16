@@ -40,6 +40,7 @@ export default async function AdminCompaniesPage() {
                   alt=""
                   width={24}
                   height={24}
+                    sizes="24px"
                   className="h-6 w-6 rounded-md object-contain"
                 />
               ) : (

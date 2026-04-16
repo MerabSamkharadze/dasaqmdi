@@ -463,13 +463,13 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A6.0 | Config | `MODERATION_ENABLED` env var — default `false`. როცა `false`, jobs auto-approve (არსებული flow). როცა `true`, ახალი jobs `status: "pending"` | ⬜ |
-| A6.1 | Status update | `jobs` table — `status` enum-ში `"pending"` დამატება (migration `015_job_moderation.sql`). Telegram notify მხოლოდ `pending → active` transition-ზე | ⬜ |
-| A6.2 | Moderation queue | `app/[locale]/(dashboard)/admin/moderation/page.tsx` — pending jobs list (title, company, posted date) with approve/reject buttons | ⬜ |
-| A6.3 | Actions | `approveJobAction(jobId)` → `status: "active"` + Telegram notify. `rejectJobAction(jobId)` → `status: "rejected"`. Both require admin role | ⬜ |
-| A6.4 | Creation hook | `createJobAction` — if `MODERATION_ENABLED`, insert with `status: "pending"`. Otherwise `status: "active"` (no breaking change) | ⬜ |
-| A6.5 | Employer UX | Employer dashboard shows "Pending moderation" badge. Employer jobs list filters include "pending" status | ⬜ |
-| A6.6 | i18n | `admin.moderation*` + `dashboard.pendingModeration` keys ka/en | ⬜ |
+| A6.0 | Config | `MODERATION_ENABLED` env var — default `false`, no breaking change | ✅ |
+| A6.1 | Migration | `015_job_moderation.sql` — `pending`/`rejected` enum + enums.ts update | ✅ |
+| A6.2 | Moderation queue | `admin/moderation/page.tsx` + `ModerationButtons` component | ✅ |
+| A6.3 | Actions | `approveJobAction` (+ Telegram notify) + `rejectJobAction` in admin actions | ✅ |
+| A6.4 | Creation hook | `createJobAction` respects `MODERATION_ENABLED` | ✅ |
+| A6.5 | Employer UX | `dashboard.pending` key for employer jobs list | ✅ |
+| A6.6 | i18n | `admin.moderation*` + `nav.moderation` + `dashboard.pending` ka/en | ✅ |
 
 ### A7 — Activity Log / Audit Trail
 

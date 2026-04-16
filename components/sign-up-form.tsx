@@ -163,6 +163,8 @@ export function SignUpForm({
             name="password"
             type="password"
             required
+            aria-invalid={!!state.error}
+            aria-describedby={state.error ? "signup-error" : undefined}
             className="h-11 bg-card"
           />
         </div>
@@ -177,6 +179,8 @@ export function SignUpForm({
             name="confirmPassword"
             type="password"
             required
+            aria-invalid={!!state.error}
+            aria-describedby={state.error ? "signup-error" : undefined}
             className="h-11 bg-card"
           />
         </div>
