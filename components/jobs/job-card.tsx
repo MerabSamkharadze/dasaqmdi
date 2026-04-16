@@ -2,7 +2,8 @@
 
 import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
-import { BadgeCheck, Building2, Calendar, Clock, MapPin, Star, Zap, Wifi } from "lucide-react";
+import { Building2, Calendar, Clock, MapPin, Star, Zap, Wifi } from "lucide-react";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
@@ -117,9 +118,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               className="inline-flex items-center gap-1.5 truncate hover:text-primary transition-colors duration-150"
             >
               {companyName}
-              {job.company.is_verified && (
-                <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-primary" />
-              )}
+              {job.company.is_verified && <VerifiedBadge />}
             </Link>
             {job.city && (
               <span className="inline-flex items-center gap-1 text-muted-foreground/60">

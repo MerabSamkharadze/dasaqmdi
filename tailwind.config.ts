@@ -113,6 +113,13 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        heartbeat: {
+          "0%": { transform: "scale(1)" },
+          "15%": { transform: "scale(1.3)" },
+          "30%": { transform: "scale(1)" },
+          "45%": { transform: "scale(1.2)" },
+          "60%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.4s ease-out forwards",

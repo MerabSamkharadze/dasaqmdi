@@ -1,7 +1,8 @@
 import { getAllCompanies } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
-import { Building2, MapPin, Users, CheckCircle } from "lucide-react";
+import { Building2, MapPin, Users } from "lucide-react";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { CountBadge } from "@/components/shared/count-badge";
 import Image from "next/image";
 import Link from "next/link";
@@ -101,9 +102,7 @@ export default async function CompaniesPage() {
                     <h2 className="text-[15px] font-semibold leading-snug tracking-tight truncate group-hover:text-primary transition-colors duration-200">
                       {name}
                     </h2>
-                    {company.is_verified && (
-                      <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    )}
+                    {company.is_verified && <VerifiedBadge />}
                   </div>
 
                   {desc && (

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { localized } from "@/lib/utils";
-import { Briefcase, FileText, Eye, PlusCircle, CheckCircle, Building2 } from "lucide-react";
+import { Briefcase, FileText, Eye, PlusCircle, Building2 } from "lucide-react";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { Badge } from "@/components/ui/badge";
 import { RenewJobButton } from "@/components/dashboard/job-action-buttons";
 import type { JobWithCompany } from "@/lib/types";
@@ -48,9 +49,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
               <p className="text-[15px] font-semibold tracking-tight text-foreground truncate">
                 {companyName}
               </p>
-              {data.company.is_verified && (
-                <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              )}
+              {data.company.is_verified && <VerifiedBadge />}
             </div>
           </div>
           <Link

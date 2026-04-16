@@ -12,12 +12,12 @@ import {
   MapPin,
   Globe,
   Users,
-  CheckCircle,
   ExternalLink,
   Code2,
   Heart,
   Sparkles,
 } from "lucide-react";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import Image from "next/image";
 import type { Metadata } from "next";
 
@@ -97,13 +97,13 @@ export default async function CompanyProfilePage({ params }: PageProps) {
             <h1 className="text-xl font-semibold tracking-tight">{name}</h1>
             {company.is_verified && (
               <>
-                {/* Desktop: badge with text */}
-                <Badge variant="secondary" className="hidden sm:inline-flex gap-1 text-[12px] bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                  <CheckCircle className="h-3 w-3" />
+                <Badge variant="secondary" className="hidden sm:inline-flex gap-1.5 text-[12px] bg-primary/10 text-primary border-primary/20">
+                  <VerifiedBadge />
                   {t("verified")}
                 </Badge>
-                {/* Mobile: icon only */}
-                <CheckCircle className="sm:hidden h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span className="sm:hidden">
+                  <VerifiedBadge size="md" />
+                </span>
               </>
             )}
           </div>

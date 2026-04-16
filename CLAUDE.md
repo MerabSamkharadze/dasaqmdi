@@ -1,4 +1,19 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # dasaqmdi.com — Project Source of Truth
+
+## Development Commands
+
+```bash
+npm run dev          # Start dev server (http://localhost:3000)
+npm run build        # Production build
+npm run start        # Start production server
+npm run lint         # ESLint check
+```
+
+No test framework is configured. No unit/integration tests exist yet.
 
 ## Tech Stack
 
