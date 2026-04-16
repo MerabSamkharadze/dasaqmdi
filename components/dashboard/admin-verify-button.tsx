@@ -2,7 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { verifyCompanyAction } from "@/lib/actions/admin";
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 import { useTransition } from "react";
 
 export function AdminVerifyButton({ companyId }: { companyId: string }) {
@@ -23,7 +24,7 @@ export function AdminVerifyButton({ companyId }: { companyId: string }) {
       className="gap-1.5 text-[12px] border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
     >
       {isPending ? (
-        <Loader2 className="h-3 w-3 animate-spin" />
+        <Spinner />
       ) : (
         <ShieldCheck className="h-3 w-3" />
       )}

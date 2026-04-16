@@ -90,9 +90,19 @@ export async function getJobs({
   return getJobsCached(page, category, categoriesJson, city, type, q);
 }
 
-export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[]> {
+type EmployerJobFilters = {
+  q?: string;
+  status?: string;
+  category?: string;
+};
+
+export async function getJobsByEmployer(
+  userId: string,
+  filters?: EmployerJobFilters,
+): Promise<JobWithCompany[]> {
   const supabase = createClient();
-  const { data, error } = await supabase
+
+  let query = supabase
     .from("jobs")
     .select(
       `
@@ -102,8 +112,34 @@ export async function getJobsByEmployer(userId: string): Promise<JobWithCompany[
     `
     )
     .eq("posted_by", userId)
-    .order("created_at", { ascending: false })
-    .returns<JobWithCompany[]>();
+    .order("created_at", { ascending: false });
+
+  if (filters?.q) {
+    const term = `%${filters.q}%`;
+    query = query.or(`title.ilike.${term},title_ka.ilike.${term}`);
+  }
+
+  const now = new Date().toISOString();
+  if (filters?.status === "active") {
+    query = query.eq("status", "active").gte("expires_at", now);
+  } else if (filters?.status === "closed") {
+    query = query.in("status", ["closed", "archived"]);
+  } else if (filters?.status === "expired") {
+    query = query.eq("status", "active").lt("expires_at", now);
+  }
+
+  if (filters?.category) {
+    const { data: cat } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", filters.category)
+      .single();
+    if (cat) {
+      query = query.eq("category_id", cat.id);
+    }
+  }
+
+  const { data, error } = await query.returns<JobWithCompany[]>();
 
   if (error) {
     console.error("Failed to fetch employer jobs:", error.message);

@@ -105,7 +105,7 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
             <Share2 className="h-4 w-4" />
           </button>
         ) : (
-          <Button variant="outline" size="sm" className="gap-1.5 text-[12px] border-border bg-card text-foreground hover:bg-muted">
+          <Button variant="outline" size="sm" className="gap-1.5 text-[12px] border-border bg-card text-foreground hover:bg-muted hover:text-foreground">
             <Share2 className="h-3.5 w-3.5" />
             {t("share")}
           </Button>

@@ -4,7 +4,8 @@ import { useState, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { uploadFile, deleteFile, getFilePath } from "@/lib/storage";
 import { ImageCropDialog } from "@/components/shared/image-crop-dialog";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 
 /**
  * Extract storage path from a public URL or return path as-is for private buckets.
@@ -212,7 +213,7 @@ export function FileUpload({
           className="gap-2 text-[13px]"
         >
           {uploading ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <Spinner />
           ) : (
             <Upload className="h-3.5 w-3.5" />
           )}

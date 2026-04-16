@@ -4,7 +4,8 @@ import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getPortalUrlAction } from "@/lib/actions/billing";
-import { ExternalLink, Loader2, AlertTriangle } from "lucide-react";
+import { ExternalLink, AlertTriangle } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 import Link from "next/link";
 import type { SubscriptionPlan, SubscriptionStatus } from "@/lib/types";
 
@@ -109,7 +110,7 @@ export function BillingCard({
             className="gap-2"
           >
             {isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner />
             ) : (
               <ExternalLink className="h-4 w-4" />
             )}

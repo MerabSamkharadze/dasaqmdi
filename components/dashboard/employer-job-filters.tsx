@@ -13,7 +13,7 @@ import {
 import { Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type AdminJobFiltersProps = {
+type EmployerJobFiltersProps = {
   categories: { slug: string; label: string }[];
   translations: {
     searchPlaceholder: string;
@@ -25,10 +25,10 @@ type AdminJobFiltersProps = {
   };
 };
 
-export function AdminJobFilters({
+export function EmployerJobFilters({
   categories,
   translations: t,
-}: AdminJobFiltersProps) {
+}: EmployerJobFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -87,18 +87,10 @@ export function AdminJobFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all" className="text-[13px]">
-            {t.allStatuses}
-          </SelectItem>
-          <SelectItem value="active" className="text-[13px]">
-            {t.active}
-          </SelectItem>
-          <SelectItem value="closed" className="text-[13px]">
-            {t.closed}
-          </SelectItem>
-          <SelectItem value="expired" className="text-[13px]">
-            {t.expired}
-          </SelectItem>
+          <SelectItem value="all" className="text-[13px]">{t.allStatuses}</SelectItem>
+          <SelectItem value="active" className="text-[13px]">{t.active}</SelectItem>
+          <SelectItem value="closed" className="text-[13px]">{t.closed}</SelectItem>
+          <SelectItem value="expired" className="text-[13px]">{t.expired}</SelectItem>
         </SelectContent>
       </Select>
 
@@ -110,9 +102,7 @@ export function AdminJobFilters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all" className="text-[13px]">
-            {t.allCategories}
-          </SelectItem>
+          <SelectItem value="all" className="text-[13px]">{t.allCategories}</SelectItem>
           {categories.map((cat) => (
             <SelectItem key={cat.slug} value={cat.slug} className="text-[13px]">
               {cat.label}

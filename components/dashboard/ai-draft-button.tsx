@@ -11,7 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Sparkles, Loader2, X } from "lucide-react";
+import { Sparkles, X } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 
 type DraftResult = {
   title: string;
@@ -163,7 +164,7 @@ export function AIDraftButton({ onDraftComplete }: AIDraftButtonProps) {
         className="gap-1.5 text-[13px]"
       >
         {isLoading ? (
-          <Loader2 className="h-3 w-3 animate-spin" />
+          <Spinner />
         ) : (
           <Sparkles className="h-3 w-3" />
         )}

@@ -217,4 +217,131 @@
     background: linear-gradient(135deg, #C7AE6A 0%, #f5ebb4 100%);
     @apply shadow-md;
   }
+
+  /* Loaders */
+  .choco-drink {
+    width: 35px;
+    height: 80px;
+    position: relative;
+  }
+  .choco-drink::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 3px 5px;
+    border-top: 1px solid #bbb6aa;
+    border-bottom: 4px solid #bbb6aa;
+    background:
+      linear-gradient(#612329 0 0) bottom no-repeat content-box,
+      #e4e0d7;
+    mix-blend-mode: darken;
+    animation: choco-drink-fill 1.5s infinite linear;
+  }
+  .choco-drink::before {
+    content: "";
+    position: absolute;
+    inset: -18px calc(50% - 2px) 8px;
+    background: #eb6b3e;
+    transform-origin: bottom;
+    transform: rotate(8deg);
+  }
+
+  @keyframes choco-drink-fill {
+    0%   { background-size: 100% 100%; }
+    100% { background-size: 100% 5%; }
+  }
+
+  .watermelon-loader {
+    width: 80px;
+    height: 40px;
+    border-radius: 0 0 100px 100px;
+    border: 5px solid #538a2d;
+    border-top: 0;
+    box-sizing: border-box;
+    background:
+      radial-gradient(farthest-side at top, #0000 calc(100% - 5px), #e7ef9d calc(100% - 4px)),
+      radial-gradient(2px 3px, #5c4037 89%, #0000) 0 0/17px 12px,
+      #ff1643;
+    --c: radial-gradient(farthest-side, #000 94%, #0000);
+    -webkit-mask:
+      linear-gradient(#0000 0 0),
+      var(--c) 12px -8px,
+      var(--c) 29px -8px,
+      var(--c) 45px -6px,
+      var(--c) 22px -2px,
+      var(--c) 34px 6px,
+      var(--c) 21px 6px,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0),
+      var(--c) 12px -8px,
+      var(--c) 29px -8px,
+      var(--c) 45px -6px,
+      var(--c) 22px -2px,
+      var(--c) 34px 6px,
+      var(--c) 21px 6px,
+      linear-gradient(#0000 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude, add, add, add, add, add, add;
+    -webkit-mask-repeat: no-repeat;
+    animation: watermelon-bite 3s infinite;
+  }
+
+  @keyframes watermelon-bite {
+    0%   { -webkit-mask-size: auto, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+    15%  { -webkit-mask-size: auto, 20px 20px, 0 0, 0 0, 0 0, 0 0, 0 0; }
+    30%  { -webkit-mask-size: auto, 20px 20px, 20px 20px, 0 0, 0 0, 0 0, 0 0; }
+    45%  { -webkit-mask-size: auto, 20px 20px, 20px 20px, 20px 20px, 0 0, 0 0, 0 0; }
+    60%  { -webkit-mask-size: auto, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 0 0, 0 0; }
+    75%  { -webkit-mask-size: auto, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 0 0; }
+    90%, 100% { -webkit-mask-size: auto, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px; }
+  }
+
+  .chocolate-loader {
+    width: 35px;
+    height: 80px;
+    position: relative;
+  }
+  .chocolate-loader::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 20px;
+    padding: 1px;
+    background:
+      conic-gradient(from -90deg at calc(100% - 3px) 3px, #7e3c26 135deg, #341612 0 270deg, #0000 0),
+      conic-gradient(from 0deg at 3px calc(100% - 3px), #0000 90deg, #341612 0 225deg, #7e3c26 0),
+      #54281f;
+    background-size: 17px 17px;
+    background-clip: content-box;
+    --c: no-repeat linear-gradient(#000 0 0);
+    -webkit-mask:
+      var(--c) 0 0,
+      var(--c) 17px 0,
+      var(--c) 0 17px,
+      var(--c) 17px 17px,
+      var(--c) 0 34px,
+      var(--c) 17px 34px,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: chocolate-eat 3s infinite;
+  }
+  .chocolate-loader::after {
+    content: "";
+    position: absolute;
+    inset: 60% 0 0;
+    background: #B21B01;
+    border-top: 5px solid #c9c7c5;
+  }
+
+  @keyframes chocolate-eat {
+    0%, 14%   { -webkit-mask-size: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, auto; }
+    15%, 29%  { -webkit-mask-size: 17px 17px, 0 0, 0 0, 0 0, 0 0, 0 0, auto; }
+    30%, 44%  { -webkit-mask-size: 17px 17px, 17px 17px, 0 0, 0 0, 0 0, 0 0, auto; }
+    45%, 59%  { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 0 0, 0 0, 0 0, auto; }
+    60%, 74%  { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 0 0, 0 0, auto; }
+    75%, 89%  { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, 0 0, auto; }
+    90%, 100% { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, auto; }
+  }
+
 }

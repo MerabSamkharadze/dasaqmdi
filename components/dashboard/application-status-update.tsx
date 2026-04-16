@@ -10,7 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { APPLICATION_STATUSES } from "@/lib/types/enums";
-import { Loader2, Check } from "lucide-react";
+import { Check } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 import { useTranslations } from "next-intl";
 import type { ActionResult } from "@/lib/types";
 
@@ -62,7 +63,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
         </SelectContent>
       </Select>
 
-      {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground/50" />}
+      {isPending && <Spinner className="text-muted-foreground/50" />}
       {saved && <Check className="h-3.5 w-3.5 text-primary" />}
       {error && <span className="text-[11px] text-destructive/80">{error}</span>}
     </form>

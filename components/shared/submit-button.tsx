@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 import { useFormStatus } from "react-dom";
 import type { ComponentPropsWithoutRef } from "react";
 
@@ -25,7 +25,7 @@ export function SubmitButton({
     >
       {pending ? (
         <>
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          <Spinner />
           {pendingText ?? children}
         </>
       ) : (

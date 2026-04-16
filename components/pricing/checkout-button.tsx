@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { createCheckoutAction } from "@/lib/actions/subscriptions";
-import { Loader2 } from "lucide-react";
+import { Spinner } from "@/components/shared/spinner";
 
 type CheckoutButtonProps = {
   plan: "pro" | "verified";
@@ -30,7 +30,7 @@ export function CheckoutButton({ plan, label, variant = "default" }: CheckoutBut
       variant={variant}
       className="w-full"
     >
-      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : label}
+      {isPending ? <Spinner /> : label}
     </Button>
   );
 }
