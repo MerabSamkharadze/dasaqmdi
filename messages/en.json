@@ -305,7 +305,14 @@
     "totalJobs": "Total Jobs",
     "totalCompanies": "Companies",
     "totalApplications": "Applications",
-    "verifyCompany": "Verify Company"
+    "verifyCompany": "Verify Company",
+    "searchJobs": "Search jobs...",
+    "allStatuses": "All Statuses",
+    "active": "Active",
+    "closed": "Closed",
+    "expired": "Expired",
+    "allCategories": "All Categories",
+    "noResults": "No jobs found"
   },
   "salaries": {
     "title": "Salaries in Georgia",

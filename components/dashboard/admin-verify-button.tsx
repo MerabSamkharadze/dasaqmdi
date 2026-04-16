@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { verifyCompanyAction } from "@/lib/actions/admin";
-import { CheckCircle } from "lucide-react";
+import { ShieldCheck, Loader2 } from "lucide-react";
 import { useTransition } from "react";
 
 export function AdminVerifyButton({ companyId }: { companyId: string }) {
@@ -20,10 +20,14 @@ export function AdminVerifyButton({ companyId }: { companyId: string }) {
       size="sm"
       onClick={handleVerify}
       disabled={isPending}
-      className="gap-1.5 text-[12px]"
+      className="gap-1.5 text-[12px] border-primary/30 text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-200"
     >
-      <CheckCircle className="h-3 w-3" />
-      Verify
+      {isPending ? (
+        <Loader2 className="h-3 w-3 animate-spin" />
+      ) : (
+        <ShieldCheck className="h-3 w-3" />
+      )}
+      {isPending ? "..." : "Verify"}
     </Button>
   );
 }

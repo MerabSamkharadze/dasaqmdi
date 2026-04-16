@@ -173,7 +173,6 @@ export async function renewJobAction(jobId: string): Promise<ActionResult> {
     .single();
 
   if (!job) return { error: "Job not found" };
-  if (job.status === "closed") return { error: "Cannot renew a closed job. Please create a new listing." };
   if (job.status === "archived") return { error: "Cannot renew an archived job." };
 
   const newExpiresAt = new Date();

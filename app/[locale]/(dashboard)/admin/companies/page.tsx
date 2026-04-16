@@ -4,7 +4,8 @@ import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CountBadge } from "@/components/shared/count-badge";
 import { AdminVerifyButton } from "@/components/dashboard/admin-verify-button";
-import { Building2, CheckCircle } from "lucide-react";
+import { Building2 } from "lucide-react";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import Image from "next/image";
 import type { Metadata } from "next";
 
@@ -53,8 +54,8 @@ export default async function AdminCompaniesPage() {
             </div>
 
             {company.is_verified ? (
-              <Badge variant="secondary" className="gap-1 text-[11px] bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400">
-                <CheckCircle className="h-3 w-3" />
+              <Badge variant="secondary" className="gap-1 text-[11px] bg-primary/10 text-primary border-primary/20">
+                <VerifiedBadge />
                 Verified
               </Badge>
             ) : (

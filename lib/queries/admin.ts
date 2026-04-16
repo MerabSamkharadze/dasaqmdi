@@ -51,13 +51,50 @@ export async function getAllUsers(): Promise<Profile[]> {
   return data ?? [];
 }
 
-export async function getAllJobs(): Promise<Job[]> {
+type AdminJobFilters = {
+  q?: string;
+  status?: string;
+  category?: string;
+};
+
+export async function getAllJobs(filters?: AdminJobFilters): Promise<Job[]> {
   const supabase = await requireAdmin();
 
-  const { data } = await supabase
+  // Resolve category slug → id if needed
+  let categoryId: number | undefined;
+  if (filters?.category) {
+    const { data: cat } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", filters.category)
+      .single();
+    categoryId = cat?.id;
+  }
+
+  let query = supabase
     .from("jobs")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (filters?.q) {
+    const term = `%${filters.q}%`;
+    query = query.or(`title.ilike.${term},title_ka.ilike.${term}`);
+  }
+
+  const now = new Date().toISOString();
+  if (filters?.status === "active") {
+    query = query.eq("status", "active").gte("expires_at", now);
+  } else if (filters?.status === "closed") {
+    query = query.eq("status", "closed");
+  } else if (filters?.status === "expired") {
+    query = query.eq("status", "active").lt("expires_at", now);
+  }
+
+  if (categoryId) {
+    query = query.eq("category_id", categoryId);
+  }
+
+  const { data } = await query;
   return data ?? [];
 }
 

@@ -305,7 +305,14 @@
     "totalJobs": "სულ ვაკანსიები",
     "totalCompanies": "კომპანიები",
     "totalApplications": "განაცხადები",
-    "verifyCompany": "კომპანიის ვერიფიკაცია"
+    "verifyCompany": "კომპანიის ვერიფიკაცია",
+    "searchJobs": "ვაკანსიების ძიება...",
+    "allStatuses": "ყველა სტატუსი",
+    "active": "აქტიური",
+    "closed": "დახურული",
+    "expired": "ვადაგასული",
+    "allCategories": "ყველა კატეგორია",
+    "noResults": "ვაკანსიები ვერ მოიძებნა"
   },
   "salaries": {
     "title": "ხელფასები საქართველოში",

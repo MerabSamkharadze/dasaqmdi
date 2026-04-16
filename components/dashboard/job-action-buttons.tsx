@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { closeJobAction, renewJobAction } from "@/lib/actions/jobs";
 import { Edit, XCircle, RefreshCw, Users } from "lucide-react";
 import Link from "next/link";
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 
 // E6: Standalone renew button for dashboard
@@ -34,21 +34,31 @@ type JobActionButtonsProps = {
 
 export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButtonsProps) {
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   function handleClose() {
+    setError(null);
     startTransition(async () => {
-      await closeJobAction(jobId);
+      const result = await closeJobAction(jobId);
+      if (result.error) setError(result.error);
     });
   }
 
   function handleRenew() {
+    setError(null);
     startTransition(async () => {
-      await renewJobAction(jobId);
+      const result = await renewJobAction(jobId);
+      if (result.error) setError(result.error);
     });
   }
 
   return (
-    <div className="flex items-center gap-0.5 shrink-0">
+    <div className="flex items-center gap-0.5 shrink-0 relative">
+      {error && (
+        <span className="absolute -top-6 right-0 text-[11px] text-destructive/80 whitespace-nowrap">
+          {error}
+        </span>
+      )}
       {(isExpired || isClosed) && (
         <Button
           variant="outline"
