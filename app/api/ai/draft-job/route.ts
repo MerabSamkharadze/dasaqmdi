@@ -109,14 +109,15 @@ export async function POST(req: Request) {
     requirements: z.string().describe("Requirements in English: Required skills (5-7 bullet points) + Nice to Have (3-4 bullet points). Plain text."),
     requirements_ka: z.string().describe("მოთხოვნები ქართულად: საჭირო უნარები (5-7 პუნქტი) + სასურველი (3-4 პუნქტი). უბრალო ტექსტი."),
     suggested_category: z.string().describe(`The single best matching category slug from this list: ${categoryList}. Pick the most relevant one for the job title and skills.`),
-    suggested_tags: z.array(z.string()).min(10).max(15).describe("10-15 relevant skill tags for this job. Mix of technical/hard skills (e.g. React, SQL, Figma) and soft skills (e.g. Communication, Teamwork, Problem Solving). Use English. Short labels, no sentences."),
+    suggested_tags: z.array(z.string()).min(3).max(15).describe("10-15 relevant skill tags for this job. Mix of technical/hard skills (e.g. React, SQL, Figma) and soft skills (e.g. Communication, Teamwork, Problem Solving). Use English. Short labels, no sentences."),
   });
 
-  const result = await generateObject({
-    model: google("gemini-2.5-flash"),
-    schema: outputSchema,
-    system: `You are a professional job description writer for the Georgian job market (dasaqmdi.com). Generate BOTH English and Georgian versions simultaneously. Be specific to the role, not generic. Use plain text with line breaks and bullet points (- ), no markdown headers.`,
-    prompt: `Generate a structured job description for:
+  try {
+    const result = await generateObject({
+      model: google("gemini-2.5-flash"),
+      schema: outputSchema,
+      system: `You are a professional job description writer for the Georgian job market (dasaqmdi.com). Generate BOTH English and Georgian versions simultaneously. Be specific to the role, not generic. Use plain text with line breaks and bullet points (- ), no markdown headers.`,
+      prompt: `Generate a structured job description for:
 
 Job Title: ${title}
 Seniority Level: ${seniority}
@@ -125,7 +126,14 @@ Core Skills: ${skills.join(", ")}
 Available categories: ${categoryList}
 
 For each field, write professional, detailed content. Georgian text must be natural Georgian, not a machine translation. For suggested_category, pick the single most relevant category slug from the list above.`,
-  });
+    });
 
-  return Response.json(result.object);
+    return Response.json(result.object);
+  } catch (err) {
+    console.error("AI draft generation failed:", err instanceof Error ? err.message : err);
+    return Response.json(
+      { error: "AI generation failed. Please try again." },
+      { status: 502 },
+    );
+  }
 }
