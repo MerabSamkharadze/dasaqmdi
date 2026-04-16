@@ -407,12 +407,12 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A1.0 | DB: RPC functions | Migration `014_admin_analytics.sql` — `get_registration_trend(days)`, `get_job_posting_trend(days)`, `get_application_trend(days)` Postgres functions returning `{date, count}[]` | ⬜ |
-| A1.1 | Stats queries | `lib/queries/admin.ts` — trend queries via RPC + `getCategoryBreakdown` (Supabase group query) | ⬜ |
-| A1.2 | Chart component | `components/dashboard/admin-charts.tsx` — CSS-only bar charts (%-based divs, brand palette, responsive). არ ვამატებთ external dependency | ⬜ |
-| A1.3 | Analytics page | `app/[locale]/(dashboard)/admin/analytics/page.tsx` — 4 chart cards: registrations, jobs, applications, categories | ⬜ |
-| A1.4 | Nav link | `nav-items.ts` — BarChart3 icon, admin nav "Tools" section | ⬜ |
-| A1.5 | i18n | `admin.analytics*` keys ka/en | ⬜ |
+| A1.0 | DB: RPC functions | Migration `014_admin_analytics.sql` — 4 Postgres functions (3 trends + category breakdown) | ✅ |
+| A1.1 | Stats queries | `lib/queries/admin.ts` — 4 query functions via RPC | ✅ |
+| A1.2 | Chart component | `components/dashboard/admin-bar-chart.tsx` — CSS-only BarChart + HBarChart | ✅ |
+| A1.3 | Analytics page | `app/[locale]/(dashboard)/admin/analytics/page.tsx` — 3 trend cards + category breakdown | ✅ |
+| A1.4 | Nav link | `nav-items.ts` — BarChart3 icon | ✅ |
+| A1.5 | i18n | `admin.analytics*` + `nav.analytics` keys ka/en | ✅ |
 
 ### A2 — User Search + Filters
 

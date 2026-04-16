@@ -271,7 +271,7 @@ function PreferredCategoriesSection({
               key={cat.slug}
               type="button"
               onClick={() => toggle(cat.slug)}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all duration-200 text-[13px] ${
+              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all duration-200 text-[13px] min-w-0 overflow-hidden ${
                 isSelected
                   ? "border-primary/40 bg-primary/5 text-primary"
                   : "border-border/60 text-muted-foreground hover:border-border hover:bg-muted/30"
@@ -282,7 +282,7 @@ function PreferredCategoriesSection({
               }`}>
                 {isSelected && <span className="text-[10px]">✓</span>}
               </span>
-              {cat.label}
+              <span className="truncate">{cat.label}</span>
             </button>
           );
         })}
