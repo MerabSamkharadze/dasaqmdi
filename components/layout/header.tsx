@@ -12,6 +12,7 @@ export async function Header() {
     { href: "/jobs", label: t("jobs") },
     { href: "/companies", label: t("companies") },
     { href: "/salaries", label: t("salaries") },
+    { href: "/about", label: t("about") },
   ];
 
   return (

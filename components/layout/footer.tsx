@@ -36,6 +36,9 @@ export async function Footer() {
               <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 {t("pricing")}
               </Link>
+              <Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
+                {t("about")}
+              </Link>
             </nav>
           </div>
 

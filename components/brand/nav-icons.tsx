@@ -105,6 +105,19 @@ export function LaptopIcon({ className }: { className?: string }) {
   );
 }
 
+export function AboutIcon({ className }: { className?: string }) {
+  return (
+    <svg {...ICON_PROPS} className={className}>
+      {/* Circle */}
+      <circle cx="12" cy="12" r="9" fill="#543d3d" />
+      {/* i dot */}
+      <circle cx="12" cy="8.5" r="1.5" fill="#f5ebb4" />
+      {/* i stem */}
+      <rect x="10.5" y="11.5" width="3" height="6" rx="1" fill="#f5ebb4" />
+    </svg>
+  );
+}
+
 export function SalariesIcon({ className }: { className?: string }) {
   return (
     <svg {...ICON_PROPS} className={className}>

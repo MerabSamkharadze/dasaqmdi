@@ -5,7 +5,7 @@ import { usePathname } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/brand/logo";
 import { Menu } from "lucide-react";
-import { JobsIcon, CompaniesIcon, SalariesIcon } from "@/components/brand/nav-icons";
+import { JobsIcon, CompaniesIcon, SalariesIcon, AboutIcon } from "@/components/brand/nav-icons";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -25,6 +25,7 @@ const NAV_ICONS: Record<string, React.ElementType> = {
   "/jobs": JobsIcon,
   "/companies": CompaniesIcon,
   "/salaries": SalariesIcon,
+  "/about": AboutIcon,
 };
 
 export function HeaderClient({

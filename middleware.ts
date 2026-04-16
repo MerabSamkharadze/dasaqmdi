@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 const intlMiddleware = createIntlMiddleware(routing);
 
 // Public paths that don't require authentication (without locale prefix)
-const PUBLIC_PATHS = ["/", "/jobs", "/companies", "/auth", "/pricing", "/salaries", "/seekers"];
+const PUBLIC_PATHS = ["/", "/jobs", "/companies", "/auth", "/pricing", "/salaries", "/seekers", "/about"];
 
 function isPublicPath(pathname: string): boolean {
   // Strip locale prefix if present (e.g., /en/jobs → /jobs)

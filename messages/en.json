@@ -39,6 +39,7 @@
     "billing": "Billing",
     "emailTemplates": "Email Templates",
     "pricing": "Pricing",
+    "about": "About",
     "telegramSubscribe": "Subscribe via Telegram",
     "footerTagline": "Job search in Georgia — fast, simple.",
     "footerQuickLinks": "Quick Links",
@@ -335,6 +336,62 @@
     "salaryByCategory": "Salary by Category",
     "salaryRange": "Salary Ranges",
     "disclaimer": "Data based on job listings published on this site with specified salary ranges"
+  },
+  "about": {
+    "title": "About dasaqmdi.com",
+    "subtitle": "The modern job platform connecting talent with opportunities across Georgia.",
+    "heroTitle": "Find your dream job in",
+    "heroAccent": "Georgia",
+    "browseJobs": "Browse Jobs",
+    "createAccount": "Create Account",
+    "whyUs": "Why choose dasaqmdi.com?",
+    "features": {
+      "aiMatching": {
+        "title": "AI Smart Matching",
+        "description": "Our AI analyzes your skills and matches you with the most relevant jobs automatically."
+      },
+      "smartAlerts": {
+        "title": "Instant Notifications",
+        "description": "Get notified the moment a new job matches your profile — via email or Telegram."
+      },
+      "verified": {
+        "title": "Verified Companies",
+        "description": "Trusted employers with verified badges so you can apply with confidence."
+      },
+      "bilingual": {
+        "title": "Bilingual Platform",
+        "description": "Full support for both Georgian and English — every listing, every interface."
+      },
+      "telegram": {
+        "title": "Telegram Bot",
+        "description": "Subscribe to categories and companies. Get job alerts directly in Telegram."
+      },
+      "freeForSeekers": {
+        "title": "Free for Job Seekers",
+        "description": "Searching and applying for jobs is completely free. No hidden fees, ever."
+      }
+    },
+    "stats": {
+      "jobs": { "value": "500+", "label": "Active Jobs" },
+      "companies": { "value": "100+", "label": "Companies" },
+      "categories": { "value": "11", "label": "Categories" },
+      "languages": { "value": "2", "label": "Languages" }
+    },
+    "forSeekers": {
+      "title": "For Job Seekers",
+      "point1": "Create a profile and get matched with relevant jobs",
+      "point2": "Apply with one click and track your applications",
+      "point3": "Save favorite jobs and get notified about updates",
+      "point4": "Build a public portfolio to showcase your skills"
+    },
+    "forEmployers": {
+      "title": "For Employers",
+      "point1": "Post jobs and reach thousands of candidates",
+      "point2": "Use AI to draft professional job descriptions",
+      "point3": "Review applicants with smart match scores",
+      "point4": "Manage subscriptions and customize email templates"
+    },
+    "telegramCta": "Join our Telegram bot for instant job alerts"
   },
   "pricing": {
     "title": "Pricing",
