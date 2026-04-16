@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useRef, useEffect, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { ChocoDrink } from "@/components/shared/loaders/choco-drink";
 import { Input } from "@/components/ui/input";
@@ -135,10 +136,11 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
         }}
       />
 
-      {isPending && (
+      {isPending && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/60 backdrop-blur-sm">
           <ChocoDrink />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

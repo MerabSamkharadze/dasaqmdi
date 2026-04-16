@@ -40,6 +40,7 @@
     "emailTemplates": "ელფოსტის შაბლონები",
     "pricing": "ფასები",
     "about": "ჩვენს შესახებ",
+    "analytics": "ანალიტიკა",
     "telegramSubscribe": "გამოიწერე ტელეგრამით",
     "footerTagline": "სამუშაოს ძიება საქართველოში — სწრაფად, მარტივად.",
     "footerQuickLinks": "სწრაფი ბმულები",
@@ -321,7 +322,14 @@
     "closed": "დახურული",
     "expired": "ვადაგასული",
     "allCategories": "ყველა კატეგორია",
-    "noResults": "ვაკანსიები ვერ მოიძებნა"
+    "noResults": "ვაკანსიები ვერ მოიძებნა",
+    "analyticsTitle": "ანალიტიკა",
+    "registrations": "ახალი რეგისტრაციები",
+    "jobPostings": "ვაკანსიები",
+    "applicationsTrend": "განაცხადები",
+    "categoryBreakdown": "ვაკანსიები კატეგორიების მიხედვით",
+    "last30Days": "ბოლო 30 დღე",
+    "total": "სულ"
   },
   "salaries": {
     "title": "ხელფასები საქართველოში",

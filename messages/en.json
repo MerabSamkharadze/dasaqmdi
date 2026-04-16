@@ -40,6 +40,7 @@
     "emailTemplates": "Email Templates",
     "pricing": "Pricing",
     "about": "About",
+    "analytics": "Analytics",
     "telegramSubscribe": "Subscribe via Telegram",
     "footerTagline": "Job search in Georgia — fast, simple.",
     "footerQuickLinks": "Quick Links",
@@ -321,7 +322,14 @@
     "closed": "Closed",
     "expired": "Expired",
     "allCategories": "All Categories",
-    "noResults": "No jobs found"
+    "noResults": "No jobs found",
+    "analyticsTitle": "Analytics",
+    "registrations": "New Registrations",
+    "jobPostings": "Job Postings",
+    "applicationsTrend": "Applications",
+    "categoryBreakdown": "Jobs by Category",
+    "last30Days": "Last 30 Days",
+    "total": "Total"
   },
   "salaries": {
     "title": "Salaries in Georgia",

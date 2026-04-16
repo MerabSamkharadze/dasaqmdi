@@ -61,7 +61,8 @@
       "Bash(python3 -c \"import sys,json; print\\(json.dumps\\(json.load\\(sys.stdin\\),indent=2\\)\\)\")",
       "Bash(netstat -ano)",
       "Bash(taskkill:*)",
-      "Bash(xargs sed:*)"
+      "Bash(xargs sed:*)",
+      "Bash(wc -l /c/Users/msamkharadze/Desktop/personal/my-app/components/**/*.tsx)"
     ]
   }
 }

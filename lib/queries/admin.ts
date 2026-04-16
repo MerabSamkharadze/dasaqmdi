@@ -98,6 +98,35 @@ export async function getAllJobs(filters?: AdminJobFilters): Promise<Job[]> {
   return data ?? [];
 }
 
+// --- Analytics ---
+
+export type TrendPoint = { date: string; count: number };
+export type CategoryCount = { slug: string; name_en: string; name_ka: string; count: number };
+
+export async function getRegistrationTrend(days = 30): Promise<TrendPoint[]> {
+  const supabase = await requireAdmin();
+  const { data } = await supabase.rpc("get_registration_trend", { p_days: days });
+  return (data as TrendPoint[]) ?? [];
+}
+
+export async function getJobPostingTrend(days = 30): Promise<TrendPoint[]> {
+  const supabase = await requireAdmin();
+  const { data } = await supabase.rpc("get_job_posting_trend", { p_days: days });
+  return (data as TrendPoint[]) ?? [];
+}
+
+export async function getApplicationTrend(days = 30): Promise<TrendPoint[]> {
+  const supabase = await requireAdmin();
+  const { data } = await supabase.rpc("get_application_trend", { p_days: days });
+  return (data as TrendPoint[]) ?? [];
+}
+
+export async function getCategoryBreakdown(): Promise<CategoryCount[]> {
+  const supabase = await requireAdmin();
+  const { data } = await supabase.rpc("get_category_breakdown");
+  return (data as CategoryCount[]) ?? [];
+}
+
 export async function getAllCompaniesAdmin(): Promise<Company[]> {
   const supabase = await requireAdmin();
 
