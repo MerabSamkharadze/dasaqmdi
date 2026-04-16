@@ -65,6 +65,8 @@ export function LoginForm({
             type="email"
             placeholder="m@example.com"
             required
+            aria-invalid={!!state.error}
+            aria-describedby={state.error ? "login-error" : undefined}
             className="h-11 bg-card"
           />
         </div>
@@ -87,13 +89,15 @@ export function LoginForm({
             name="password"
             type="password"
             required
+            aria-invalid={!!state.error}
+            aria-describedby={state.error ? "login-error" : undefined}
             className="h-11 bg-card"
           />
         </div>
 
         {/* Error */}
         {state.error && (
-          <div className="rounded-xl border border-destructive/30 bg-destructive/8 px-4 py-3 text-sm text-destructive">
+          <div id="login-error" role="alert" className="rounded-xl border border-destructive/30 bg-destructive/8 px-4 py-3 text-sm text-destructive">
             {state.error}
           </div>
         )}

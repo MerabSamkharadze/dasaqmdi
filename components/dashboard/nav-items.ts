@@ -58,6 +58,7 @@ const adminNav: NavItem[] = [
   { href: "/admin/jobs", labelKey: "manageJobs", icon: Briefcase },
   { href: "/admin/companies", labelKey: "manageCompanies", icon: Building2 },
   { href: "/admin/analytics", labelKey: "analytics", icon: BarChart3 },
+  { href: "/admin/subscriptions", labelKey: "subscriptions", icon: CreditCard },
 ];
 
 export function getNavItems(role: UserRole): NavItem[] {

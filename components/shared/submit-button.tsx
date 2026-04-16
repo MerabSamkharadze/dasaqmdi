@@ -20,6 +20,7 @@ export function SubmitButton({
     <Button
       type="submit"
       disabled={pending}
+      aria-busy={pending}
       className="transition-all duration-200 active:scale-[0.97]"
       {...props}
     >

@@ -23,7 +23,7 @@ export async function Footer() {
             <h4 className="text-[13px] font-semibold text-foreground">
               {t("footerQuickLinks")}
             </h4>
-            <nav className="flex flex-col gap-2">
+            <nav aria-label="Footer links" className="flex flex-col gap-2">
               <Link href="/jobs" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200">
                 {t("jobs")}
               </Link>
@@ -47,7 +47,7 @@ export async function Footer() {
             <h4 className="text-[13px] font-semibold text-foreground">
               {t("footerResources")}
             </h4>
-            <nav className="flex flex-col gap-2">
+            <nav aria-label="Resources" className="flex flex-col gap-2">
               <a
                 href={siteConfig.social.telegramBot}
                 target="_blank"

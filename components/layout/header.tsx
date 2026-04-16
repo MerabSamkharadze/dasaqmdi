@@ -20,7 +20,7 @@ export async function Header() {
       <LanguageSwitcher />
       <ThemeSwitcher />
       <div className="ml-1.5 pl-1.5 border-l border-border/40">
-        <Suspense>
+        <Suspense fallback={<div className="h-9 w-20 animate-pulse rounded-lg bg-muted/50" />}>
           <AuthButton />
         </Suspense>
       </div>

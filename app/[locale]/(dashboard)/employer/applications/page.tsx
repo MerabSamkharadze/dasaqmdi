@@ -112,7 +112,7 @@ export default async function EmployerAllApplicationsPage({
       </div>
 
       {/* Filters */}
-      <Suspense>
+      <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>
         <ApplicationFilters
           jobs={jobOptions}
           translations={filterTranslations}

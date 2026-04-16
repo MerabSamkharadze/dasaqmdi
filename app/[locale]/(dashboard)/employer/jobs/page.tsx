@@ -101,7 +101,7 @@ export default async function EmployerJobsPage({
         </Button>
       </div>
 
-      <Suspense>
+      <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>
         <EmployerJobFilters
           categories={categoryOptions}
           translations={filterTranslations}

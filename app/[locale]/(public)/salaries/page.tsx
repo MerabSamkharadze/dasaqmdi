@@ -124,7 +124,7 @@ export default async function SalariesPage({
       </section>
 
       {/* Filters */}
-      <Suspense>
+      <Suspense fallback={<div className="h-12 animate-pulse rounded-lg bg-muted/50" />}>
         <SalaryFilters
           categories={categoryOptions}
           cities={cities}

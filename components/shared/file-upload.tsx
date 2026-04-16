@@ -87,12 +87,12 @@ export function FileUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setError(null);
+
     if (file.size > maxSizeMB * 1024 * 1024) {
       setError(`File must be under ${maxSizeMB}MB`);
       return;
     }
-
-    setError(null);
 
     // Show crop dialog for images
     if (enableCrop && file.type.startsWith("image/")) {
@@ -173,9 +173,10 @@ export function FileUpload({
           <button
             type="button"
             onClick={handleRemove}
+            aria-label="Remove file"
             className="absolute -right-2 -top-2 rounded-full bg-destructive/80 p-1 text-destructive-foreground shadow-sm hover:bg-destructive transition-colors duration-200"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       )}

@@ -41,7 +41,7 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-0.5 p-3">
+      <nav aria-label="Dashboard navigation" className="flex-1 space-y-0.5 p-3">
         {navItems.map((item) => {
           const isActive = isNavActive(item, normalizedPath);
           const Icon = item.icon;
@@ -50,6 +50,7 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
             <Link
               key={item.href}
               href={item.href}
+              aria-current={isActive ? "page" : undefined}
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200 relative",
                 isActive
@@ -84,6 +85,7 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
                     alt=""
                     width={32}
                     height={32}
+                    sizes="32px"
                     className="h-8 w-8 rounded-full object-cover"
                   />
                 ) : (

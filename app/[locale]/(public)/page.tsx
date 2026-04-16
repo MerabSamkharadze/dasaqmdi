@@ -13,6 +13,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { RefreshButton } from "@/components/shared/refresh-button";
+import { ShowAllLink } from "@/components/shared/show-all-link";
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
@@ -199,7 +200,7 @@ export default async function HomePage({
 
       {/* Filters */}
       <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
-        <Suspense>
+        <Suspense fallback={<div className="h-12 animate-pulse rounded-lg bg-muted/50" />}>
           <JobFilters
             categories={categoryOptions}
             translations={filterTranslations}
@@ -223,9 +224,7 @@ export default async function HomePage({
           <span className="text-[12px] text-primary font-medium">
             {tHome("personalizedFeed")}
           </span>
-          <Link href="/?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
-            {tHome("showAll")}
-          </Link>
+          <ShowAllLink />
         </div>
       )}
 

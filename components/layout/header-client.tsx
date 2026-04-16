@@ -65,7 +65,7 @@ export function HeaderClient({
             <Logo />
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-1">
+          <nav aria-label="Main navigation" className="hidden sm:flex items-center gap-1">
             {navLinks.map((link) => {
               const Icon = NAV_ICONS[link.href];
               const isActive =
@@ -89,7 +89,7 @@ export function HeaderClient({
                   {link.label}
                   {/* Active gold underline */}
                   {isActive && (
-                    <span className="absolute -bottom-[calc(0.375rem+1px)] left-3 right-3 h-[2px] rounded-full bg-[#C7AE6A]" />
+                    <span className="absolute -bottom-[calc(0.375rem+1px)] left-3 right-3 h-[2px] rounded-full bg-primary" />
                   )}
                 </Link>
               );
@@ -106,7 +106,7 @@ export function HeaderClient({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-xl sm:hidden"
+            className="h-11 w-11 sm:h-8 sm:w-8 rounded-xl sm:hidden"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
           >
@@ -124,7 +124,7 @@ export function HeaderClient({
             </SheetTitle>
           </SheetHeader>
 
-          <nav className="flex flex-col gap-1 px-3 py-4">
+          <nav aria-label="Main navigation" className="flex flex-col gap-1 px-3 py-4">
             {navLinks.map((link) => {
               const Icon = NAV_ICONS[link.href];
               const isActive =

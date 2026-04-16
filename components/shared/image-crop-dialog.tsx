@@ -91,18 +91,24 @@ export function ImageCropDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md mx-4 rounded-xl bg-card shadow-xl overflow-hidden">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="crop-dialog-title"
+        className="relative w-full max-w-md mx-4 rounded-xl bg-card shadow-xl overflow-hidden"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-border/60">
-          <p className="text-[14px] font-semibold tracking-tight">
+          <p id="crop-dialog-title" className="text-[14px] font-semibold tracking-tight">
             {t("cropImage")}
           </p>
           <button
             type="button"
             onClick={onCancel}
+            aria-label={t("cancel")}
             className="text-muted-foreground/50 hover:text-foreground transition-colors duration-200"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -123,13 +129,18 @@ export function ImageCropDialog({
 
         {/* Zoom slider */}
         <div className="px-5 py-3">
+          <label htmlFor="crop-zoom" className="sr-only">Zoom</label>
           <input
+            id="crop-zoom"
             type="range"
             min={1}
             max={3}
             step={0.05}
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
+            aria-valuemin={1}
+            aria-valuemax={3}
+            aria-valuenow={zoom}
             className="w-full h-1.5 rounded-full appearance-none bg-muted/60 accent-primary cursor-pointer"
           />
         </div>

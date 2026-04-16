@@ -100,6 +100,7 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
         {variant === "icon" ? (
           <button
             type="button"
+            aria-label={t("share")}
             className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-muted/50 transition-all duration-200"
           >
             <Share2 className="h-4 w-4" />

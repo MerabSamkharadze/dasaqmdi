@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
 import { AuthModal } from "@/components/shared/auth-modal";
 import type { Locale } from "@/lib/types/enums";
+import { siteConfig } from "@/lib/config";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -64,10 +65,10 @@ export default async function LocaleLayout({
             disableTransitionOnChange
           >
             <NextTopLoader
-              color="#C7AE6A"
+              color={siteConfig.og.accentColor}
               height={2}
               showSpinner={false}
-              shadow="0 0 10px rgba(199,174,106,0.3), 0 0 5px rgba(199,174,106,0.2)"
+              shadow={`0 0 10px ${siteConfig.og.accentColor}4D, 0 0 5px ${siteConfig.og.accentColor}33`}
             />
             <AuthModalProvider>
               {children}

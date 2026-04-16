@@ -20,15 +20,26 @@ type StatusUpdateProps = {
   currentStatus: string;
 };
 
-// O12: Optimistic — auto-submit on select change, no Update button needed
+const SENSITIVE_STATUSES = ["accepted", "rejected"];
+
+// O12: Optimistic — auto-submit on select change, with confirmation for sensitive statuses
 export function ApplicationStatusUpdate({ applicationId, currentStatus }: StatusUpdateProps) {
   const t = useTranslations("applications.status");
+  const tCommon = useTranslations("common");
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  function handleChange() {
+  function handleChange(newStatus: string) {
+    // Confirm before sensitive status changes
+    if (SENSITIVE_STATUSES.includes(newStatus) && newStatus !== currentStatus) {
+      const confirmed = window.confirm(
+        `${t(newStatus)}? ${tCommon("confirmAction")}`
+      );
+      if (!confirmed) return;
+    }
+
     setError(null);
     setSaved(false);
     startTransition(async () => {
@@ -41,7 +52,7 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
         setError(result.error);
       } else {
         setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
+        setTimeout(() => setSaved(false), 3000);
       }
     });
   }
@@ -64,8 +75,13 @@ export function ApplicationStatusUpdate({ applicationId, currentStatus }: Status
       </Select>
 
       {isPending && <Spinner className="text-muted-foreground/50" />}
-      {saved && <Check className="h-3.5 w-3.5 text-primary" />}
-      {error && <span className="text-[11px] text-destructive/80">{error}</span>}
+      {saved && (
+        <span className="flex items-center gap-1">
+          <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+          <span className="sr-only">{tCommon("saved")}</span>
+        </span>
+      )}
+      {error && <span role="alert" className="text-[11px] text-destructive/80">{error}</span>}
     </form>
   );
 }

@@ -8,7 +8,16 @@ type BarChartProps = {
 
 export function BarChart({ data, label, subtitle }: BarChartProps) {
   const total = data.reduce((sum, d) => sum + d.count, 0);
-  const max = Math.max(...data.map((d) => d.count), 1);
+  const max = data.length > 0 ? Math.max(...data.map((d) => d.count), 1) : 1;
+
+  if (data.length === 0) {
+    return (
+      <div>
+        <h3 className="text-[15px] font-semibold tracking-tight">{label}</h3>
+        <p className="text-[11px] text-muted-foreground/60 mt-2">No data</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -66,7 +75,7 @@ type HBarChartProps = {
 };
 
 export function HBarChart({ data, label, locale }: HBarChartProps) {
-  const max = Math.max(...data.map((d) => d.count), 1);
+  const max = data.length > 0 ? Math.max(...data.map((d) => d.count), 1) : 1;
 
   return (
     <div>

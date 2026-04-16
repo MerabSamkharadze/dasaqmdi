@@ -108,6 +108,7 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
                         alt=""
                         width={36}
                         height={36}
+                        sizes="36px"
                         className="h-9 w-9 rounded-lg object-cover"
                       />
                     ) : (
@@ -185,6 +186,7 @@ export function SeekerDashboard({ data, locale, t }: SeekerDashboardProps) {
                         alt=""
                         width={36}
                         height={36}
+                        sizes="36px"
                         className="h-9 w-9 rounded-lg object-cover"
                       />
                     ) : (

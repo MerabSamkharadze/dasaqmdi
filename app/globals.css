@@ -64,7 +64,7 @@
     --secondary: 0 16% 24%;
     --secondary-foreground: 48 81% 93%;
     --muted: 0 16% 16%;
-    --muted-foreground: 0 10% 55%;
+    --muted-foreground: 0 10% 60%;
     --accent: 0 16% 20%;
     --accent-foreground: 48 81% 93%;
     --destructive: 0 55% 38%;
@@ -96,6 +96,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   body {
     @apply bg-background text-foreground antialiased leading-relaxed;
   }
@@ -112,7 +118,7 @@
 
   /* Focus ring — gold accent, no offset */
   :focus-visible {
-    @apply outline-none ring-[1.5px] ring-[#C7AE6A]/40;
+    @apply outline-none ring-[1.5px] ring-primary/40;
   }
 
   /* Scrollbar — thin & elegant */

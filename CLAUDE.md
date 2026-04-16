@@ -395,6 +395,14 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 
 **მიზანი**: სრულყოფილი admin პანელი — analytics, user/company detail views, search, subscription management, moderation tools.
 
+### ⚡ სამუშაო პრინციპი
+
+**ყოველი ნაბიჯის დასრულების შემდეგ, სანამ შემდეგზე გადავალ, აუცილებლად:**
+1. TypeScript check (`tsc --noEmit`)
+2. კოდის რევიუ — ლოგიკური შეცდომები, missing imports, i18n keys consistency
+3. არსებულ ფუნქციონალთან თავსებადობა — არ იშლება სხვა გვერდები/კომპონენტები
+4. CLAUDE.md სტატუსების განახლება
+
 ### ⚠️ არქიტექტურული გადაწყვეტილებები
 
 - **Charts**: CSS-only bar charts (%-based divs). არ ვამატებთ recharts/tremor — bundle size +40KB არ ღირს 4 chart-ისთვის
@@ -418,38 +426,38 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A2.1 | Query update | `getAllUsers(filters)` — q (`full_name`/`full_name_ka` ilike search, არა email), role filter | ⬜ |
-| A2.2 | Filter component | `components/dashboard/admin-user-filters.tsx` — Search + Role dropdown (seeker/employer/admin) + `startTransition` | ⬜ |
-| A2.3 | Page update | `admin/users/page.tsx` — searchParams + filters + CountBadge | ⬜ |
-| A2.4 | i18n | `admin.searchUsers`, `admin.allRoles`, `admin.seeker`, `admin.employer` ka/en | ⬜ |
+| A2.1 | Query update | `getAllUsers(filters)` — q (`full_name`/`full_name_ka` ilike search), role filter | ✅ |
+| A2.2 | Filter component | `components/dashboard/admin-user-filters.tsx` — Search + Role dropdown + `startTransition` | ✅ |
+| A2.3 | Page update | `admin/users/page.tsx` — searchParams + filters + CountBadge + empty state + color-coded role badges | ✅ |
+| A2.4 | i18n | `admin.searchUsers`, `admin.allRoles`, `admin.seeker`, `admin.employer`, `admin.adminRole` ka/en | ✅ |
 
 ### A3 — User Detail View
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A3.1 | Query | `getAdminUserDetail(supabase, userId)` — supabase client parameter-ად (არა ახალი requireAdmin). Profile + applications count + posted jobs count + company info | ⬜ |
-| A3.2 | Detail page | `app/[locale]/(dashboard)/admin/users/[id]/page.tsx` — page-level requireAdmin → profile card (avatar, name, role, city, skills, created_at), activity stats (applications, jobs), role change dropdown | ⬜ |
-| A3.3 | Link from list | `admin/users/page.tsx` — user name → Link to `/admin/users/[id]` | ⬜ |
-| A3.4 | i18n | `admin.userDetail*` keys ka/en | ⬜ |
+| A3.1 | Query | `getAdminUserDetail(userId)` — profile + applications/jobs count + company info | ✅ |
+| A3.2 | Detail page | `admin/users/[id]/page.tsx` — profile card, stats, skills, role change, back link | ✅ |
+| A3.3 | Link from list | `admin/users/page.tsx` — user name → clickable link | ✅ |
+| A3.4 | i18n | `admin.changeRole` ka/en | ✅ |
 
 ### A4 — Company Detail View
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A4.1 | Query | `getAdminCompanyDetail(supabase, companyId)` — company + active/total jobs count + total applications + subscription row + owner profile (name, email) | ⬜ |
-| A4.2 | Detail page | `app/[locale]/(dashboard)/admin/companies/[id]/page.tsx` — company card (logo, name, city, verified), owner info, jobs summary, subscription status, verify/unverify button | ⬜ |
-| A4.3 | Link from list | `admin/companies/page.tsx` — company name → Link to `/admin/companies/[id]` | ⬜ |
-| A4.4 | i18n | `admin.companyDetail*` keys ka/en | ⬜ |
+| A4.1 | Query | `getAdminCompanyDetail(companyId)` — company + jobs/applications count + subscription + owner | ✅ |
+| A4.2 | Detail page | `admin/companies/[id]/page.tsx` — company card, 4 stat cards, owner link, subscription, verify | ✅ |
+| A4.3 | Link from list | `admin/companies/page.tsx` — company name → clickable link | ✅ |
+| A4.4 | i18n | Existing admin keys reused | ✅ |
 
 ### A5 — Subscription Management
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A5.1 | Query | `getAllSubscriptions()` — all subscriptions joined with company (name, slug). Local DB only — Lemon Squeezy sync არ არის ამ phase-ში | ⬜ |
-| A5.2 | Subscriptions page | `app/[locale]/(dashboard)/admin/subscriptions/page.tsx` — list with plan/status badges, company name, period dates. Summary cards: total active, revenue estimate | ⬜ |
-| A5.3 | Nav link | `nav-items.ts` — CreditCard icon, admin nav "Tools" section | ⬜ |
-| A5.4 | Filters | Status dropdown (active/cancelled/expired) + plan dropdown (free/pro/verified) | ⬜ |
-| A5.5 | i18n | `admin.subscriptions*` keys ka/en | ⬜ |
+| A5.1 | Query | `getAllSubscriptions(filters)` — with status/plan filters + company join | ✅ |
+| A5.2 | Subscriptions page | list + summary cards (active/paid) + plan/status badges | ✅ |
+| A5.3 | Nav link | CreditCard icon in admin nav | ✅ |
+| A5.4 | Filters | `AdminSubscriptionFilters` — Status + Plan dropdowns + startTransition | ✅ |
+| A5.5 | i18n | `admin.subscriptions*` + `nav.subscriptions` ka/en | ✅ |
 
 ### A6 — Job Moderation
 
@@ -491,3 +499,86 @@ A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail)
 ```
 
 **პრიორიტეტი**: A1 → A2 → A3 → A4 — ეს 4 ნაბიჯი ყველაზე მეტ ღირებულებას იძლევა მინიმალური complexity-ით. A6 (Moderation) ყველაზე რისკიანია (breaking change potential) — `MODERATION_ENABLED=false` default-ით დაცულია.
+
+---
+
+## Phase 14: UI/UX & Accessibility Audit Fixes
+
+**მიზანი**: WCAG AA შესაბამისობა, დიზაინ-სისტემის მთლიანობა, UX friction-ის აღმოფხვრა, Performance ოპტიმიზაცია.
+
+### UX1 — Accessibility: ARIA & Semantic HTML (Quick Wins)
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX1.1 | `aria-label` ყველა `<nav>`-ზე | `header-client.tsx`, `dashboard-sidebar.tsx`, `footer.tsx` | `"Main navigation"`, `"Dashboard navigation"`, `"Footer links"`, `"Resources"` | ✅ |
+| UX1.2 | `aria-current="page"` sidebar-ში | `dashboard-sidebar.tsx:53-66` | აქტიურ ლინკს `aria-current="page"` დაემატა | ✅ |
+| UX1.3 | Form validation ARIA | `login-form.tsx`, `sign-up-form.tsx` | `aria-invalid`, `aria-describedby`, `role="alert"` error div-ებზე | ✅ |
+| UX1.4 | Sign-up role buttons | `sign-up-form.tsx:62-131` | `role="radio"` + `aria-checked` + `radiogroup` wrapper | ✅ |
+| UX1.5 | Submit button `aria-busy` | `components/shared/submit-button.tsx` | `aria-busy={pending}` | ✅ |
+| UX1.6 | Share button `aria-label` | `components/jobs/share-job-button.tsx` | `aria-label={t("share")}` icon-only ვარიანტზე | ✅ |
+| UX1.7 | Bookmark `aria-label` | `components/jobs/bookmark-button.tsx` | `aria-hidden` icon-ზე, sr-only ტექსტი გაუმჯობესდა | ✅ |
+| UX1.8 | `scroll-behavior: smooth` reduced-motion | `app/globals.css` | `prefers-reduced-motion`-ში `scroll-behavior: auto` | ✅ |
+
+### UX2 — Auth Modal: Focus Management
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX2.1 | `role="dialog"` + ARIA | `components/shared/auth-modal.tsx` | `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby` | ✅ |
+| UX2.2 | Focus trap | `components/shared/auth-modal.tsx` | Tab/Shift+Tab ციკლი მოდალის შიგნით | ✅ |
+| UX2.3 | Auto-focus on open | `components/shared/auth-modal.tsx` | `requestAnimationFrame` + first focusable | ✅ |
+| UX2.4 | Focus restore on close | `components/shared/auth-modal.tsx` | `previousFocusRef` — trigger-ზე ბრუნდება | ✅ |
+
+### UX3 — Design System: Hardcoded ფერების აღმოფხვრა
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX3.1 | Header active indicator | `header-client.tsx:92` | `bg-[#C7AE6A]` → `bg-primary` | ✅ |
+| UX3.2 | Job card borders | `job-card.tsx:72` | `border-[#C7AE6A]/20` → `border-primary/20`, `border-[#725252]/10` → `border-muted-foreground/10` | ✅ |
+| UX3.3 | Footer telegram button | `footer.tsx:55` | `bg-[#229ED9]/10` — brand color, გამონაკლისი | ⏭️ |
+| UX3.4 | NextTopLoader color | `app/[locale]/layout.tsx:67` | `siteConfig.og.accentColor`-ით შეცვლა | ✅ |
+| UX3.5 | Focus ring in globals | `app/globals.css:115` | `ring-[#C7AE6A]/40` → `ring-primary/40` | ✅ |
+| UX3.6 | OG image route colors | `app/api/og/job/[id]/route.tsx` | 10+ hardcoded hex → centralized color constants | ⬜ |
+
+### UX4 — Dark Mode: Contrast Fix (WCAG AA)
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX4.1 | muted-foreground lightness | `app/globals.css:dark` | `--muted-foreground: 0 10% 55%` → `0 10% 60%` (5.5:1 contrast) | ✅ |
+
+### UX5 — Image Performance
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX5.1 | `sizes` prop ყველა Image-ზე | 20+ Image component across codebase | ყველა Image-ს დაემატა `sizes` prop | ✅ |
+| UX5.2 | raw `<img>` → `<Image>` | `components/shared/file-upload.tsx:168` | blob URL preview — `<img>` სწორია, Next.js Image blob-ს ვერ ამუშავებს | ⏭️ |
+| UX5.3 | Suspense fallback-ები | 8 Suspense across codebase | ყველა Suspense-ს skeleton fallback დაემატა | ✅ |
+
+### UX6 — Touch Targets & Mobile UX
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX6.1 | 44px touch targets | `header-client.tsx:106` | hamburger button: `h-11 w-11 sm:h-8 sm:w-8` | ✅ |
+
+### UX7 — Conversion & Safety UX
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX7.1 | Status update confirmation | `application-status-update.tsx` | accepted/rejected-ზე `window.confirm` + i18n keys | ✅ |
+| UX7.2 | Apply form validation UX | `apply-form.tsx` | Resume required state ნათლად ჩვენება, disabled button-ის ახსნა | ⬜ |
+| UX7.3 | Job form field validation | `job-form.tsx` | Field-level error messages top-level-ის ნაცვლად | ⬜ |
+| UX7.4 | File upload error recovery | `file-upload.tsx` | Error clearing on re-select + remove button aria-label | ✅ |
+| UX7.5 | Image crop dialog ARIA | `image-crop-dialog.tsx` | `role="dialog"`, `aria-modal`, zoom slider label, button aria-labels | ✅ |
+
+### UX8 — SEO & Meta
+
+| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
+|---|---------|-------|--------|---------|
+| UX8.1 | Root `og:image` | `app/layout.tsx` | მთავარ layout-ს აკლია default OG image | ⬜ |
+
+### შესრულების თანმიმდევრობა
+
+```
+UX1 (ARIA Quick Wins) → UX4 (Contrast) → UX3 (Colors) → UX2 (Modal) → UX5 (Images) → UX6 (Touch) → UX7 (Conversion) → UX8 (SEO)
+```
+
+**პრიორიტეტი**: UX1 + UX4 — ყველაზე სწრაფი და მაღალი impact. UX2 (Modal) მოითხოვს ყველაზე მეტ ყურადღებას (focus trap logic). UX7 ყველაზე მნიშვნელოვანია conversion-ისთვის.

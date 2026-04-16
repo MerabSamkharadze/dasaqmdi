@@ -58,9 +58,11 @@ export function SignUpForm({
         {/* Role selection */}
         <div className="space-y-2.5">
           <Label className="text-[13px]">{t("selectRole")}</Label>
-          <div className="grid grid-cols-2 gap-3">
+          <div role="radiogroup" aria-label={t("selectRole")} className="grid grid-cols-2 gap-3">
             <button
               type="button"
+              role="radio"
+              aria-checked={selectedRole === "seeker"}
               onClick={() => setSelectedRole("seeker")}
               className={cn(
                 "flex flex-col items-center gap-2.5 rounded-xl border-2 p-4 transition-all duration-200",
@@ -96,6 +98,8 @@ export function SignUpForm({
 
             <button
               type="button"
+              role="radio"
+              aria-checked={selectedRole === "employer"}
               onClick={() => setSelectedRole("employer")}
               className={cn(
                 "flex flex-col items-center gap-2.5 rounded-xl border-2 p-4 transition-all duration-200",
@@ -143,6 +147,8 @@ export function SignUpForm({
             type="email"
             placeholder="m@example.com"
             required
+            aria-invalid={!!state.error}
+            aria-describedby={state.error ? "signup-error" : undefined}
             className="h-11 bg-card"
           />
         </div>
@@ -177,7 +183,7 @@ export function SignUpForm({
 
         {/* Error */}
         {state.error && (
-          <div className="rounded-xl border border-destructive/30 bg-destructive/8 px-4 py-3 text-sm text-destructive">
+          <div id="signup-error" role="alert" className="rounded-xl border border-destructive/30 bg-destructive/8 px-4 py-3 text-sm text-destructive">
             {state.error}
           </div>
         )}

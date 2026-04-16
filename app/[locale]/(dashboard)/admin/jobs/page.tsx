@@ -57,7 +57,7 @@ export default async function AdminJobsPage({
         <CountBadge>{jobs.length}</CountBadge>
       </div>
 
-      <Suspense>
+      <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>
         <AdminJobFilters
           categories={categoryOptions}
           translations={filterTranslations}

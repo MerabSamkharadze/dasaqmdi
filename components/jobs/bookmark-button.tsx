@@ -57,8 +57,9 @@ export function BookmarkButton({ jobId, isSaved: initialSaved, isLoggedIn = true
     >
       <Bookmark
         className={cn("h-4 w-4", saved && "fill-current")}
+        aria-hidden="true"
       />
-      <span className="sr-only">{saved ? "Unsave" : "Save"}</span>
+      <span className="sr-only">{saved ? "Remove bookmark" : "Bookmark job"}</span>
     </Button>
   );
 }

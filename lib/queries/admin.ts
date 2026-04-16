@@ -41,13 +41,29 @@ export async function getAdminStats() {
   };
 }
 
-export async function getAllUsers(): Promise<Profile[]> {
+type AdminUserFilters = {
+  q?: string;
+  role?: string;
+};
+
+export async function getAllUsers(filters?: AdminUserFilters): Promise<Profile[]> {
   const supabase = await requireAdmin();
 
-  const { data } = await supabase
+  let query = supabase
     .from("profiles")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (filters?.q) {
+    const term = `%${filters.q}%`;
+    query = query.or(`full_name.ilike.${term},full_name_ka.ilike.${term}`);
+  }
+
+  if (filters?.role && ["seeker", "employer", "admin"].includes(filters.role)) {
+    query = query.eq("role", filters.role);
+  }
+
+  const { data } = await query;
   return data ?? [];
 }
 
@@ -125,6 +141,162 @@ export async function getCategoryBreakdown(): Promise<CategoryCount[]> {
   const supabase = await requireAdmin();
   const { data } = await supabase.rpc("get_category_breakdown");
   return (data as CategoryCount[]) ?? [];
+}
+
+// --- User Detail ---
+
+export type AdminUserDetail = {
+  profile: Profile;
+  applicationsCount: number;
+  postedJobsCount: number;
+  company: { id: string; name: string; slug: string; is_verified: boolean } | null;
+};
+
+export async function getAdminUserDetail(userId: string): Promise<AdminUserDetail | null> {
+  const supabase = await requireAdmin();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+
+  if (!profile) return null;
+
+  const [applications, jobs, company] = await Promise.all([
+    supabase
+      .from("applications")
+      .select("id", { count: "exact", head: true })
+      .eq("applicant_id", userId),
+    supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("posted_by", userId),
+    supabase
+      .from("companies")
+      .select("id, name, slug, is_verified")
+      .eq("owner_id", userId)
+      .single(),
+  ]);
+
+  return {
+    profile,
+    applicationsCount: applications.count ?? 0,
+    postedJobsCount: jobs.count ?? 0,
+    company: company.data,
+  };
+}
+
+// --- Company Detail ---
+
+export type AdminCompanyDetail = {
+  company: Company;
+  owner: { id: string; full_name: string | null; full_name_ka: string | null; role: string } | null;
+  activeJobsCount: number;
+  totalJobsCount: number;
+  totalApplicationsCount: number;
+  subscription: {
+    plan: string;
+    status: string;
+    current_period_end: string | null;
+  } | null;
+};
+
+export async function getAdminCompanyDetail(companyId: string): Promise<AdminCompanyDetail | null> {
+  const supabase = await requireAdmin();
+
+  const { data: company } = await supabase
+    .from("companies")
+    .select("*")
+    .eq("id", companyId)
+    .single();
+
+  if (!company) return null;
+
+  const now = new Date().toISOString();
+
+  // First: get job IDs for this company (needed for applications count)
+  const { data: companyJobs } = await supabase
+    .from("jobs")
+    .select("id")
+    .eq("company_id", companyId);
+  const jobIds = (companyJobs ?? []).map((j) => j.id);
+
+  const [owner, activeJobs, totalJobs, applications, subscription] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, full_name, full_name_ka, role")
+      .eq("id", company.owner_id)
+      .single(),
+    supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("company_id", companyId)
+      .eq("status", "active")
+      .gte("expires_at", now),
+    supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("company_id", companyId),
+    jobIds.length > 0
+      ? supabase
+          .from("applications")
+          .select("id", { count: "exact", head: true })
+          .in("job_id", jobIds)
+      : Promise.resolve({ count: 0 }),
+    supabase
+      .from("subscriptions")
+      .select("plan, status, current_period_end")
+      .eq("company_id", companyId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single(),
+  ]);
+
+  return {
+    company,
+    owner: owner.data,
+    activeJobsCount: activeJobs.count ?? 0,
+    totalJobsCount: totalJobs.count ?? 0,
+    totalApplicationsCount: applications.count ?? 0,
+    subscription: subscription.data,
+  };
+}
+
+// --- Subscriptions ---
+
+export type AdminSubscription = {
+  id: string;
+  plan: string;
+  status: string;
+  current_period_start: string | null;
+  current_period_end: string | null;
+  created_at: string;
+  company: { id: string; name: string; slug: string } | null;
+};
+
+type AdminSubscriptionFilters = {
+  status?: string;
+  plan?: string;
+};
+
+export async function getAllSubscriptions(filters?: AdminSubscriptionFilters): Promise<AdminSubscription[]> {
+  const supabase = await requireAdmin();
+
+  let query = supabase
+    .from("subscriptions")
+    .select("id, plan, status, current_period_start, current_period_end, created_at, company:companies(id, name, slug)")
+    .order("created_at", { ascending: false });
+
+  if (filters?.status && ["active", "cancelled", "past_due", "expired"].includes(filters.status)) {
+    query = query.eq("status", filters.status);
+  }
+  if (filters?.plan && ["free", "pro", "verified"].includes(filters.plan)) {
+    query = query.eq("plan", filters.plan);
+  }
+
+  const { data } = await query;
+  return (data as unknown as AdminSubscription[]) ?? [];
 }
 
 export async function getAllCompaniesAdmin(): Promise<Company[]> {

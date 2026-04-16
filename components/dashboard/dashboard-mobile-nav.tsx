@@ -109,6 +109,7 @@ export function DashboardMobileNav({ role, fullName, avatarUrl }: DashboardMobil
                       alt=""
                       width={32}
                       height={32}
+                      sizes="32px"
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (

@@ -14,6 +14,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
+import { ShowAllLink } from "@/components/shared/show-all-link";
 
 export async function generateMetadata({
   params,
@@ -169,7 +170,7 @@ export default async function JobsPage({
 
       {/* Filters */}
       <div className="rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
-        <Suspense>
+        <Suspense fallback={<div className="h-12 animate-pulse rounded-lg bg-muted/50" />}>
           <JobFilters
             categories={categoryOptions}
             translations={filterTranslations}
@@ -193,9 +194,7 @@ export default async function JobsPage({
           <span className="text-[12px] text-primary font-medium">
             {tHome("personalizedFeed")}
           </span>
-          <Link href="/jobs?all=1" className="text-[11px] text-primary/60 hover:text-primary transition-colors">
-            {tHome("showAll")}
-          </Link>
+          <ShowAllLink href="/jobs?all=1" />
         </div>
       )}
 

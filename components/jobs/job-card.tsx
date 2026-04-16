@@ -69,7 +69,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   return (
     <div
       onClick={() => router.push(`/jobs/${job.id}`)}
-      className="group relative block cursor-pointer rounded-xl border border-[#725252]/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-[#C7AE6A]/20 hover:-translate-y-1"
+      className="group relative block cursor-pointer rounded-xl border border-muted-foreground/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-primary/20 hover:-translate-y-1"
     >
       <div className="flex items-start gap-4">
         {/* Company Logo */}
@@ -84,6 +84,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
               alt={companyName}
               width={36}
               height={36}
+              sizes="36px"
               className="h-9 w-9 rounded-lg object-contain"
             />
           ) : (

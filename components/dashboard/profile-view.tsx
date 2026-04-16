@@ -32,6 +32,7 @@ export function ProfileView({ profile, email, t }: ProfileViewProps) {
               alt={displayName}
               width={80}
               height={80}
+              sizes="80px"
               className="h-20 w-20 rounded-full object-cover"
             />
           ) : (
