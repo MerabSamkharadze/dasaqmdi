@@ -260,7 +260,7 @@
     box-sizing: border-box;
     background:
       radial-gradient(farthest-side at top, #0000 calc(100% - 5px), #e7ef9d calc(100% - 4px)),
-      radial-gradient(2px 3px, #5c4037 89%, #0000) 0 0/17px 12px,
+      radial-gradient(2px 3px at center, #5c4037 89%, #0000) 0 0/17px 12px,
       #ff1643;
     --c: radial-gradient(farthest-side, #000 94%, #0000);
     -webkit-mask:
@@ -342,6 +342,32 @@
     60%, 74%  { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 0 0, 0 0, auto; }
     75%, 89%  { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, 0 0, auto; }
     90%, 100% { -webkit-mask-size: 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, 17px 17px, auto; }
+  }
+
+  .day-night-loader {
+    width: 80px;
+    height: 40px;
+    border-radius: 100px 100px 0 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .day-night-loader::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 -100%;
+    background:
+      radial-gradient(farthest-side, #ffd738 80%, #0000) left 70% top 20%/15px 15px,
+      radial-gradient(farthest-side, #020308 92%, #0000) left 65% bottom 19%/12px 12px,
+      radial-gradient(farthest-side, #ecfefe 92%, #0000) left 70% bottom 20%/15px 15px,
+      linear-gradient(#9eddfe 50%, #020308 0);
+    background-repeat: no-repeat;
+    animation: day-night-spin 2s infinite;
+  }
+
+  @keyframes day-night-spin {
+    0%, 20%   { transform: rotate(0); }
+    40%, 60%  { transform: rotate(.5turn); }
+    80%, 100% { transform: rotate(1turn); }
   }
 
 }
