@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useRef, useEffect } from "react";
+import { useCallback, useRef, useEffect, useTransition } from "react";
+import { cn } from "@/lib/utils";
+import { ChocoDrink } from "@/components/shared/loaders/choco-drink";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,9 +38,9 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -55,13 +57,15 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
       }
       params.delete("page");
       const qs = params.toString();
-      router.push(qs ? `${pathname}?${qs}` : pathname);
+      startTransition(() => {
+        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      });
     },
     [router, pathname, searchParams]
   );
 
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+    <div className={cn("flex flex-col gap-3 sm:flex-row sm:items-center transition-opacity duration-200", isPending && "opacity-60")}>
       {/* Search — O11: debounced realtime search */}
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
@@ -130,6 +134,12 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
           }, 350);
         }}
       />
+
+      {isPending && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <ChocoDrink />
+        </div>
+      )}
     </div>
   );
 }

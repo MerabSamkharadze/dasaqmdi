@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useCallback, useTransition } from "react";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -25,7 +26,9 @@ type SalaryFiltersProps = {
 
 export function SalaryFilters({ categories, cities, translations }: SalaryFiltersProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -35,13 +38,16 @@ export function SalaryFilters({ categories, cities, translations }: SalaryFilter
       } else {
         params.delete(key);
       }
-      router.push(`?${params.toString()}`);
+      const qs = params.toString();
+      startTransition(() => {
+        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+      });
     },
-    [router, searchParams]
+    [router, pathname, searchParams]
   );
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3">
+    <div className={cn("flex flex-col sm:flex-row gap-3 transition-opacity duration-200", isPending && "opacity-60")}>
       {/* Category */}
       <Select
         defaultValue={searchParams.get("category") ?? "all"}
