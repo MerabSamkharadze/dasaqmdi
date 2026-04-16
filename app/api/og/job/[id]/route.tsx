@@ -95,6 +95,8 @@ export async function GET(
   const jobTypeText =
     jobTypeLabels[job.job_type]?.[locale === "ka" ? "ka" : "en"] ?? job.job_type;
 
+  const hiringLabel = locale === "ka" ? "იღებს" : "Hiring";
+
   return new ImageResponse(
     (
       <div
@@ -104,116 +106,200 @@ export async function GET(
           justifyContent: "space-between",
           width: "100%",
           height: "100%",
-          padding: "60px 80px",
-          background: "linear-gradient(135deg, #1a1614 0%, #252220 100%)",
+          padding: "64px 80px",
+          background: "#160905",
+          backgroundImage:
+            "radial-gradient(at 15% 20%, rgba(199,174,106,0.18) 0, transparent 45%), radial-gradient(at 85% 85%, rgba(199,174,106,0.10) 0, transparent 50%), linear-gradient(135deg, #160905 0%, #1f120b 55%, #281b12 100%)",
           color: "#fbf7e1",
           fontFamily: "Noto Sans Georgian, sans-serif",
           position: "relative",
         }}
       >
+        {/* Subtle vignette frame */}
         <div
           style={{
             position: "absolute",
-            top: -40,
-            right: -40,
-            width: 260,
-            height: 260,
-            borderRadius: "50%",
-            background: "rgba(199,174,106,0.05)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            bottom: -80,
-            left: -80,
-            width: 300,
-            height: 300,
-            borderRadius: "50%",
-            background: "rgba(199,174,106,0.03)",
+            inset: 0,
+            borderRadius: 0,
+            boxShadow: "inset 0 0 200px rgba(0,0,0,0.35)",
+            pointerEvents: "none",
           }}
         />
 
-        <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+        {/* Grain-like overlay via tiny stripes */}
+        <div
+          style={{
+            position: "absolute",
+            top: 40,
+            right: 40,
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "10px 18px",
+            borderRadius: 999,
+            background: "rgba(199,174,106,0.15)",
+            border: "1px solid rgba(199,174,106,0.35)",
+            color: "#C7AE6A",
+            fontSize: 18,
+            fontWeight: 600,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              background: "#C7AE6A",
+              boxShadow: "0 0 12px rgba(199,174,106,0.9)",
+            }}
+          />
+          {hiringLabel}
+        </div>
+
+        {/* Company row */}
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 64,
-              height: 64,
-              borderRadius: 14,
-              background: "rgba(199,174,106,0.1)",
-              border: "1px solid rgba(199,174,106,0.2)",
-              fontSize: 28,
+              width: 72,
+              height: 72,
+              borderRadius: 18,
+              background:
+                "linear-gradient(135deg, rgba(199,174,106,0.25) 0%, rgba(199,174,106,0.05) 100%)",
+              border: "1px solid rgba(199,174,106,0.35)",
+              fontSize: 32,
               color: "#C7AE6A",
               fontWeight: 700,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
             }}
           >
             {companyName.charAt(0).toUpperCase()}
           </div>
-          <div style={{ fontSize: 24, color: "#C7AE6A", fontWeight: 600 }}>
-            {companyName}
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div
+              style={{
+                fontSize: 14,
+                color: "#8a827b",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                fontWeight: 500,
+              }}
+            >
+              {locale === "ka" ? "კომპანია" : "Company"}
+            </div>
+            <div
+              style={{ fontSize: 26, color: "#fbf7e1", fontWeight: 600 }}
+            >
+              {companyName}
+            </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div
-            style={{
-              fontSize: 56,
-              fontWeight: 700,
-              lineHeight: 1.15,
-              maxWidth: "950px",
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {jobTitle}
-          </div>
+        {/* Title block with accent bar */}
+        <div style={{ display: "flex", gap: "28px" }}>
           <div
             style={{
               display: "flex",
-              gap: "14px",
-              fontSize: 20,
-              color: "#cbbfa8",
-              flexWrap: "wrap",
+              width: 5,
+              minHeight: 140,
+              borderRadius: 3,
+              background:
+                "linear-gradient(180deg, #C7AE6A 0%, rgba(199,174,106,0) 100%)",
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "22px",
+              flex: 1,
             }}
           >
-            <span
+            <div
               style={{
-                padding: "8px 16px",
-                borderRadius: 999,
-                background: "rgba(199,174,106,0.1)",
-                border: "1px solid rgba(199,174,106,0.2)",
+                fontSize: 60,
+                fontWeight: 700,
+                lineHeight: 1.1,
+                maxWidth: "920px",
+                letterSpacing: "-0.025em",
+                color: "#fbf7e1",
               }}
             >
-              {jobTypeText}
-            </span>
-            {job.city && (
+              {jobTitle}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                fontSize: 20,
+                color: "#cbbfa8",
+                flexWrap: "wrap",
+              }}
+            >
               <span
                 style={{
-                  padding: "8px 16px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "10px 18px",
                   borderRadius: 999,
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                {job.city}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                </svg>
+                {jobTypeText}
               </span>
-            )}
-            {salary && (
-              <span
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: 999,
-                  background: "rgba(199,174,106,0.12)",
-                  border: "1px solid rgba(199,174,106,0.25)",
-                  color: "#C7AE6A",
-                  fontWeight: 600,
-                }}
-              >
-                {salary}
-              </span>
-            )}
+              {job.city && (
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "10px 18px",
+                    borderRadius: 999,
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  {job.city}
+                </span>
+              )}
+              {salary && (
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "10px 18px",
+                    borderRadius: 999,
+                    background:
+                      "linear-gradient(135deg, rgba(199,174,106,0.2) 0%, rgba(199,174,106,0.08) 100%)",
+                    border: "1px solid rgba(199,174,106,0.4)",
+                    color: "#C7AE6A",
+                    fontWeight: 600,
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="12" y1="2" x2="12" y2="22" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>
+                  {salary}
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
