@@ -1,4 +1,4 @@
-import { Inter, Noto_Sans_Georgian } from "next/font/google";
+import { Inter, Noto_Sans_Georgian, Playfair_Display } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
@@ -13,6 +13,13 @@ const inter = Inter({
   variable: "--font-inter",
   display: "swap",
   subsets: ["latin", "latin-ext"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  display: "swap",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
 
 const notoGeorgian = Noto_Sans_Georgian({
@@ -40,7 +47,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${notoGeorgian.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoGeorgian.variable} ${playfair.variable} font-sans antialiased`}
       >
         {/* L4 FIX: Skip to content link for keyboard/screen-reader users */}
         <a

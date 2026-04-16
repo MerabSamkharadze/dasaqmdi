@@ -60,6 +60,7 @@
     "noSkillsCta": "Complete your profile",
     "refresh": "Refresh jobs",
     "refreshing": "Refreshing...",
+    "refreshingJobs": "Updating job listings...",
     "personalizedFeed": "Showing jobs from your preferred categories",
     "showAll": "Show all jobs",
     "backToJobs": "Browse Jobs"
@@ -397,6 +398,11 @@
       "point2": "Use AI to draft professional job descriptions",
       "point3": "Review applicants with smart match scores",
       "point4": "Manage subscriptions and customize email templates"
+    },
+    "pricingCta": {
+      "title": "Ready to hire the best talent?",
+      "description": "Unlock AI-powered job drafts, smart matching, verified badge and unlimited job posts with our Pro and Verified plans.",
+      "button": "View Pricing Plans"
     },
     "telegramCta": "Join our Telegram bot for instant job alerts"
   },

@@ -10,6 +10,7 @@ import {
   Globe,
   Send,
   Users,
+  Building2,
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -166,6 +167,23 @@ export default async function AboutPage() {
             ))}
           </ul>
         </div>
+      </section>
+
+      {/* Pricing CTA for companies */}
+      <section className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent p-8 sm:p-10 text-center">
+        <Building2 className="h-8 w-8 text-primary/60 mx-auto mb-4" />
+        <h2 className="text-xl font-semibold tracking-tight mb-2">
+          {t("pricingCta.title")}
+        </h2>
+        <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
+          {t("pricingCta.description")}
+        </p>
+        <Link
+          href="/pricing"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow-md hover:shadow-lg transition-all duration-200"
+        >
+          {t("pricingCta.button")}
+        </Link>
       </section>
 
       {/* Telegram CTA */}
