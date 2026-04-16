@@ -388,3 +388,92 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 ```
 
 **რეკომენდებული სტარტი**: N1 (DB) → N2 (Resend setup) → N3 (template) → N4 (hook) — ეს 4 ნაბიჯი საკმარისია default templates-ით მუშაობისთვის. N5 (UI editor) მოგვიანებით.
+
+---
+
+## Phase 13: Admin Panel Enhancement
+
+**მიზანი**: სრულყოფილი admin პანელი — analytics, user/company detail views, search, subscription management, moderation tools.
+
+### A1 — Analytics Dashboard (Charts + Trends)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A1.1 | Stats queries | `lib/queries/admin.ts` — getRegistrationTrend (7/30 days), getJobPostingTrend, getApplicationTrend, getCategoryBreakdown | ⬜ |
+| A1.2 | Chart component | `components/dashboard/admin-charts.tsx` — lightweight bar/line charts (CSS-only ან recharts) | ⬜ |
+| A1.3 | Analytics page | `app/[locale]/(dashboard)/admin/analytics/page.tsx` — 4 chart cards: registrations, jobs, applications, categories | ⬜ |
+| A1.4 | Nav link | `nav-items.ts` — BarChart3 icon, "Analytics" / "ანალიტიკა" | ⬜ |
+| A1.5 | i18n | `admin.analytics*` keys ka/en | ⬜ |
+
+### A2 — User Search + Filters
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A2.1 | Query update | `getAllUsers(filters)` — q (name/email search), role filter | ⬜ |
+| A2.2 | Filter component | `components/dashboard/admin-user-filters.tsx` — Search + Role dropdown | ⬜ |
+| A2.3 | Page update | `admin/users/page.tsx` — searchParams + filters + CountBadge | ⬜ |
+| A2.4 | i18n | `admin.searchUsers`, `admin.allRoles`, `admin.seeker`, `admin.employer` ka/en | ⬜ |
+
+### A3 — User Detail View
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A3.1 | Query | `getAdminUserDetail(userId)` — profile + applications count + posted jobs + company info | ⬜ |
+| A3.2 | Detail page | `app/[locale]/(dashboard)/admin/users/[id]/page.tsx` — profile card, activity summary, role management | ⬜ |
+| A3.3 | Link from list | `admin/users/page.tsx` — user name → clickable link to detail | ⬜ |
+| A3.4 | i18n | `admin.userDetail*` keys ka/en | ⬜ |
+
+### A4 — Company Detail View
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A4.1 | Query | `getAdminCompanyDetail(companyId)` — company + jobs count + applications count + subscription + owner profile | ⬜ |
+| A4.2 | Detail page | `app/[locale]/(dashboard)/admin/companies/[id]/page.tsx` — company card, jobs list, subscription status, verify button | ⬜ |
+| A4.3 | Link from list | `admin/companies/page.tsx` — company name → clickable link to detail | ⬜ |
+| A4.4 | i18n | `admin.companyDetail*` keys ka/en | ⬜ |
+
+### A5 — Subscription Management
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A5.1 | Query | `getAllSubscriptions()` — all active/expired subscriptions with company info | ⬜ |
+| A5.2 | Subscriptions page | `app/[locale]/(dashboard)/admin/subscriptions/page.tsx` — list with status badges, revenue summary | ⬜ |
+| A5.3 | Nav link | `nav-items.ts` — CreditCard icon, "Subscriptions" / "გამოწერები" | ⬜ |
+| A5.4 | i18n | `admin.subscriptions*` keys ka/en | ⬜ |
+
+### A6 — Job Moderation
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A6.1 | Status field | `jobs` table — add `moderation_status` (auto_approved/pending/rejected) ან არსებული `status`-ის გაფართოება | ⬜ |
+| A6.2 | Moderation queue | `app/[locale]/(dashboard)/admin/moderation/page.tsx` — pending jobs list with approve/reject buttons | ⬜ |
+| A6.3 | Actions | `approveJobAction`, `rejectJobAction` — status update + revalidate | ⬜ |
+| A6.4 | Hook | job creation → `status: "pending"` instead of `"active"` (configurable) | ⬜ |
+| A6.5 | i18n | `admin.moderation*` keys ka/en | ⬜ |
+
+### A7 — Activity Log / Audit Trail
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A7.1 | Migration | `admin_logs` table — action, actor_id, target_type, target_id, metadata, created_at | ⬜ |
+| A7.2 | Logger util | `lib/admin-log.ts` — `logAdminAction(action, targetType, targetId, metadata)` | ⬜ |
+| A7.3 | Hook into actions | verify company, delete job, change role → auto-log | ⬜ |
+| A7.4 | Logs page | `app/[locale]/(dashboard)/admin/logs/page.tsx` — chronological list with filters | ⬜ |
+| A7.5 | i18n | `admin.logs*` keys ka/en | ⬜ |
+
+### A8 — Bulk Actions
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| A8.1 | Checkbox selection | admin jobs/users lists — multi-select with "Select All" | ⬜ |
+| A8.2 | Bulk actions bar | "Delete selected (3)", "Close selected", "Change role" — sticky bottom bar | ⬜ |
+| A8.3 | Batch server actions | `batchDeleteJobsAction`, `batchUpdateRoleAction` — ownership + validation | ⬜ |
+| A8.4 | i18n | `admin.bulk*` keys ka/en | ⬜ |
+
+### შესრულების თანმიმდევრობა
+
+```
+A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail) → A5 (Subscriptions) → A6 (Moderation) → A7 (Audit Log) → A8 (Bulk Actions)
+```
+
+**პრიორიტეტი**: A1 → A2 → A3 → A4 — ეს 4 ნაბიჯი ყველაზე მეტ ღირებულებას იძლევა მინიმალური complexity-ით.

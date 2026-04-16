@@ -51,6 +51,7 @@ export default async function DashboardLayout({
           fullName={fullName}
           email={user.email ?? ""}
           role={role}
+          avatarUrl={avatarUrl}
         />
 
         <main id="main-content" className="flex-1 overflow-y-auto">

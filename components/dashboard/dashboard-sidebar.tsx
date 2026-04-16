@@ -6,7 +6,7 @@ import { Logo } from "@/components/brand/logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { LogOut, User, Settings } from "lucide-react";
+import { LogOut, User, Settings, ChevronUp } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { getNavItems, isNavActive } from "./nav-items";
 import { RoleLabel } from "./role-label";
@@ -29,7 +29,6 @@ type DashboardSidebarProps = {
 export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: DashboardSidebarProps) {
   const pathname = usePathname();
   const t = useTranslations("nav");
-  const tDash = useTranslations("dashboard");
   const navItems = getNavItems(role);
 
   const normalizedPath = pathname.replace(/^\/(ka|en)/, "") || "/";
@@ -70,59 +69,52 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
         })}
       </nav>
 
-      {/* User avatar + dropdown */}
-      <div className="border-t border-border/30 px-4 py-3.5">
+      {/* User menu */}
+      <div className="border-t border-border/30 p-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all duration-200 focus-visible:outline-none focus-visible:ring-primary/40"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 hover:bg-accent group focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary/30"
             >
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className="h-9 w-9 rounded-full object-cover"
-                />
-              ) : (
-                <User className="h-4 w-4 text-muted-foreground/50" />
-              )}
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="h-3.5 w-3.5 text-muted-foreground/50" />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium text-foreground truncate leading-tight">
+                  {fullName ?? t("profile")}
+                </p>
+                <RoleLabel role={role} />
+              </div>
+              <ChevronUp className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" side="top" className="w-52 mb-1">
-            {/* User info */}
-            <div className="px-3 py-2.5">
-              <p className="text-[13px] font-medium text-foreground truncate">
-                {fullName ?? t("profile")}
-              </p>
-              <RoleLabel role={role} />
-            </div>
-            <DropdownMenuSeparator />
-
-            {/* Profile link (seeker only) */}
+          <DropdownMenuContent align="start" side="top" sideOffset={8} className="w-[calc(14rem-24px)]">
             {role === "seeker" && (
-              <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
-                <Link href="/profile">
-                  <Settings className="h-4 w-4 opacity-60" />
-                  {t("profile")}
-                </Link>
-              </DropdownMenuItem>
+              <>
+                <DropdownMenuItem asChild className="gap-2 text-[13px] cursor-pointer">
+                  <Link href="/profile">
+                    <Settings className="h-4 w-4 opacity-60" />
+                    {t("profile")}
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
             )}
-
-            {/* Logout */}
             <DropdownMenuItem
               className="gap-2 text-[13px] cursor-pointer text-destructive/80 focus:text-destructive focus:bg-destructive/8"
-              onSelect={(e) => {
-                e.preventDefault();
-                const form = document.createElement("form");
-                form.method = "POST";
-                form.action = "/api/auth/logout";
-                document.body.appendChild(form);
-                // Use server action via hidden form
-                const btn = document.getElementById("sidebar-logout-btn") as HTMLButtonElement;
-                btn?.click();
+              onSelect={() => {
+                document.getElementById("sidebar-logout-btn")?.click();
               }}
             >
               <LogOut className="h-4 w-4" />
@@ -131,7 +123,6 @@ export function DashboardSidebar({ role, fullName, avatarUrl, badgeCount = 0 }: 
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Hidden logout form for server action */}
         <form action={logoutAction} className="hidden">
           <button type="submit" id="sidebar-logout-btn" />
         </form>
