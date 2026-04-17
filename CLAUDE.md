@@ -436,14 +436,13 @@ Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| SEO2.1 | City landing | `app/[locale]/(public)/jobs/[city]/page.tsx` — filtered by city, SEO title "ვაკანსიები თბილისში" | ⬜ |
-| SEO2.2 | Category landing | `app/[locale]/(public)/jobs/category/[slug]/page.tsx` — "IT ვაკანსიები" | ⬜ |
-| SEO2.3 | Remote landing | `app/[locale]/(public)/jobs/remote/page.tsx` — `is_remote = true` | ⬜ |
-| SEO2.4 | Internship landing | `app/[locale]/(public)/jobs/internship/page.tsx` — `job_type = internship` | ⬜ |
-| SEO2.5 | generateMetadata | SEO-optimized title/description per landing | ⬜ |
-| SEO2.6 | Sitemap | Landing pages sitemap-ში | ⬜ |
-| SEO2.7 | Internal linking | Homepage + jobs page — links to landings | ⬜ |
-| SEO2.8 | i18n | Landing page titles ka/en | ⬜ |
+| SEO2.1 | Catch-all landing | `/jobs/explore/[...slug]` — 18 landings (4 cities + 3 types + 11 categories) | ✅ |
+| SEO2.2 | Landing config | `lib/seo-landings.ts` — centralized filter + title + description ka/en | ✅ |
+| SEO2.3 | generateMetadata | SEO-optimized title/description + alternates per landing | ✅ |
+| SEO2.4 | generateStaticParams | ISG — all landing slugs pre-generated | ✅ |
+| SEO2.5 | Sitemap | 36 landing URLs (18 × ka/en) priority 0.85 | ✅ |
+| SEO2.6 | Internal linking | Jobs page — "Browse by" section with 10 landing links | ✅ |
+| SEO2.7 | Full job list | Match scores + saved jobs + pagination per landing | ✅ |
 
 ### SEO3 — Sitemap & Indexing
 

@@ -215,6 +215,37 @@ export default async function JobsPage({
         basePath="/jobs"
         searchParams={preservedParams}
       />
+
+      {/* SEO internal links */}
+      {page === 1 && !searchParams.q && !searchParams.category && (
+        <section className="mt-4 rounded-xl border border-border/40 bg-card/50 p-5">
+          <h2 className="text-[13px] font-semibold text-muted-foreground mb-3">
+            {tHome("browseByCategory")}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { href: "/jobs/explore/tbilisi", label: locale === "ka" ? "თბილისი" : "Tbilisi" },
+              { href: "/jobs/explore/batumi", label: locale === "ka" ? "ბათუმი" : "Batumi" },
+              { href: "/jobs/explore/remote", label: locale === "ka" ? "დისტანციური" : "Remote" },
+              { href: "/jobs/explore/internship", label: locale === "ka" ? "სტაჟირება" : "Internship" },
+              { href: "/jobs/explore/it-software", label: "IT" },
+              { href: "/jobs/explore/sales-marketing", label: locale === "ka" ? "მარკეტინგი" : "Marketing" },
+              { href: "/jobs/explore/finance", label: locale === "ka" ? "ფინანსები" : "Finance" },
+              { href: "/jobs/explore/hospitality", label: locale === "ka" ? "სტუმართმოყვარეობა" : "Hospitality" },
+              { href: "/jobs/explore/healthcare", label: locale === "ka" ? "ჯანდაცვა" : "Healthcare" },
+              { href: "/jobs/explore/part-time", label: locale === "ka" ? "ნახევარი განაკვეთი" : "Part-time" },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="text-[12px] rounded-lg px-3 py-1.5 bg-muted/50 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

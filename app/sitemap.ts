@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { siteConfig } from "@/lib/config";
+import { getAllLandingSlugs } from "@/lib/seo-landings";
 import type { MetadataRoute } from "next";
 
 const BASE_URL = siteConfig.url;
@@ -81,5 +82,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  return [...staticPages, ...categoryPages, ...jobPages, ...companyPages];
+  // SEO landing pages
+  const landingPages: MetadataRoute.Sitemap = getAllLandingSlugs().flatMap((slug) => [
+    { url: `${BASE_URL}/jobs/explore/${slug}`, lastModified: now, changeFrequency: "daily" as const, priority: 0.85 },
+    { url: `${BASE_URL}/en/jobs/explore/${slug}`, lastModified: now, changeFrequency: "daily" as const, priority: 0.85 },
+  ]);
+
+  return [...staticPages, ...categoryPages, ...landingPages, ...jobPages, ...companyPages];
 }
