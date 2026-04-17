@@ -45,6 +45,7 @@
     "analytics": "Analytics",
     "subscriptions": "Subscriptions",
     "moderation": "Moderation",
+    "logs": "Logs",
     "telegramSubscribe": "Subscribe via Telegram",
     "footerTagline": "Job search in Georgia — fast, simple.",
     "footerQuickLinks": "Quick Links",
@@ -355,7 +356,14 @@
     "noPendingJobs": "No pending jobs — all clear!",
     "pending": "Pending",
     "rejected": "Rejected",
-    "moderation": "Moderation"
+    "moderation": "Moderation",
+    "logsTitle": "Activity Logs",
+    "noLogs": "No activity recorded yet",
+    "logs": "Logs",
+    "selectAll": "Select all",
+    "deleteSelected": "Delete",
+    "cancelSelection": "Cancel",
+    "confirmBulkDelete": "Are you sure you want to delete the selected items? This action cannot be undone."
   },
   "salaries": {
     "title": "Salaries in Georgia",

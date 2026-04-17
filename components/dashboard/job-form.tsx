@@ -106,14 +106,14 @@ export function JobForm({ job, companyId, categories, locale, mode, canUseAI = f
       {job && <input type="hidden" name="job_id" value={job.id} />}
 
       {state.error && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
+        <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
           {state.error}
         </div>
       )}
 
       {mode === "edit" && state.error === null && state !== initialState && (
-        <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-[13px] text-primary">
-          Saved
+        <div role="status" aria-live="polite" className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-[13px] text-primary">
+          {tc("saved")}
         </div>
       )}
 

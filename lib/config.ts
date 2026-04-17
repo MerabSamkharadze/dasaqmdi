@@ -18,6 +18,10 @@ export const siteConfig = {
   },
   og: {
     accentColor: "#C7AE6A",
+    bgColor: "#160905",
+    textColor: "#fbf7e1",
+    mutedColor: "#8a827b",
+    cardBg: "#362828",
   },
 } as const;
 

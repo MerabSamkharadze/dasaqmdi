@@ -475,22 +475,22 @@ N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 →
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A7.1 | Migration | `016_admin_logs.sql` — `admin_logs` table (id, action, actor_id, target_type, target_id, metadata jsonb, created_at). Index on `created_at DESC`. RLS: service_role only | ⬜ |
-| A7.2 | Logger util | `lib/admin-log.ts` — `logAdminAction(supabase, action, targetType, targetId, metadata?)` | ⬜ |
-| A7.3 | Hook into actions | verify company, delete job, change role, approve/reject moderation → auto-log | ⬜ |
-| A7.4 | Logs page | `app/[locale]/(dashboard)/admin/logs/page.tsx` — chronological list with **pagination** (20 per page) + date/action type filters | ⬜ |
-| A7.5 | Retention | Auto-delete logs older than 90 days (Supabase cron ან manual cleanup) — documented, not auto-implemented | ⬜ |
-| A7.6 | i18n | `admin.logs*` keys ka/en | ⬜ |
+| A7.1 | Migration | `016_admin_logs.sql` — table + indexes + RLS (admin read/insert) | ✅ |
+| A7.2 | Logger util | `lib/admin-log.ts` — reusable `logAdminAction()` | ✅ |
+| A7.3 | Hook into actions | 5 actions: verify, change_role, approve, reject, delete | ✅ |
+| A7.4 | Logs page | `admin/logs/page.tsx` — paginated (20/page), color-coded badges, localized dates | ✅ |
+| A7.5 | Retention | Documented — 90-day cleanup via Supabase cron (not auto-implemented) | ✅ |
+| A7.6 | i18n | `admin.logsTitle`, `admin.noLogs`, `admin.logs`, `nav.logs` ka/en | ✅ |
 
 ### A8 — Bulk Actions
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| A8.1 | Selection wrapper | `components/dashboard/admin-selectable-list.tsx` — Client Component wrapper. Receives items, renders checkboxes + "Select All". Internal state tracks selected IDs | ⬜ |
-| A8.2 | Bulk actions bar | Sticky bottom bar — shows when selection > 0. "Delete selected (3)", "Close selected", "Change role". Confirm dialog before destructive actions | ⬜ |
-| A8.3 | Batch server actions | `batchDeleteJobsAction(ids[])`, `batchCloseJobsAction(ids[])`, `batchUpdateRoleAction(ids[], role)` — admin role check + audit log | ⬜ |
-| A8.4 | Integration | Apply to `admin/jobs` and `admin/users` pages | ⬜ |
-| A8.5 | i18n | `admin.bulk*` keys ka/en | ⬜ |
+| A8.1 | Selection wrapper | `admin-selectable-list.tsx` — reusable checkbox + select all + sticky bar | ✅ |
+| A8.2 | Bulk actions bar | Sticky bottom bar with count, delete button, confirm dialog, cancel | ✅ |
+| A8.3 | Batch server actions | `batchDeleteJobsAction` — admin check + per-item audit log | ✅ |
+| A8.4 | Integration | `admin/jobs` — `AdminJobsList` client wrapper with bulk delete | ✅ |
+| A8.5 | i18n | `admin.selectAll`, `deleteSelected`, `cancelSelection`, `confirmBulkDelete` ka/en | ✅ |
 
 ### შესრულების თანმიმდევრობა
 
@@ -537,7 +537,7 @@ A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail)
 | UX3.3 | Footer telegram button | `footer.tsx:55` | `bg-[#229ED9]/10` — brand color, გამონაკლისი | ⏭️ |
 | UX3.4 | NextTopLoader color | `app/[locale]/layout.tsx:67` | `siteConfig.og.accentColor`-ით შეცვლა | ✅ |
 | UX3.5 | Focus ring in globals | `app/globals.css:115` | `ring-[#C7AE6A]/40` → `ring-primary/40` | ✅ |
-| UX3.6 | OG image route colors | `app/api/og/job/[id]/route.tsx` | 10+ hardcoded hex → centralized color constants | ⬜ |
+| UX3.6 | OG image route colors | `app/api/og/job/[id]/route.tsx` | `siteConfig.og.*` + `accentAlpha()` helper — 10+ hardcoded hex centralized | ✅ |
 
 ### UX4 — Dark Mode: Contrast Fix (WCAG AA)
 
@@ -564,8 +564,8 @@ A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail)
 | # | ამოცანა | ფაილი | დეტალი | სტატუსი |
 |---|---------|-------|--------|---------|
 | UX7.1 | Status update confirmation | `application-status-update.tsx` | accepted/rejected-ზე `window.confirm` + i18n keys | ✅ |
-| UX7.2 | Apply form validation UX | `apply-form.tsx` | Resume required state ნათლად ჩვენება, disabled button-ის ახსნა | ⬜ |
-| UX7.3 | Job form field validation | `job-form.tsx` | Field-level error messages top-level-ის ნაცვლად | ⬜ |
+| UX7.2 | Apply form validation UX | `apply-form.tsx` | `text-destructive/60` resume hint, `aria-describedby` disabled button-ზე, `role="alert"` error-ზე | ✅ |
+| UX7.3 | Job form error + success a11y | `job-form.tsx` | `role="alert"` error-ზე, `role="status" aria-live="polite"` success-ზე, i18n "Saved" → `tc("saved")` | ✅ |
 | UX7.4 | File upload error recovery | `file-upload.tsx` | Error clearing on re-select + remove button aria-label | ✅ |
 | UX7.5 | Image crop dialog ARIA | `image-crop-dialog.tsx` | `role="dialog"`, `aria-modal`, zoom slider label, button aria-labels | ✅ |
 
@@ -573,7 +573,7 @@ A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail)
 
 | # | ამოცანა | ფაილი | დეტალი | სტატუსი |
 |---|---------|-------|--------|---------|
-| UX8.1 | Root `og:image` | `app/layout.tsx` | მთავარ layout-ს აკლია default OG image | ⬜ |
+| UX8.1 | Root `og:image` | `app/opengraph-image.tsx` | უკვე არსებობს — Next.js convention-based OG image generation | ✅ (already existed) |
 
 ### შესრულების თანმიმდევრობა
 

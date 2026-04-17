@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { logAdminAction } from "@/lib/admin-log";
 import type { ActionResult } from "@/lib/types";
 
 async function verifyAdmin(): Promise<string | null> {
@@ -34,6 +35,8 @@ export async function verifyCompanyAction(companyId: string): Promise<ActionResu
 
   if (error) return { error: error.message };
 
+  await logAdminAction(supabase, adminId, "verify_company", "company", companyId);
+
   revalidatePath("/admin/companies");
   return { error: null };
 }
@@ -46,12 +49,25 @@ export async function updateUserRoleAction(
   if (!adminId) return { error: "Unauthorized" };
 
   const supabase = createClient();
+
+  // Get old role for audit log
+  const { data: oldProfile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
   const { error } = await supabase
     .from("profiles")
     .update({ role })
     .eq("id", userId);
 
   if (error) return { error: error.message };
+
+  await logAdminAction(supabase, adminId, "change_role", "user", userId, {
+    old_role: oldProfile?.role,
+    new_role: role,
+  });
 
   revalidatePath("/admin/users");
   return { error: null };
@@ -79,6 +95,8 @@ export async function approveJobAction(jobId: string): Promise<ActionResult> {
     .eq("id", jobId);
 
   if (error) return { error: error.message };
+
+  await logAdminAction(supabase, adminId, "approve_job", "job", jobId);
 
   // Telegram notify on approval (fire-and-forget)
   if (process.env.CRON_SECRET) {
@@ -122,9 +140,33 @@ export async function rejectJobAction(jobId: string): Promise<ActionResult> {
 
   if (error) return { error: error.message };
 
+  await logAdminAction(supabase, adminId, "reject_job", "job", jobId);
+
   revalidatePath("/admin/moderation");
   revalidatePath("/admin/jobs");
   revalidatePath("/employer/jobs");
+  return { error: null };
+}
+
+export async function batchDeleteJobsAction(jobIds: string[]): Promise<ActionResult> {
+  if (jobIds.length === 0) return { error: null };
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("jobs")
+    .delete()
+    .in("id", jobIds);
+
+  if (error) return { error: error.message };
+
+  for (const id of jobIds) {
+    await logAdminAction(supabase, adminId, "delete_job", "job", id, { bulk: true });
+  }
+
+  revalidatePath("/admin/jobs");
+  revalidatePath("/jobs");
   return { error: null };
 }
 
@@ -139,6 +181,8 @@ export async function deleteJobAdminAction(jobId: string): Promise<ActionResult>
     .eq("id", jobId);
 
   if (error) return { error: error.message };
+
+  await logAdminAction(supabase, adminId, "delete_job", "job", jobId);
 
   revalidatePath("/admin/jobs");
   return { error: null };

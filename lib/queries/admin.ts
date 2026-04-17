@@ -319,6 +319,37 @@ export async function getPendingJobs(): Promise<PendingJob[]> {
   return (data as unknown as PendingJob[]) ?? [];
 }
 
+// --- Activity Logs ---
+
+export type AdminLog = {
+  id: string;
+  action: string;
+  actor_id: string;
+  target_type: string;
+  target_id: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
+export async function getAdminLogs(page = 1, perPage = 20): Promise<{ logs: AdminLog[]; total: number }> {
+  const supabase = await requireAdmin();
+  const from = (page - 1) * perPage;
+  const to = from + perPage - 1;
+
+  const [{ data, count }, ] = await Promise.all([
+    supabase
+      .from("admin_logs")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, to),
+  ]);
+
+  return {
+    logs: (data as AdminLog[]) ?? [],
+    total: count ?? 0,
+  };
+}
+
 export async function getAllCompaniesAdmin(): Promise<Company[]> {
   const supabase = await requireAdmin();
 

@@ -9,6 +9,9 @@ export const dynamic = "force-dynamic";
 
 const size = { width: 1200, height: 630 };
 
+// Centralized OG colors from config
+const C = siteConfig.og;
+
 function publicClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -63,11 +66,11 @@ export async function GET(
             justifyContent: "center",
             width: "100%",
             height: "100%",
-            background: "#1a1614",
+            background: C.bgColor,
             fontFamily: "Noto Sans Georgian, sans-serif",
           }}
         >
-          <span style={{ fontSize: 48, color: "#C7AE6A", fontWeight: 700 }}>
+          <span style={{ fontSize: 48, color: C.accentColor, fontWeight: 700 }}>
             {siteConfig.domain}
           </span>
         </div>
@@ -97,6 +100,9 @@ export async function GET(
 
   const hiringLabel = locale === "ka" ? "იღებს" : "Hiring";
 
+  // Accent color with alpha variations — must use rgba() for Satori compatibility
+  const accentAlpha = (a: number) => `rgba(199,174,106,${a})`;
+
   return new ImageResponse(
     (
       <div
@@ -107,10 +113,10 @@ export async function GET(
           width: "100%",
           height: "100%",
           padding: "64px 80px",
-          background: "#160905",
+          background: C.bgColor,
           backgroundImage:
-            "radial-gradient(at 15% 20%, rgba(199,174,106,0.18) 0, transparent 45%), radial-gradient(at 85% 85%, rgba(199,174,106,0.10) 0, transparent 50%), linear-gradient(135deg, #160905 0%, #1f120b 55%, #281b12 100%)",
-          color: "#fbf7e1",
+            `radial-gradient(at 15% 20%, ${accentAlpha(0.18)} 0, transparent 45%), radial-gradient(at 85% 85%, ${accentAlpha(0.10)} 0, transparent 50%), linear-gradient(135deg, ${C.bgColor} 0%, #1f120b 55%, #281b12 100%)`,
+          color: C.textColor,
           fontFamily: "Noto Sans Georgian, sans-serif",
           position: "relative",
         }}
@@ -126,7 +132,7 @@ export async function GET(
           }}
         />
 
-        {/* Grain-like overlay via tiny stripes */}
+        {/* Hiring badge */}
         <div
           style={{
             position: "absolute",
@@ -137,9 +143,9 @@ export async function GET(
             gap: "10px",
             padding: "10px 18px",
             borderRadius: 999,
-            background: "rgba(199,174,106,0.15)",
-            border: "1px solid rgba(199,174,106,0.35)",
-            color: "#C7AE6A",
+            background: accentAlpha(0.15),
+            border: `1px solid ${accentAlpha(0.35)}`,
+            color: C.accentColor,
             fontSize: 18,
             fontWeight: 600,
             letterSpacing: "0.08em",
@@ -152,8 +158,8 @@ export async function GET(
               width: 10,
               height: 10,
               borderRadius: "50%",
-              background: "#C7AE6A",
-              boxShadow: "0 0 12px rgba(199,174,106,0.9)",
+              background: C.accentColor,
+              boxShadow: `0 0 12px ${accentAlpha(0.9)}`,
             }}
           />
           {hiringLabel}
@@ -170,10 +176,10 @@ export async function GET(
               height: 72,
               borderRadius: 18,
               background:
-                "linear-gradient(135deg, rgba(199,174,106,0.25) 0%, rgba(199,174,106,0.05) 100%)",
-              border: "1px solid rgba(199,174,106,0.35)",
+                `linear-gradient(135deg, ${accentAlpha(0.25)} 0%, ${accentAlpha(0.05)} 100%)`,
+              border: `1px solid ${accentAlpha(0.35)}`,
               fontSize: 32,
-              color: "#C7AE6A",
+              color: C.accentColor,
               fontWeight: 700,
               boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
             }}
@@ -184,7 +190,7 @@ export async function GET(
             <div
               style={{
                 fontSize: 14,
-                color: "#8a827b",
+                color: C.mutedColor,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 fontWeight: 500,
@@ -193,7 +199,7 @@ export async function GET(
               {locale === "ka" ? "კომპანია" : "Company"}
             </div>
             <div
-              style={{ fontSize: 26, color: "#fbf7e1", fontWeight: 600 }}
+              style={{ fontSize: 26, color: C.textColor, fontWeight: 600 }}
             >
               {companyName}
             </div>
@@ -209,7 +215,7 @@ export async function GET(
               minHeight: 140,
               borderRadius: 3,
               background:
-                "linear-gradient(180deg, #C7AE6A 0%, rgba(199,174,106,0) 100%)",
+                `linear-gradient(180deg, ${C.accentColor} 0%, ${accentAlpha(0)} 100%)`,
             }}
           />
           <div
@@ -227,7 +233,7 @@ export async function GET(
                 lineHeight: 1.1,
                 maxWidth: "920px",
                 letterSpacing: "-0.025em",
-                color: "#fbf7e1",
+                color: C.textColor,
               }}
             >
               {jobTitle}
@@ -252,7 +258,7 @@ export async function GET(
                   border: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="7" width="20" height="14" rx="2" />
                   <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                 </svg>
@@ -270,7 +276,7 @@ export async function GET(
                     border: "1px solid rgba(255,255,255,0.1)",
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
@@ -286,13 +292,13 @@ export async function GET(
                     padding: "10px 18px",
                     borderRadius: 999,
                     background:
-                      "linear-gradient(135deg, rgba(199,174,106,0.2) 0%, rgba(199,174,106,0.08) 100%)",
-                    border: "1px solid rgba(199,174,106,0.4)",
-                    color: "#C7AE6A",
+                      `linear-gradient(135deg, ${accentAlpha(0.2)} 0%, ${accentAlpha(0.08)} 100%)`,
+                    border: `1px solid ${accentAlpha(0.4)}`,
+                    color: C.accentColor,
                     fontWeight: 600,
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C7AE6A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="2" x2="12" y2="22" />
                     <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                   </svg>
@@ -308,7 +314,7 @@ export async function GET(
             display: "flex",
             justifyContent: "space-between",
             alignItems: "flex-end",
-            borderTop: "1px solid rgba(199,174,106,0.15)",
+            borderTop: `1px solid ${accentAlpha(0.15)}`,
             paddingTop: "24px",
           }}
         >
@@ -316,22 +322,22 @@ export async function GET(
             <svg width="32" height="32" viewBox="0 0 120 120" fill="none">
               <path
                 d="M60 6C30 4 8 26 6 56c-2 32 22 54 52 58 32 4 56-18 58-48C118 34 94 8 60 6Z"
-                fill="#362828"
+                fill={C.cardBg}
               />
               <path
                 d="M60 24 L84 42 L78 80 L42 80 L36 48 Z"
                 fill="none"
-                stroke="#fbf7e1"
+                stroke={C.textColor}
                 strokeWidth="2.5"
                 strokeLinejoin="round"
               />
-              <path d="M53 48 L53 66 L67 57 Z" fill="#C7AE6A" />
+              <path d="M53 48 L53 66 L67 57 Z" fill={C.accentColor} />
             </svg>
-            <span style={{ fontSize: 22, fontWeight: 700, color: "#C7AE6A" }}>
+            <span style={{ fontSize: 22, fontWeight: 700, color: C.accentColor }}>
               {siteConfig.domain}
             </span>
           </div>
-          <div style={{ fontSize: 16, color: "#8a827b" }}>
+          <div style={{ fontSize: 16, color: C.mutedColor }}>
             {locale === "ka" ? "ვაკანსიები საქართველოში" : "Jobs in Georgia"}
           </div>
         </div>

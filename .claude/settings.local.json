@@ -62,7 +62,8 @@
       "Bash(netstat -ano)",
       "Bash(taskkill:*)",
       "Bash(xargs sed:*)",
-      "Bash(wc -l /c/Users/msamkharadze/Desktop/personal/my-app/components/**/*.tsx)"
+      "Bash(wc -l /c/Users/msamkharadze/Desktop/personal/my-app/components/**/*.tsx)",
+      "Bash(kill %1)"
     ]
   }
 }

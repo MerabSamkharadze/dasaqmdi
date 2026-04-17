@@ -45,6 +45,7 @@
     "analytics": "ანალიტიკა",
     "subscriptions": "გამოწერები",
     "moderation": "მოდერაცია",
+    "logs": "ჟურნალი",
     "telegramSubscribe": "გამოიწერე ტელეგრამით",
     "footerTagline": "სამუშაოს ძიება საქართველოში — სწრაფად, მარტივად.",
     "footerQuickLinks": "სწრაფი ბმულები",
@@ -354,7 +355,14 @@
     "noPendingJobs": "მოლოდინში მყოფი ვაკანსიები არ არის",
     "pending": "მოლოდინში",
     "rejected": "უარყოფილი",
-    "moderation": "მოდერაცია"
+    "moderation": "მოდერაცია",
+    "logsTitle": "აქტივობის ჟურნალი",
+    "noLogs": "აქტივობა ჯერ არ არის",
+    "logs": "ჟურნალი",
+    "selectAll": "ყველას მონიშვნა",
+    "deleteSelected": "წაშლა",
+    "cancelSelection": "გაუქმება",
+    "confirmBulkDelete": "დარწმუნებული ხართ? მონიშნული ელემენტები წაიშლება და ეს მოქმედება ვერ გაუქმდება."
   },
   "salaries": {
     "title": "ხელფასები საქართველოში",

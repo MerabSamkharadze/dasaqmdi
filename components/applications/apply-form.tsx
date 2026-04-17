@@ -29,7 +29,7 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
       <input type="hidden" name="resume_url" value={resumeUrl} />
 
       {state.error && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
+        <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
           {state.error}
         </div>
       )}
@@ -49,7 +49,7 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
           prefix="application"
         />
         {!resumeUrl && (
-          <p className="text-[11px] text-muted-foreground/60">
+          <p id="resume-hint" className="text-[11px] text-destructive/60">
             {t("resumeRequired")}
           </p>
         )}
@@ -67,7 +67,11 @@ export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) 
       </div>
 
       <div className="flex justify-end">
-        <SubmitButton pendingText="..." disabled={!resumeUrl}>
+        <SubmitButton
+          pendingText="..."
+          disabled={!resumeUrl}
+          aria-describedby={!resumeUrl ? "resume-hint" : undefined}
+        >
           {t("submitApplication")}
         </SubmitButton>
       </div>
