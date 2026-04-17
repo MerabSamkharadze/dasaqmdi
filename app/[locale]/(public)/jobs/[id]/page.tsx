@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const path = `/jobs/${params.id}`;
   const alternates = buildAlternates(path, params.locale);
   const fullTitle = `${title} — ${companyName}`;
-  const ogImageUrl = `/api/og/job/${params.id}?locale=${params.locale}`;
+  const ogImageUrl = `${siteConfig.url}/api/og/job/${params.id}?locale=${params.locale}`;
 
   return {
     title: fullTitle,

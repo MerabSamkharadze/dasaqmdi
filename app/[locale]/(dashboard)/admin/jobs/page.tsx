@@ -78,6 +78,7 @@ export default async function AdminJobsPage({
             closed: t("closed"),
             expired: t("expired"),
             pending: t("pending"),
+            views: t("views"),
             selectAll: t("selectAll"),
             deleteSelected: t("deleteSelected"),
             cancel: t("cancelSelection"),

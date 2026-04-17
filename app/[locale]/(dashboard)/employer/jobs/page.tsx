@@ -162,7 +162,7 @@ export default async function EmployerJobsPage({
                         {formatDate(job.created_at, locale)}
                       </span>
                       <span>
-                        {job.views_count} {locale === "ka" ? "ნახვა" : "views"}
+                        {job.views_count} {td("views")}
                       </span>
                     </div>
                   </div>

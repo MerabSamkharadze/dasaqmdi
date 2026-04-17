@@ -24,6 +24,7 @@ type AdminJobsListProps = {
     closed: string;
     expired: string;
     pending: string;
+    views: string;
     selectAll: string;
     deleteSelected: string;
     cancel: string;
@@ -95,7 +96,7 @@ export function AdminJobsList({ jobs, locale, translations: t }: AdminJobsListPr
                 {formatDate(job.created_at, locale)}
               </span>
               <span>
-                {job.views_count} {locale === "ka" ? "ნახვა" : "views"}
+                {job.views_count} {t.views}
               </span>
             </div>
           </div>
