@@ -60,7 +60,7 @@ export default async function LocaleLayout({
           {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
         </a>
         <FacebookPixel />
-        <SpeedInsights />
+        <SpeedInsights debug={false} />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

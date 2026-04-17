@@ -338,7 +338,7 @@ components/
 - `next/image` for all images (Supabase domain configured in `next.config.mjs`)
 - Middleware: Supabase session refresh → auth guard → intl locale routing (API routes excluded). Metadata routes (opengraph-image) get intl rewrite only, no auth
 - Facebook Pixel: `afterInteractive` script, env-gated. Events fire via `lib/tracking/pixel-events.ts` helpers
-- Application status change: AlertDialog confirmation for accepted/rejected (not `window.confirm`)
+- **არასოდეს გამოიყენო `window.confirm()` ან `window.alert()`** — ყოველთვის shadcn `AlertDialog` კომპონენტი (`components/ui/alert-dialog.tsx`). Destructive actions-ზე confirm ღილაკს `bg-destructive` class
 
 ---
 

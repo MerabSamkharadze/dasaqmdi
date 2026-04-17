@@ -3,6 +3,16 @@
 import { useState, useTransition } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Spinner } from "@/components/shared/spinner";
 import { Trash2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,6 +36,7 @@ export function AdminSelectableList({
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const allSelected = items.length > 0 && selected.size === items.length;
 
@@ -47,9 +58,9 @@ export function AdminSelectableList({
     setSelected(next);
   }
 
-  function handleDelete() {
-    if (!confirm(t.confirmDelete)) return;
+  function handleDeleteConfirm() {
     setError(null);
+    setConfirmOpen(false);
     startTransition(async () => {
       const result = await onBulkDelete([...selected]);
       if (result.error) {
@@ -116,7 +127,7 @@ export function AdminSelectableList({
             <Button
               variant="destructive"
               size="sm"
-              onClick={handleDelete}
+              onClick={() => setConfirmOpen(true)}
               disabled={isPending}
               className="gap-1.5 text-[12px]"
             >
@@ -128,6 +139,24 @@ export function AdminSelectableList({
               {t.deleteSelected} ({selected.size})
             </Button>
           </div>
+
+          <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t.deleteSelected}</AlertDialogTitle>
+                <AlertDialogDescription>{t.confirmDelete}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteConfirm}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {t.deleteSelected} ({selected.size})
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       )}
     </div>

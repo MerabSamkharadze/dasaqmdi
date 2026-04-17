@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Share2, Check, Copy, Facebook, Linkedin, Smartphone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -106,10 +105,13 @@ export function ShareJobButton({ jobUrl, jobTitle, variant = "icon" }: ShareJobB
             <Share2 className="h-4 w-4" />
           </button>
         ) : (
-          <Button variant="outline" size="sm" className="gap-1.5 text-[12px] border-border bg-card text-foreground hover:bg-muted hover:text-foreground">
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 h-8 rounded-xl px-3.5 text-[12px] font-medium border border-border bg-card text-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
+          >
             <Share2 className="h-3.5 w-3.5" />
             {t("share")}
-          </Button>
+          </button>
         )}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
