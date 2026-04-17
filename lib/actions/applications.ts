@@ -72,6 +72,17 @@ export async function applyToJobAction(
     return { error: "Invalid resume" };
   }
 
+  // Block applications to external jobs
+  const { data: jobCheck } = await supabase
+    .from("jobs")
+    .select("external_url")
+    .eq("id", parsed.data.job_id)
+    .single();
+
+  if (jobCheck?.external_url) {
+    return { error: "External jobs don't accept applications" };
+  }
+
   // Check if already applied
   const { data: existing } = await supabase
     .from("applications")

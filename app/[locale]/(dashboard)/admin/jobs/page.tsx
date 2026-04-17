@@ -5,6 +5,9 @@ import { localized } from "@/lib/utils";
 import { CountBadge } from "@/components/shared/count-badge";
 import { AdminJobFilters } from "@/components/dashboard/admin-job-filters";
 import { AdminJobsList } from "@/components/dashboard/admin-jobs-list";
+import { Button } from "@/components/ui/button";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
@@ -38,6 +41,7 @@ export default async function AdminJobsPage({
     active: t("active"),
     closed: t("closed"),
     expired: t("expired"),
+    external: t("externalJobs"),
     allCategories: t("allCategories"),
   };
 
@@ -55,7 +59,15 @@ export default async function AdminJobsPage({
     <div className="flex flex-col gap-6">
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("manageJobs")}</h1>
-        <CountBadge>{jobs.length}</CountBadge>
+        <div className="flex items-center gap-3">
+          <CountBadge>{jobs.length}</CountBadge>
+          <Button asChild size="sm" variant="outline">
+            <Link href="/admin/jobs/external/new" className="gap-1.5 text-[12px]">
+              <ExternalLink className="h-3 w-3" />
+              {t("addExternalJob")}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>

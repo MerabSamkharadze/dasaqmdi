@@ -404,4 +404,6 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 
 ## დარჩენილი ამოცანები
 
-ამჟამად გასაკეთებელი ამოცანები არ არის. ყველა Phase (0-15) დასრულებულია.
+### Phase 16: External Job Aggregation ✅
+
+Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე deploy-ის წინ.

@@ -21,6 +21,7 @@ type AdminJobFiltersProps = {
     active: string;
     closed: string;
     expired: string;
+    external: string;
     allCategories: string;
   };
 };
@@ -95,6 +96,9 @@ export function AdminJobFilters({
           </SelectItem>
           <SelectItem value="closed" className="text-[13px]">
             {t.closed}
+          </SelectItem>
+          <SelectItem value="external" className="text-[13px]">
+            {t.external}
           </SelectItem>
           <SelectItem value="expired" className="text-[13px]">
             {t.expired}

@@ -22,6 +22,7 @@ import {
   Zap,
   CheckCircle,
   Send,
+  ExternalLink,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -282,7 +283,7 @@ export default async function JobDetailPage({ params }: PageProps) {
                 {t("alreadyApplied")}
               </Badge>
             ) : !hasApplied ? (
-              <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
+              <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} externalUrl={job.external_url} externalLabel={job.external_source ? `${t("viewOriginal")} → ${job.external_source}` : undefined} />
             ) : null}
           </div>
         </div>
@@ -411,6 +412,25 @@ export default async function JobDetailPage({ params }: PageProps) {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* ── External source notice ── */}
+      {job.external_url && job.external_source && (
+        <div className="rounded-xl border border-orange-200/60 dark:border-orange-500/20 bg-orange-50/30 dark:bg-orange-950/10 p-5 flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{t("externalSource")}: </span>
+            {job.external_source}
+          </div>
+          <a
+            href={job.external_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-primary hover:underline inline-flex items-center gap-1.5"
+          >
+            {t("viewOriginal")}
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
         </div>
       )}
 

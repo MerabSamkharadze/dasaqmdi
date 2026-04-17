@@ -99,11 +99,13 @@ export async function getAllJobs(filters?: AdminJobFilters): Promise<Job[]> {
 
   const now = new Date().toISOString();
   if (filters?.status === "active") {
-    query = query.eq("status", "active").gte("expires_at", now);
+    query = query.eq("status", "active").gte("expires_at", now).is("external_url", null);
   } else if (filters?.status === "closed") {
     query = query.eq("status", "closed");
   } else if (filters?.status === "expired") {
     query = query.eq("status", "active").lt("expires_at", now);
+  } else if (filters?.status === "external") {
+    query = query.not("external_url", "is", null);
   }
 
   if (categoryId) {

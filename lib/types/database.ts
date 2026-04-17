@@ -189,6 +189,8 @@ export type Database = {
           tags: string[];
           views_count: number;
           is_featured: boolean;
+          external_url: string | null;
+          external_source: string | null;
           created_at: string;
           updated_at: string;
         };

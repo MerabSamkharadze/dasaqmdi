@@ -69,6 +69,16 @@ export default async function AdminLogsPage({
                   <span className="font-mono text-[11px] text-muted-foreground/50">
                     {log.target_id.slice(0, 8)}
                   </span>
+                  {(meta.title || meta.company_name) && (
+                    <span className="ml-2 text-[11px] text-foreground/70">
+                      {locale === "ka" ? (meta.title_ka || meta.title) : meta.title}
+                      {meta.company_name && (
+                        <span className="text-muted-foreground/50">
+                          {" — "}{locale === "ka" ? (meta.company_name_ka || meta.company_name) : meta.company_name}
+                        </span>
+                      )}
+                    </span>
+                  )}
                   {meta.old_role && meta.new_role && (
                     <span className="ml-2 text-[11px]">
                       {meta.old_role} → {meta.new_role}

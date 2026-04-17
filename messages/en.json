@@ -113,7 +113,9 @@
     "subscribeTelegram": "Get similar jobs on Telegram",
     "share": "Share",
     "copyLink": "Copy link",
-    "linkCopied": "Link copied!"
+    "linkCopied": "Link copied!",
+    "externalSource": "Source",
+    "viewOriginal": "View Original"
   },
   "categories": {
     "it-software": "IT & Software",
@@ -369,7 +371,12 @@
     "cancelSelection": "Cancel",
     "confirmBulkDelete": "Are you sure you want to delete the selected items? This action cannot be undone.",
     "deleteJobTitle": "Delete Job",
-    "deleteJobDescription": "Are you sure you want to delete this job? This action cannot be undone."
+    "deleteJobDescription": "Are you sure you want to delete this job? This action cannot be undone.",
+    "addExternalJob": "Add External Job",
+    "externalUrl": "External URL",
+    "externalSourceName": "Source Name",
+    "externalSourceInfo": "This job will link to an external source instead of the internal apply form.",
+    "externalJobs": "External"
   },
   "salaries": {
     "title": "Salaries in Georgia",

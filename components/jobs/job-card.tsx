@@ -2,7 +2,7 @@
 
 import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
-import { Building2, Calendar, Clock, MapPin, Star, Zap, Wifi } from "lucide-react";
+import { Building2, Calendar, Clock, MapPin, Star, Zap, Wifi, ExternalLink as ExternalLinkIcon } from "lucide-react";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
@@ -66,9 +66,19 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
 
   const typeColor = TYPE_COLORS[job.job_type] ?? "bg-secondary text-secondary-foreground";
 
+  const isExternal = !!job.external_url;
+
+  function handleCardClick() {
+    if (isExternal && job.external_url) {
+      window.open(job.external_url, "_blank", "noopener,noreferrer");
+    } else {
+      router.push(`/jobs/${job.id}`);
+    }
+  }
+
   return (
     <div
-      onClick={() => router.push(`/jobs/${job.id}`)}
+      onClick={handleCardClick}
       className="group relative block cursor-pointer rounded-xl border border-muted-foreground/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-primary/20 hover:-translate-y-1"
     >
       <div className="flex items-start gap-4">
@@ -155,6 +165,12 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
                 <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400">
                   <Wifi className="h-3 w-3" />
                   {translations.remote}
+                </span>
+              )}
+              {isExternal && job.external_source && (
+                <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-orange-50 text-orange-700 dark:bg-orange-500/10 dark:text-orange-400">
+                  <ExternalLinkIcon className="h-3 w-3" />
+                  {job.external_source}
                 </span>
               )}
               {matchScore != null && matchScore > 0 && (
