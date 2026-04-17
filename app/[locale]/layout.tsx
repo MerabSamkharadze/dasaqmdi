@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
 import { AuthModal } from "@/components/shared/auth-modal";
 import { FacebookPixel } from "@/components/tracking/facebook-pixel";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Locale } from "@/lib/types/enums";
 import { siteConfig } from "@/lib/config";
 
@@ -59,6 +60,7 @@ export default async function LocaleLayout({
           {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
         </a>
         <FacebookPixel />
+        <SpeedInsights />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

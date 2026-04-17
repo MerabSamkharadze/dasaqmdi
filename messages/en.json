@@ -252,7 +252,8 @@
     "allStatuses": "All Statuses",
     "filterByJob": "Filter by Job",
     "filterByStatus": "Filter by Status",
-    "noResults": "No applications match these filters"
+    "noResults": "No applications match these filters",
+    "confirmStatusChange": "Are you sure you want to change the application status? The applicant will be notified by email."
   },
   "dashboard": {
     "title": "Dashboard",
