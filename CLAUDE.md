@@ -19,7 +19,7 @@ No test framework is configured. No unit/integration tests exist yet.
 
 | Layer | Technology | Version |
 |---|---|---|
-| Framework | Next.js 14 (App Router) | 14.2.15 |
+| Framework | Next.js 14 (App Router) | 14.2.35 |
 | Language | TypeScript (strict) | ^5 |
 | Runtime | React | 18.3.1 |
 | Database | Supabase (PostgreSQL) | ^2.47.12 |
@@ -35,6 +35,9 @@ No test framework is configured. No unit/integration tests exist yet.
 | Payments | Lemon Squeezy (`@lemonsqueezy/lemonsqueezy.js`) | MoR model |
 | Telegram | Grammy (`grammy`) | Bot API |
 | Image Crop | `react-easy-crop` | Avatar/logo upload |
+| Email | Resend | Transactional emails (accepted/rejected) |
+| Analytics | Facebook Pixel | Conversion tracking |
+| Monitoring | Vercel Speed Insights | `@vercel/speed-insights` |
 
 ### Next.js 14 Conventions (CRITICAL)
 
@@ -73,7 +76,7 @@ No test framework is configured. No unit/integration tests exist yet.
 - `localePrefix: "as-needed"` — defined in `i18n/routing.ts`
 - Navigation: `i18n/navigation.ts` — `createNavigation(routing)`
 - Server: `await getTranslations("namespace")`, Client: `useTranslations("namespace")`
-- Namespaces: `common`, `nav`, `home`, `jobs`, `categories`, `auth`, `profile`, `company`, `applications`, `dashboard`, `admin`, `errors`, `salaries`, `pricing`
+- Namespaces: `common`, `nav`, `home`, `jobs`, `categories`, `auth`, `profile`, `company`, `applications`, `dashboard`, `admin`, `errors`, `salaries`, `pricing`, `about`
 - Bilingual fields: `field` + `field_ka`. Use `localized(obj, "title", locale)` helper from `lib/utils.ts`
 - Language switching: `LanguageSwitcher` component — `router.replace` + `router.refresh()` via `startTransition`
 
@@ -101,12 +104,12 @@ app/
 │   │   │   └── [id]/
 │   │   │       ├── page.tsx                # Job detail + JSON-LD + share + apply
 │   │   │       ├── apply/page.tsx          # Apply form
-│   │   │       ├── loading.tsx
-│   │   │       └── opengraph-image.tsx     # Dynamic OG image
+│   │   │       └── loading.tsx
 │   │   ├── companies/                      # Company directory + profiles (revalidate: 3600)
 │   │   ├── seekers/[id]/page.tsx           # Public seeker portfolio (privacy-gated)
 │   │   ├── salaries/page.tsx               # Salary aggregation dashboard
-│   │   └── pricing/page.tsx                # Subscription plans
+│   │   ├── pricing/page.tsx                # Subscription plans
+│   │   └── about/page.tsx                  # About page (public, all roles)
 │   └── (dashboard)/
 │       ├── layout.tsx                      # Auth guard + sidebar + header + badge count
 │       ├── dashboard/page.tsx              # Role-aware: SeekerDashboard / EmployerDashboard / AdminDashboard
@@ -116,15 +119,25 @@ app/
 │       │   └── saved/page.tsx              # Saved jobs
 │       ├── employer/
 │       │   ├── company/                    # Company CRUD (culture: tech_stack, benefits, why_work_here)
-│       │   ├── jobs/                       # Job CRUD + per-job applicants (match % sorted)
+│       │   ├── jobs/                       # Job CRUD + filters + per-job applicants (match % sorted)
 │       │   ├── applications/page.tsx       # All applicants across jobs
+│       │   ├── email-templates/page.tsx    # Custom accepted/rejected email templates
 │       │   └── billing/page.tsx            # Subscription management
-│       └── admin/                          # Users, jobs, companies management
+│       └── admin/
+│           ├── users/                      # User list (search + role filter) + detail view
+│           ├── jobs/                       # Job list (search + status + category filter) + bulk delete
+│           ├── companies/                  # Company list + detail view + verify
+│           ├── analytics/page.tsx          # Charts: registration/job/application trends + category breakdown
+│           ├── subscriptions/page.tsx       # Subscription management (status + plan filters)
+│           ├── moderation/page.tsx          # Pending job approval/rejection queue
+│           └── logs/page.tsx               # Admin activity audit trail (paginated)
 ├── api/
-│   ├── ai/draft-job/route.ts               # Gemini 2.5 Flash — generates 4 fields (desc/req × en/ka)
+│   ├── ai/draft-job/route.ts               # Gemini 2.5 Flash — generates 4 fields + category + tags
+│   ├── og/job/[id]/route.tsx               # Dynamic OG image for job posts (Route Handler)
 │   ├── telegram/
 │   │   ├── webhook/route.ts                # Grammy bot: /start, /categories, /companies, /language, /stop
 │   │   └── notify/route.ts                 # Send job notifications to subscribers
+│   ├── email/notify/route.ts               # Send status change emails via Resend
 │   ├── digest/                             # Email digest (⏸️ deferred)
 │   └── webhooks/lemonsqueezy/route.ts      # Payment webhook handler
 
@@ -143,7 +156,7 @@ lib/
 │   ├── applications.ts                     # Apply, status update, batch mark viewed, delete (+ storage cleanup)
 │   ├── profile.ts                          # Update (preferred_categories, is_public, email_digest)
 │   ├── company.ts                          # CRUD (tech_stack, benefits, why_work_here)
-│   ├── admin.ts                            # Verify company, update role, delete job
+│   ├── admin.ts                            # Verify company, update role, delete job, approve/reject, bulk delete + audit log
 │   ├── saved-jobs.ts                       # Save/unsave jobs
 │   ├── billing.ts                          # Lemon Squeezy checkout
 │   └── subscriptions.ts                    # Subscription management
@@ -154,7 +167,7 @@ lib/
 │   ├── companies.ts                        # getCompanyByOwner, getCompanyBySlug, getAllCompanies
 │   ├── categories.ts                       # getCategories (unstable_cache 1hr)
 │   ├── dashboard.ts                        # getSeekerDashboardData, getEmployerDashboardData
-│   ├── admin.ts                            # getAdminStats, getAllUsers/Jobs/Companies (requireAdmin guard)
+│   ├── admin.ts                            # getAdminStats, getAllUsers/Jobs/Companies, trends (RPC), user/company detail, subscriptions, moderation, logs
 │   ├── salaries.ts                         # Salary aggregation by category/city
 │   ├── saved-jobs.ts                       # getSavedJobIds
 │   ├── employer-applications.ts            # All applications across employer's jobs
@@ -171,12 +184,18 @@ lib/
 │   ├── profile.ts                          # Profile (preferred_categories, is_public, email_digest)
 │   ├── company.ts                          # Company (tech_stack, benefits, why_work_here)
 │   └── application.ts                      # Apply, status update
-└── email/                                  # Email templates (digest)
+├── tracking/
+│   └── pixel-events.ts                     # Facebook Pixel event helpers (ViewContent, Registration, Lead, JobPosted)
+├── admin-log.ts                            # Audit trail logger
+├── seo.ts                                  # buildAlternates() for canonical/hreflang
+├── og-fonts.ts                             # Noto Georgian font loader for OG images
+├── config.ts                               # siteConfig — centralized brand/URL/OG constants
+└── email/                                  # Email templates (status notifications + digest)
 
 components/
-├── ui/                                     # shadcn/ui primitives (select with truncate fix)
+├── ui/                                     # shadcn/ui primitives (select truncate, alert-dialog)
 ├── layout/
-│   ├── header.tsx                          # Sticky header (jobs, companies, salaries nav)
+│   ├── header.tsx                          # Sticky header (jobs, companies, salaries, about nav)
 │   ├── footer.tsx                          # 3-column footer (brand, links, telegram)
 │   └── language-switcher.tsx               # Locale switch with startTransition + refresh
 ├── brand/                                  # Logo (multiple variants), nav-icons
@@ -190,8 +209,16 @@ components/
 │   ├── profile-form.tsx                    # Preferred categories checkboxes, avatar crop
 │   ├── profile-page-client.tsx             # View/edit toggle
 │   ├── company-form.tsx                    # Culture section (tech_stack, benefits)
-│   ├── application-status-update.tsx       # Auto-submit on select change
-│   └── job-action-buttons.tsx              # Close, renew (RenewJobButton), edit, applicants
+│   ├── application-status-update.tsx       # Auto-submit + AlertDialog confirm for accept/reject
+│   ├── job-action-buttons.tsx              # Close, renew (RenewJobButton), edit, applicants
+│   ├── admin-bar-chart.tsx                 # CSS-only BarChart + HBarChart for analytics
+│   ├── admin-job-filters.tsx               # Admin jobs search + status + category filters
+│   ├── admin-user-filters.tsx              # Admin users search + role filter
+│   ├── admin-subscription-filters.tsx      # Admin subscription status + plan filters
+│   ├── admin-moderation-buttons.tsx        # Approve/reject pending jobs
+│   ├── admin-selectable-list.tsx           # Reusable checkbox selection + bulk action bar
+│   ├── admin-jobs-list.tsx                 # Client wrapper for bulk-deletable job list
+│   └── employer-job-filters.tsx            # Employer jobs search + status + category filters
 ├── jobs/
 │   ├── job-card.tsx                        # Card with share + bookmark (auth modal for guests)
 │   ├── job-list.tsx                        # Staggered fade-in list
@@ -201,7 +228,7 @@ components/
 │   ├── bookmark-button.tsx                 # Save/unsave with auth modal for guests
 │   ├── apply-button.tsx                    # Apply with auth modal for guests
 │   ├── top-matches.tsx                     # "Picked for You" section
-│   └── view-tracker.tsx                    # Increment job views
+│   └── view-tracker.tsx                    # Increment job views + Facebook Pixel ViewContent
 ├── applications/                           # StatusBadge, DeleteButton, ApplyForm
 └── shared/
     ├── file-upload.tsx                     # Upload with crop dialog (avatars/logos), old file cleanup
@@ -209,7 +236,14 @@ components/
     ├── auth-modal.tsx                      # "Sign in required" modal with returnUrl
     ├── refresh-button.tsx                  # router.refresh() for cache bypass
     ├── share-button.tsx                    # Clipboard copy
-    └── submit-button.tsx                   # Form submit with pending state
+    ├── submit-button.tsx                   # Form submit with pending state
+    ├── spinner.tsx                         # Reusable Loader2 spinner
+    ├── count-badge.tsx                     # Gold pill badge for list counts
+    └── verified-badge.tsx                  # Gold star SVG verified badge + heartbeat hover
+├── tracking/
+│   ├── facebook-pixel.tsx                  # Meta Pixel base snippet + PageView + noscript
+│   ├── registration-tracker.tsx            # CompleteRegistration on ?registered=1
+│   └── job-posted-tracker.tsx              # JobPosted custom event on ?created=1
 ```
 
 ---
@@ -228,6 +262,8 @@ components/
 | `saved_jobs` | user_id, job_id (unique) |
 | `subscriptions` | company_id, plan (free/pro/verified), status, lemon_squeezy_id, period dates |
 | `telegram_subscriptions` | telegram_id, chat_id, categories[], company_ids[], locale, is_active |
+| `email_templates` | company_id, type (accepted/rejected), subject/body en/ka, is_active |
+| `admin_logs` | action, actor_id, target_type, target_id, metadata jsonb, created_at |
 
 ### Migrations (in order)
 
@@ -246,6 +282,10 @@ components/
 010_email_templates.sql          # email_templates per company (custom accepted/rejected)
 011_telegram_rls.sql             # enable RLS on telegram_subscriptions (service_role only)
 012_profiles_privacy_rls.sql     # profile SELECT enforces is_public / own / admin / employer-applicant
+013_rollback_profiles_rls.sql    # rollback 012 temporarily
+014_admin_analytics.sql          # 4 RPC functions (registration/job/application trends + category breakdown)
+015_job_moderation.sql           # pending/rejected job status enum values
+016_admin_logs.sql               # admin_logs table + indexes + RLS
 ```
 
 ### Roles: `seeker` (apply, track, save), `employer` (post, review, billing), `admin` (moderate all)
@@ -272,6 +312,11 @@ components/
 10. **Telegram Bot**: Job published → notify subscribers by category + company. Commands: /start, /categories, /companies, /language, /stop. Only verified companies in /companies
 11. **Feature Gating**: Free (3 jobs), Pro (unlimited + AI), Verified (badge + featured)
 12. **Company website**: Auto-prefix `https://` if missing
+13. **Job Moderation**: `MODERATION_ENABLED` env var (default false). When true, new jobs start as `pending` → admin approves/rejects. Telegram notify only on approve
+14. **AI Draft**: Also suggests best-matching category + 10-15 skill tags
+15. **OG Images**: Route Handler at `/api/og/job/[id]` (not metadata convention — Next.js 14 route group bug workaround)
+16. **Facebook Pixel**: `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` env var. Events: PageView, ViewContent, CompleteRegistration, Lead, JobPosted (custom)
+17. **Admin Audit Log**: All admin actions (verify, role change, approve, reject, delete) auto-logged to `admin_logs` table
 
 ---
 
@@ -291,7 +336,31 @@ components/
 - Password minimum: 8 characters
 - Caching: `React.cache()` for profile, `unstable_cache` for categories (1hr) + jobs (30s), `revalidate: 3600` on company pages, ISR 60s on job detail
 - `next/image` for all images (Supabase domain configured in `next.config.mjs`)
-- Middleware: Supabase session refresh → auth guard → intl locale routing (API routes excluded)
+- Middleware: Supabase session refresh → auth guard → intl locale routing (API routes excluded). Metadata routes (opengraph-image) get intl rewrite only, no auth
+- Facebook Pixel: `afterInteractive` script, env-gated. Events fire via `lib/tracking/pixel-events.ts` helpers
+- Application status change: AlertDialog confirmation for accepted/rejected (not `window.confirm`)
+
+---
+
+## Environment Variables
+
+```
+NEXT_PUBLIC_SUPABASE_URL=<project-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+NEXT_PUBLIC_SITE_URL=https://www.dasaqmdi.com
+NEXT_PUBLIC_FACEBOOK_PIXEL_ID=<pixel-id>
+SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
+GOOGLE_GENERATIVE_AI_API_KEY=<gemini-key>
+TELEGRAM_BOT_TOKEN=<bot-token>
+CRON_SECRET=<random-secret>
+RESEND_API_KEY=<resend-key>
+LEMONSQUEEZY_API_KEY=<api-key>
+LEMONSQUEEZY_STORE_ID=<store-id>
+LEMONSQUEEZY_WEBHOOK_SECRET=<webhook-secret>
+LEMONSQUEEZY_PRO_VARIANT_ID=<variant-id>
+LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
+MODERATION_ENABLED=false
+```
 
 ---
 
@@ -323,351 +392,16 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 - **Phase 9**: Profile revolution (public portfolio, privacy toggle, share button)
 - **Phase 10**: Monetization (Lemon Squeezy, pricing page, feature gating, billing)
 - **Phase 11**: Telegram bot (categories + companies subscription, real-time notifications, localized commands)
+- **Phase 12**: Email notifications (Resend — accepted/rejected status emails, custom templates per company)
+- **Phase 13**: Admin panel enhancement (analytics charts, user/company detail, subscriptions, moderation, audit log, bulk actions)
+- **Phase 14**: UI/UX & Accessibility (ARIA, focus management, design system, contrast, touch targets)
+- **Phase 15**: Facebook Pixel integration (PageView, ViewContent, Registration, Lead, JobPosted events)
 
 ### Domain: `www.dasaqmdi.com` (Vercel)
 ### Bot: `@dasaqmdi_bot` (Telegram)
 
 ---
 
-## Phase 12: Email Notifications (Resend)
+## დარჩენილი ამოცანები
 
-**მიზანი**: აპლიკანტს ეცნობება როცა **მიიღეს (accepted)** ან **უარყვეს (rejected)**. სხვა სტატუსებზე (pending, reviewed, shortlisted) email არ იგზავნება. Employer-ს შეუძლია templates-ის კასტომიზაცია.
-
-### N1 — DB: Email Templates
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N1.1 | Migration `010_email_templates.sql` | `email_templates` table + RLS + unique(company_id, type) | ✅ |
-| N1.2 | Default templates | `lib/email/default-templates.ts` — accepted/rejected en/ka + `renderTemplate()` | ✅ |
-| N1.3 | Types | `database.ts` — EmailTemplate Row/Insert/Update | ✅ |
-
-### N2 — Resend Setup
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N2.1 | `npm install resend` | Resend SDK | ✅ |
-| N2.2 | Domain verification | `dasaqmdi.com` DNS records — **შენ უნდა გააკეთო resend.com-ზე** | ⏳ შენზეა |
-| N2.3 | Env var | `RESEND_API_KEY` — **შენ უნდა დაამატო .env.local + Vercel-ში** | ⏳ შენზეა |
-
-### N3 — Email HTML Template
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N3.1 | HTML template | `lib/email/application-status-template.ts` — dark bg, gold accent, job link button | ✅ |
-| N3.2 | Variable substitution | `{applicant_name}`, `{job_title}`, `{company_name}` → `renderTemplate()` | ✅ |
-| N3.3 | ენის არჩევა | `preferred_language`-ის მიხედვით ka/en subject + body | ✅ |
-
-### N4 — API Route + Action Hook
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N4.1 | `/api/email/notify` route | POST, CRON_SECRET, fetch app+profile+job+company → custom/default template → Resend | ✅ |
-| N4.2 | Action hook | `updateApplicationStatusAction` — accepted/rejected → fire-and-forget notify | ✅ |
-
-### N5 — Employer Template Editor UI
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N5.1 | `/employer/email-templates` გვერდი | 2 ტაბი (accepted/rejected), subject/body EN+KA | ✅ |
-| N5.2 | Live preview | real-time preview, variables replaced with sample data | ✅ |
-| N5.3 | Save action | `upsertEmailTemplateAction` + `deleteEmailTemplateAction` — ownership check | ✅ |
-| N5.4 | "Reset to default" | `deleteEmailTemplateAction` — წაშლის custom, default აბრუნებს | ✅ |
-| N5.5 | Nav ლინკი | `nav-items.ts` — Mail icon, "Email Templates" / "ელფოსტის შაბლონები" | ✅ |
-
-### N6 — i18n
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| N6.1 | Nav key | `nav.emailTemplates` ka/en | ✅ |
-| N6.2 | Template editor keys | `dashboard.emailTemplates*`, `template*` 12 key ka/en | ✅ |
-
-### შესრულების თანმიმდევრობა
-
-```
-N1.1 → N1.2 → N1.3 → N2.1 → N2.2 → N2.3 → N3.1 → N3.2 → N3.3 → N4.1 → N4.2 → N5.1 → N5.2 → N5.3 → N5.4 → N5.5 → N6.1 → N6.2
-```
-
-**რეკომენდებული სტარტი**: N1 (DB) → N2 (Resend setup) → N3 (template) → N4 (hook) — ეს 4 ნაბიჯი საკმარისია default templates-ით მუშაობისთვის. N5 (UI editor) მოგვიანებით.
-
----
-
-## Phase 13: Admin Panel Enhancement
-
-**მიზანი**: სრულყოფილი admin პანელი — analytics, user/company detail views, search, subscription management, moderation tools.
-
-### ⚡ სამუშაო პრინციპი
-
-**ყოველი ნაბიჯის დასრულების შემდეგ, სანამ შემდეგზე გადავალ, აუცილებლად:**
-1. TypeScript check (`tsc --noEmit`)
-2. კოდის რევიუ — ლოგიკური შეცდომები, missing imports, i18n keys consistency
-3. არსებულ ფუნქციონალთან თავსებადობა — არ იშლება სხვა გვერდები/კომპონენტები
-4. CLAUDE.md სტატუსების განახლება
-
-### ⚠️ არქიტექტურული გადაწყვეტილებები
-
-- **Charts**: CSS-only bar charts (%-based divs). არ ვამატებთ recharts/tremor — bundle size +40KB არ ღირს 4 chart-ისთვის
-- **Admin queries**: page-level `requireAdmin()` ერთხელ → supabase client parameter-ად გადაეცემა query helpers-ს (თავიდან ავიცილებთ ყოველ query-ზე auth check-ს)
-- **Email search**: `profiles` table-ში `email` ველი არ არის (auth.users-ში ინახება). User search მხოლოდ `full_name`/`full_name_ka`-ით. Email-ით ძიება მომავალი phase — migration სჭირდება
-- **Nav grouping**: admin nav 2 section-ად — "Main" (dashboard, users, jobs, companies) + "Tools" (analytics, subscriptions, moderation, logs). Sidebar-ში separator
-- **Moderation**: default = OFF (auto-approve). `MODERATION_ENABLED` env var-ით ჩართვა. არსებული flow არ იშლება
-
-### A1 — Analytics Dashboard (Charts + Trends)
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A1.0 | DB: RPC functions | Migration `014_admin_analytics.sql` — 4 Postgres functions (3 trends + category breakdown) | ✅ |
-| A1.1 | Stats queries | `lib/queries/admin.ts` — 4 query functions via RPC | ✅ |
-| A1.2 | Chart component | `components/dashboard/admin-bar-chart.tsx` — CSS-only BarChart + HBarChart | ✅ |
-| A1.3 | Analytics page | `app/[locale]/(dashboard)/admin/analytics/page.tsx` — 3 trend cards + category breakdown | ✅ |
-| A1.4 | Nav link | `nav-items.ts` — BarChart3 icon | ✅ |
-| A1.5 | i18n | `admin.analytics*` + `nav.analytics` keys ka/en | ✅ |
-
-### A2 — User Search + Filters
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A2.1 | Query update | `getAllUsers(filters)` — q (`full_name`/`full_name_ka` ilike search), role filter | ✅ |
-| A2.2 | Filter component | `components/dashboard/admin-user-filters.tsx` — Search + Role dropdown + `startTransition` | ✅ |
-| A2.3 | Page update | `admin/users/page.tsx` — searchParams + filters + CountBadge + empty state + color-coded role badges | ✅ |
-| A2.4 | i18n | `admin.searchUsers`, `admin.allRoles`, `admin.seeker`, `admin.employer`, `admin.adminRole` ka/en | ✅ |
-
-### A3 — User Detail View
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A3.1 | Query | `getAdminUserDetail(userId)` — profile + applications/jobs count + company info | ✅ |
-| A3.2 | Detail page | `admin/users/[id]/page.tsx` — profile card, stats, skills, role change, back link | ✅ |
-| A3.3 | Link from list | `admin/users/page.tsx` — user name → clickable link | ✅ |
-| A3.4 | i18n | `admin.changeRole` ka/en | ✅ |
-
-### A4 — Company Detail View
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A4.1 | Query | `getAdminCompanyDetail(companyId)` — company + jobs/applications count + subscription + owner | ✅ |
-| A4.2 | Detail page | `admin/companies/[id]/page.tsx` — company card, 4 stat cards, owner link, subscription, verify | ✅ |
-| A4.3 | Link from list | `admin/companies/page.tsx` — company name → clickable link | ✅ |
-| A4.4 | i18n | Existing admin keys reused | ✅ |
-
-### A5 — Subscription Management
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A5.1 | Query | `getAllSubscriptions(filters)` — with status/plan filters + company join | ✅ |
-| A5.2 | Subscriptions page | list + summary cards (active/paid) + plan/status badges | ✅ |
-| A5.3 | Nav link | CreditCard icon in admin nav | ✅ |
-| A5.4 | Filters | `AdminSubscriptionFilters` — Status + Plan dropdowns + startTransition | ✅ |
-| A5.5 | i18n | `admin.subscriptions*` + `nav.subscriptions` ka/en | ✅ |
-
-### A6 — Job Moderation
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A6.0 | Config | `MODERATION_ENABLED` env var — default `false`, no breaking change | ✅ |
-| A6.1 | Migration | `015_job_moderation.sql` — `pending`/`rejected` enum + enums.ts update | ✅ |
-| A6.2 | Moderation queue | `admin/moderation/page.tsx` + `ModerationButtons` component | ✅ |
-| A6.3 | Actions | `approveJobAction` (+ Telegram notify) + `rejectJobAction` in admin actions | ✅ |
-| A6.4 | Creation hook | `createJobAction` respects `MODERATION_ENABLED` | ✅ |
-| A6.5 | Employer UX | `dashboard.pending` key for employer jobs list | ✅ |
-| A6.6 | i18n | `admin.moderation*` + `nav.moderation` + `dashboard.pending` ka/en | ✅ |
-
-### A7 — Activity Log / Audit Trail
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A7.1 | Migration | `016_admin_logs.sql` — table + indexes + RLS (admin read/insert) | ✅ |
-| A7.2 | Logger util | `lib/admin-log.ts` — reusable `logAdminAction()` | ✅ |
-| A7.3 | Hook into actions | 5 actions: verify, change_role, approve, reject, delete | ✅ |
-| A7.4 | Logs page | `admin/logs/page.tsx` — paginated (20/page), color-coded badges, localized dates | ✅ |
-| A7.5 | Retention | Documented — 90-day cleanup via Supabase cron (not auto-implemented) | ✅ |
-| A7.6 | i18n | `admin.logsTitle`, `admin.noLogs`, `admin.logs`, `nav.logs` ka/en | ✅ |
-
-### A8 — Bulk Actions
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| A8.1 | Selection wrapper | `admin-selectable-list.tsx` — reusable checkbox + select all + sticky bar | ✅ |
-| A8.2 | Bulk actions bar | Sticky bottom bar with count, delete button, confirm dialog, cancel | ✅ |
-| A8.3 | Batch server actions | `batchDeleteJobsAction` — admin check + per-item audit log | ✅ |
-| A8.4 | Integration | `admin/jobs` — `AdminJobsList` client wrapper with bulk delete | ✅ |
-| A8.5 | i18n | `admin.selectAll`, `deleteSelected`, `cancelSelection`, `confirmBulkDelete` ka/en | ✅ |
-
-### შესრულების თანმიმდევრობა
-
-```
-A1 (Analytics) → A2 (User Search) → A3 (User Detail) → A4 (Company Detail) → A5 (Subscriptions) → A6 (Moderation) → A7 (Audit Log) → A8 (Bulk Actions)
-```
-
-**პრიორიტეტი**: A1 → A2 → A3 → A4 — ეს 4 ნაბიჯი ყველაზე მეტ ღირებულებას იძლევა მინიმალური complexity-ით. A6 (Moderation) ყველაზე რისკიანია (breaking change potential) — `MODERATION_ENABLED=false` default-ით დაცულია.
-
----
-
-## Phase 14: UI/UX & Accessibility Audit Fixes
-
-**მიზანი**: WCAG AA შესაბამისობა, დიზაინ-სისტემის მთლიანობა, UX friction-ის აღმოფხვრა, Performance ოპტიმიზაცია.
-
-### UX1 — Accessibility: ARIA & Semantic HTML (Quick Wins)
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX1.1 | `aria-label` ყველა `<nav>`-ზე | `header-client.tsx`, `dashboard-sidebar.tsx`, `footer.tsx` | `"Main navigation"`, `"Dashboard navigation"`, `"Footer links"`, `"Resources"` | ✅ |
-| UX1.2 | `aria-current="page"` sidebar-ში | `dashboard-sidebar.tsx:53-66` | აქტიურ ლინკს `aria-current="page"` დაემატა | ✅ |
-| UX1.3 | Form validation ARIA | `login-form.tsx`, `sign-up-form.tsx` | `aria-invalid`, `aria-describedby`, `role="alert"` error div-ებზე | ✅ |
-| UX1.4 | Sign-up role buttons | `sign-up-form.tsx:62-131` | `role="radio"` + `aria-checked` + `radiogroup` wrapper | ✅ |
-| UX1.5 | Submit button `aria-busy` | `components/shared/submit-button.tsx` | `aria-busy={pending}` | ✅ |
-| UX1.6 | Share button `aria-label` | `components/jobs/share-job-button.tsx` | `aria-label={t("share")}` icon-only ვარიანტზე | ✅ |
-| UX1.7 | Bookmark `aria-label` | `components/jobs/bookmark-button.tsx` | `aria-hidden` icon-ზე, sr-only ტექსტი გაუმჯობესდა | ✅ |
-| UX1.8 | `scroll-behavior: smooth` reduced-motion | `app/globals.css` | `prefers-reduced-motion`-ში `scroll-behavior: auto` | ✅ |
-
-### UX2 — Auth Modal: Focus Management
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX2.1 | `role="dialog"` + ARIA | `components/shared/auth-modal.tsx` | `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, `aria-describedby` | ✅ |
-| UX2.2 | Focus trap | `components/shared/auth-modal.tsx` | Tab/Shift+Tab ციკლი მოდალის შიგნით | ✅ |
-| UX2.3 | Auto-focus on open | `components/shared/auth-modal.tsx` | `requestAnimationFrame` + first focusable | ✅ |
-| UX2.4 | Focus restore on close | `components/shared/auth-modal.tsx` | `previousFocusRef` — trigger-ზე ბრუნდება | ✅ |
-
-### UX3 — Design System: Hardcoded ფერების აღმოფხვრა
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX3.1 | Header active indicator | `header-client.tsx:92` | `bg-[#C7AE6A]` → `bg-primary` | ✅ |
-| UX3.2 | Job card borders | `job-card.tsx:72` | `border-[#C7AE6A]/20` → `border-primary/20`, `border-[#725252]/10` → `border-muted-foreground/10` | ✅ |
-| UX3.3 | Footer telegram button | `footer.tsx:55` | `bg-[#229ED9]/10` — brand color, გამონაკლისი | ⏭️ |
-| UX3.4 | NextTopLoader color | `app/[locale]/layout.tsx:67` | `siteConfig.og.accentColor`-ით შეცვლა | ✅ |
-| UX3.5 | Focus ring in globals | `app/globals.css:115` | `ring-[#C7AE6A]/40` → `ring-primary/40` | ✅ |
-| UX3.6 | OG image route colors | `app/api/og/job/[id]/route.tsx` | `siteConfig.og.*` + `accentAlpha()` helper — 10+ hardcoded hex centralized | ✅ |
-
-### UX4 — Dark Mode: Contrast Fix (WCAG AA)
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX4.1 | muted-foreground lightness | `app/globals.css:dark` | `--muted-foreground: 0 10% 55%` → `0 10% 60%` (5.5:1 contrast) | ✅ |
-
-### UX5 — Image Performance
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX5.1 | `sizes` prop ყველა Image-ზე | 20+ Image component across codebase | ყველა Image-ს დაემატა `sizes` prop | ✅ |
-| UX5.2 | raw `<img>` → `<Image>` | `components/shared/file-upload.tsx:168` | blob URL preview — `<img>` სწორია, Next.js Image blob-ს ვერ ამუშავებს | ⏭️ |
-| UX5.3 | Suspense fallback-ები | 8 Suspense across codebase | ყველა Suspense-ს skeleton fallback დაემატა | ✅ |
-
-### UX6 — Touch Targets & Mobile UX
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX6.1 | 44px touch targets | `header-client.tsx:106` | hamburger button: `h-11 w-11 sm:h-8 sm:w-8` | ✅ |
-
-### UX7 — Conversion & Safety UX
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX7.1 | Status update confirmation | `application-status-update.tsx` | accepted/rejected-ზე `window.confirm` + i18n keys | ✅ |
-| UX7.2 | Apply form validation UX | `apply-form.tsx` | `text-destructive/60` resume hint, `aria-describedby` disabled button-ზე, `role="alert"` error-ზე | ✅ |
-| UX7.3 | Job form error + success a11y | `job-form.tsx` | `role="alert"` error-ზე, `role="status" aria-live="polite"` success-ზე, i18n "Saved" → `tc("saved")` | ✅ |
-| UX7.4 | File upload error recovery | `file-upload.tsx` | Error clearing on re-select + remove button aria-label | ✅ |
-| UX7.5 | Image crop dialog ARIA | `image-crop-dialog.tsx` | `role="dialog"`, `aria-modal`, zoom slider label, button aria-labels | ✅ |
-
-### UX8 — SEO & Meta
-
-| # | ამოცანა | ფაილი | დეტალი | სტატუსი |
-|---|---------|-------|--------|---------|
-| UX8.1 | Root `og:image` | `app/opengraph-image.tsx` | უკვე არსებობს — Next.js convention-based OG image generation | ✅ (already existed) |
-
-### შესრულების თანმიმდევრობა
-
-```
-UX1 (ARIA Quick Wins) → UX4 (Contrast) → UX3 (Colors) → UX2 (Modal) → UX5 (Images) → UX6 (Touch) → UX7 (Conversion) → UX8 (SEO)
-```
-
-**პრიორიტეტი**: UX1 + UX4 — ყველაზე სწრაფი და მაღალი impact. UX2 (Modal) მოითხოვს ყველაზე მეტ ყურადღებას (focus trap logic). UX7 ყველაზე მნიშვნელოვანია conversion-ისთვის.
-
----
-
-## Phase 15: Facebook Pixel Integration
-
-**მიზანი**: Meta (Facebook) Pixel-ის ინტეგრაცია რეკლამის ოპტიმიზაციისთვის — PageView tracking, Custom Events (ვაკანსიის ნახვა, რეგისტრაცია, განაცხადის გაგზავნა, ვაკანსიის გამოქვეყნება), Lookalike audiences-ის საფუძველი.
-
-### ⚠️ არქიტექტურული გადაწყვეტილებები
-
-- **Env var**: `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` — ცარიელისას pixel **არ ჩაიტვირთება** (dev/staging-ში off, production-ში on)
-- **Script strategy**: `next/script` `afterInteractive` — არ ბლოკავს initial render-ს
-- **GDPR**: Cookie consent banner **არ** არის ამ phase-ში. Pixel ჩაირთვება პირდაპირ. თუ EU traffic-ი მნიშვნელოვანია, Phase 16-ში consent management დაემატება
-- **SPA Navigation**: Next.js App Router-ში route change-ებს `usePathname` + `useEffect`-ით ვაკვირდებით PageView-სთვის
-- **Type safety**: `fbq` global function — `window.fbq` type declaration `types/facebook-pixel.d.ts`-ში
-- **No dependency**: არ ვამატებთ third-party package-ს (`react-facebook-pixel` და მსგავსი). პირდაპირ Meta-ს official snippet + custom wrapper
-
-### FP1 — Base Pixel Setup
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP1.1 | Type declaration | `types/facebook-pixel.d.ts` | ✅ |
-| FP1.2 | Pixel component | `components/tracking/facebook-pixel.tsx` + noscript fallback | ✅ |
-| FP1.3 | PageView tracker | `usePathname` + `useEffect` → PageView on route change | ✅ |
-| FP1.4 | Layout integration | `app/[locale]/layout.tsx` — `<FacebookPixel />` | ✅ |
-| FP1.5 | Env var | `.env.local` + Vercel-ში დასამატებელი | ✅ |
-
-### FP2 — Event Helper
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP2.1 | Event wrapper | `lib/tracking/pixel-events.ts` — 4 helper functions | ✅ |
-| FP2.2 | Standard Events mapping | ViewContent, CompleteRegistration, Lead, JobPosted (Custom) | ✅ |
-
-### FP3 — ViewContent Event (ვაკანსიის ნახვა)
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP3.1 | ViewTracker update | `view-tracker.tsx` — `trackViewContent()` in existing useEffect | ✅ |
-| FP3.2 | Data props | `jobTitle`, `category` props added + passed from page.tsx | ✅ |
-
-### FP4 — CompleteRegistration Event (რეგისტრაცია)
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP4.1 | Registration success | confirm route → `?registered=1` redirect + `RegistrationTracker` on homepage | ✅ |
-| FP4.2 | Role tracking | `trackRegistration("user")` — role-specific tracking მომავალში | ✅ |
-
-### FP5 — Lead Event (განაცხადის გაგზავნა)
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP5.1 | Apply success | `apply-form.tsx` onSubmit → `trackLead()` before action | ✅ |
-| FP5.2 | Event data | jobId, jobTitle, category props added to ApplyForm | ✅ |
-
-### FP6 — Custom Event: JobPosted (ვაკანსიის გამოქვეყნება)
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP6.1 | Job creation success | `createJobAction` → redirect `?created=1` + `JobPostedTracker` | ✅ |
-| FP6.2 | Event data | `trackJobPosted()` custom event | ✅ |
-
-### FP7 — noscript Fallback + Verification
-
-| # | ამოცანა | დეტალი | სტატუსი |
-|---|---------|--------|---------|
-| FP7.1 | noscript img | `<noscript><img>` fallback — FacebookPixel component-ში | ✅ |
-| FP7.2 | Meta Pixel Helper | Deploy-ის შემდეგ Chrome extension-ით verification | ⏳ შენზეა |
-| FP7.3 | Events Manager | Meta Events Manager-ში (business.facebook.com) event-ების დადასტურება | ⬜ |
-
-### შესრულების თანმიმდევრობა
-
-```
-FP1 (Base Setup) → FP2 (Event Helper) → FP3 (ViewContent) → FP4 (Registration) → FP5 (Lead/Apply) → FP6 (JobPosted) → FP7 (Verify)
-```
-
-**პრიორიტეტი**: FP1 + FP2 + FP3 — ეს 3 ნაბიჯი საკმარისია Pixel-ის გასააქტიურებლად და ძირითადი data-ს დაგროვების დასაწყებად. FP4-FP6 conversion events-ებისთვის. FP7 ვერიფიკაცია — deploy-ის შემდეგ.
-
-### Environment Variables (Vercel-ში დასამატებელი)
-
-```
-NEXT_PUBLIC_FACEBOOK_PIXEL_ID=<pixel-id-from-meta-events-manager>
-```
-
-### Pixel ID-ის მიღება
-
-1. https://business.facebook.com/events_manager → "Connect Data Sources" → "Web" → "Meta Pixel"
-2. სახელი: "dasaqmdi.com"
-3. "Install Pixel Manually" → **კოპირე მხოლოდ ID** (15-ნიშნა რიცხვი)
-4. Vercel Dashboard → Settings → Environment Variables → `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` = copied ID
+ამჟამად გასაკეთებელი ამოცანები არ არის. ყველა Phase (0-15) დასრულებულია.

@@ -24,15 +24,15 @@ const nextConfig = {
   async headers() {
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://connect.facebook.net https://va.vercel-scripts.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://www.facebook.com https://tr.facebook.com",
       "font-src 'self' data: https://fonts.gstatic.com",
-      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://www.facebook.com https://connect.facebook.net",
+      "connect-src 'self' https://*.supabase.co https://generativelanguage.googleapis.com https://www.facebook.com https://connect.facebook.net https://va.vercel-scripts.com",
       "frame-src https://www.facebook.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
-      "form-action 'self'",
+      "form-action 'self' https://www.facebook.com",
     ].join("; ");
 
     return [
