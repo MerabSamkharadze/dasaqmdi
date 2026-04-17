@@ -13,6 +13,7 @@ import {
   BarChart3,
   ShieldCheck,
   ScrollText,
+  ExternalLink,
 } from "lucide-react";
 import type { UserRole } from "@/lib/types/enums";
 

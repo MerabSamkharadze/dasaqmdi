@@ -68,17 +68,9 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
 
   const isExternal = !!job.external_url;
 
-  function handleCardClick() {
-    if (isExternal && job.external_url) {
-      window.open(job.external_url, "_blank", "noopener,noreferrer");
-    } else {
-      router.push(`/jobs/${job.id}`);
-    }
-  }
-
   return (
     <div
-      onClick={handleCardClick}
+      onClick={() => router.push(`/jobs/${job.id}`)}
       className="group relative block cursor-pointer rounded-xl border border-muted-foreground/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-primary/20 hover:-translate-y-1"
     >
       <div className="flex items-start gap-4">
