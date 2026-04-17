@@ -2,6 +2,7 @@ import { getAllCompanies } from "@/lib/queries/companies";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Building2, MapPin, Users } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { CountBadge } from "@/components/shared/count-badge";
 import Image from "next/image";
@@ -85,13 +86,15 @@ export default async function CompaniesPage() {
             >
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8">
-                  {company.logo_url ? (
+                  {company.slug === "dasaqmdi" ? (
+                    <LogoMark size={36} />
+                  ) : company.logo_url ? (
                     <Image
                       src={company.logo_url}
                       alt={name}
                       width={32}
                       height={32}
-                    sizes="32px"
+                      sizes="32px"
                       className="h-8 w-8 rounded-md object-contain"
                     />
                   ) : (

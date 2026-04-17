@@ -4,6 +4,7 @@ import { localized } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
 import { Building2, Calendar, Clock, MapPin, Star, Zap, Wifi, ExternalLink as ExternalLinkIcon } from "lucide-react";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
+import { LogoMark } from "@/components/brand/logo";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
@@ -80,7 +81,9 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
           onClick={(e) => e.stopPropagation()}
           className="hidden sm:flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/50 ring-1 ring-border/30 hover:bg-muted transition-colors duration-150"
         >
-          {job.company.logo_url ? (
+          {isExternal ? (
+            <LogoMark size={42} />
+          ) : job.company.logo_url ? (
             <Image
               src={job.company.logo_url}
               alt={companyName}

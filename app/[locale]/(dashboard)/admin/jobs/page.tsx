@@ -57,7 +57,6 @@ export default async function AdminJobsPage({
       <div className="flex items-baseline justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("manageJobs")}</h1>
         <CountBadge>{jobs.length}</CountBadge>
-        </div>
       </div>
 
       <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>

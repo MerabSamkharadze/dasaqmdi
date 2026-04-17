@@ -24,6 +24,7 @@ import {
   Send,
   ExternalLink,
 } from "lucide-react";
+import { LogoMark } from "@/components/brand/logo";
 import Image from "next/image";
 import Link from "next/link";
 import { ViewTracker } from "@/components/jobs/view-tracker";
@@ -230,13 +231,15 @@ export default async function JobDetailPage({ params }: PageProps) {
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
-              {job.company.logo_url ? (
+              {job.external_url ? (
+                <LogoMark size={48} />
+              ) : job.company.logo_url ? (
                 <Image
                   src={job.company.logo_url}
                   alt={companyName}
                   width={40}
                   height={40}
-                    sizes="40px"
+                  sizes="40px"
                   className="h-10 w-10 rounded-lg object-contain"
                 />
               ) : (

@@ -8,7 +8,7 @@ interface LogoProps {
   className?: string;
 }
 
-function LogoMark({ size = 32 }: { size?: number }) {
+export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg
       width={size}

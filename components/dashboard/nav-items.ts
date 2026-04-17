@@ -62,6 +62,7 @@ const adminNav: NavItem[] = [
   { href: "/admin/companies", labelKey: "manageCompanies", icon: Building2 },
   { href: "/admin/analytics", labelKey: "analytics", icon: BarChart3 },
   { href: "/admin/subscriptions", labelKey: "subscriptions", icon: CreditCard },
+  { href: "/admin/jobs/external/new", labelKey: "addExternalJob", icon: ExternalLink, exact: true },
   { href: "/admin/moderation", labelKey: "moderation", icon: ShieldCheck },
   { href: "/admin/logs", labelKey: "logs", icon: ScrollText },
 ];

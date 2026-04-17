@@ -18,6 +18,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
+import { LogoMark } from "@/components/brand/logo";
 import Image from "next/image";
 import type { Metadata } from "next";
 
@@ -79,13 +80,15 @@ export default async function CompanyProfilePage({ params }: PageProps) {
       {/* Header */}
       <div className="flex items-start gap-4">
         <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-primary/8">
-          {company.logo_url ? (
+          {company.slug === "dasaqmdi" ? (
+            <LogoMark size={48} />
+          ) : company.logo_url ? (
             <Image
               src={company.logo_url}
               alt={name}
               width={40}
               height={40}
-                    sizes="40px"
+              sizes="40px"
               className="h-10 w-10 rounded-lg object-contain"
             />
           ) : (
