@@ -407,3 +407,85 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 ### Phase 16: External Job Aggregation ✅
 
 Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე deploy-ის წინ.
+
+---
+
+## Phase 17: Search Dominance — SEO & Visibility 360°
+
+**მიზანი**: "ვაკანსიები", "დასაქმება", "სამსახური", "ვაკანსიები თბილისში" — Google-ის პირველ გვერდზე 1-3 თვეში.
+
+### ⚠️ არქიტექტურული გადაწყვეტილებები
+
+- **Landing pages**: Dynamic routes `/jobs/[city]`, `/jobs/category/[slug]`, `/jobs/remote`, `/jobs/internship` — არსებული `getJobs` query-ს reuse
+- **JSON-LD**: `directApply`, `identifier`, `sameAs` fields — Google Jobs widget-ისთვის აუცილებელი
+- **IndexNow**: Bing/Yandex instant indexing — ახალი job publish-ზე API call
+- **Structured Data**: Organization + BreadcrumbList + WebSite SearchAction schemas root layout-ში
+
+### SEO1 — JSON-LD Schema გაძლიერება
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| SEO1.1 | `directApply` | `true` internal, `false` external jobs | ⬜ |
+| SEO1.2 | `identifier` | `PropertyValue` with job ID | ⬜ |
+| SEO1.3 | `hiringOrganization.sameAs` | Company website URL | ⬜ |
+| SEO1.4 | `applicantLocationRequirements` | Remote jobs country restriction | ⬜ |
+| SEO1.5 | Validation | Google Rich Results Test | ⏳ შენზეა |
+
+### SEO2 — SEO Landing Pages
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| SEO2.1 | City landing | `app/[locale]/(public)/jobs/[city]/page.tsx` — filtered by city, SEO title "ვაკანსიები თბილისში" | ⬜ |
+| SEO2.2 | Category landing | `app/[locale]/(public)/jobs/category/[slug]/page.tsx` — "IT ვაკანსიები" | ⬜ |
+| SEO2.3 | Remote landing | `app/[locale]/(public)/jobs/remote/page.tsx` — `is_remote = true` | ⬜ |
+| SEO2.4 | Internship landing | `app/[locale]/(public)/jobs/internship/page.tsx` — `job_type = internship` | ⬜ |
+| SEO2.5 | generateMetadata | SEO-optimized title/description per landing | ⬜ |
+| SEO2.6 | Sitemap | Landing pages sitemap-ში | ⬜ |
+| SEO2.7 | Internal linking | Homepage + jobs page — links to landings | ⬜ |
+| SEO2.8 | i18n | Landing page titles ka/en | ⬜ |
+
+### SEO3 — Sitemap & Indexing
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| SEO3.1 | Missing pages | about, salaries, pricing, landing pages sitemap-ში | ⬜ |
+| SEO3.2 | IndexNow | `app/api/indexnow/route.ts` — Bing instant index on job publish | ⬜ |
+| SEO3.3 | IndexNow hook | `createJobAction` + `createExternalJobAction` → ping IndexNow | ⬜ |
+| SEO3.4 | IndexNow key | `public/[key].txt` — Bing verification file | ⏳ შენზეა |
+
+### SEO4 — Structured Data (Root-level schemas)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| SEO4.1 | Organization schema | Root layout — `@type: Organization`, name, url, logo, sameAs (telegram, facebook) | ⬜ |
+| SEO4.2 | BreadcrumbList | Job detail — `Home > Jobs > [Category] > [Title]` | ⬜ |
+| SEO4.3 | WebSite SearchAction | Root — `potentialAction: SearchAction` for Google sitelinks search box | ⬜ |
+
+### SEO5 — არაკოდური (შენზეა)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| SEO5.1 | Google Search Console | verification + sitemap submit + performance monitoring | ⏳ შენზეა |
+| SEO5.2 | Bing Webmaster Tools | registration + IndexNow API key | ⏳ შენზეა |
+| SEO5.3 | Google Business Profile | dasaqmdi.com registration | ⏳ შენზეა |
+| SEO5.4 | Rich Results Test | https://search.google.com/test/rich-results — job URLs test | ⏳ შენზეა |
+| SEO5.5 | External jobs content | 50+ ვაკანსია jobs.ge/hr.ge-დან full description-ებით | ⏳ შენზეა |
+| SEO5.6 | Backlinks | University career centers, Georgian job review sites, forums | ⏳ long-term |
+
+### შესრულების თანმიმდევრობა
+
+```
+SEO1 (Schema) → SEO3 (Sitemap + IndexNow) → SEO4 (Structured Data) → SEO2 (Landing Pages)
+```
+
+**პრიორიტეტი**: SEO1 — ყველაზე სწრაფი (1-2 საათი), Google Jobs widget-ში 1 კვირაში. SEO2 — ყველაზე impact-იანი (50+ pages), 2-4 კვირაში traffic. SEO5 პარალელურად.
+
+### მოსალოდნელი შედეგი
+
+| ვადა | შედეგი |
+|---|---|
+| 1 კვირა | JSON-LD სრული → Google Jobs widget |
+| 2 კვირა | Sitemap + IndexNow → სწრაფი indexing |
+| 1 თვე | Landing pages → "ვაკანსიები თბილისში" queries |
+| 2 თვე | 100+ external jobs → Domain Authority ↑ |
+| 3 თვე | "ვაკანსიები" / "დასაქმება" — Google page 1 |

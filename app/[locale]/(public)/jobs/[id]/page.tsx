@@ -185,6 +185,9 @@ export default async function JobDetailPage({ params }: PageProps) {
     remote: "FULL_TIME",
   };
 
+  const isExternal = !!job.external_url;
+  const companyWebsite = (job.company as unknown as { website?: string | null }).website;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
@@ -193,17 +196,51 @@ export default async function JobDetailPage({ params }: PageProps) {
     datePosted: job.created_at,
     validThrough: job.application_deadline ?? job.expires_at,
     employmentType: jobTypeMap[job.job_type] ?? "FULL_TIME",
+
+    // Google Jobs: unique identifier for deduplication
+    identifier: {
+      "@type": "PropertyValue",
+      name: siteConfig.domain,
+      value: job.id,
+    },
+
+    // Google Jobs: can user apply directly on this site?
+    directApply: !isExternal,
+
     hiringOrganization: {
       "@type": "Organization",
       name: companyName,
       ...(job.company.logo_url && { logo: job.company.logo_url }),
+      ...(companyWebsite && {
+        sameAs: companyWebsite.startsWith("http") ? companyWebsite : `https://${companyWebsite}`,
+      }),
     },
+
+    // Job location
     jobLocation: job.is_remote
       ? { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: "GE" } }
       : job.city
-        ? { "@type": "Place", address: { "@type": "PostalAddress", addressLocality: job.city, addressCountry: "GE" } }
-        : undefined,
-    jobLocationType: job.is_remote ? "TELECOMMUTE" : undefined,
+        ? {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: job.city,
+              addressRegion: job.city,
+              addressCountry: "GE",
+            },
+          }
+        : { "@type": "Place", address: { "@type": "PostalAddress", addressCountry: "GE" } },
+
+    // Remote work
+    ...(job.is_remote && {
+      jobLocationType: "TELECOMMUTE",
+      applicantLocationRequirements: {
+        "@type": "Country",
+        name: "Georgia",
+      },
+    }),
+
+    // Salary
     ...(job.salary_min && {
       baseSalary: {
         "@type": "MonetaryAmount",
@@ -216,6 +253,49 @@ export default async function JobDetailPage({ params }: PageProps) {
         },
       },
     }),
+
+    // Skills / qualifications
+    ...(job.tags && job.tags.length > 0 && {
+      skills: job.tags.join(", "),
+    }),
+
+    // Category
+    occupationalCategory: categoryName,
+
+    // URL
+    url: `${siteConfig.url}${locale === "en" ? "/en" : ""}/jobs/${job.id}`,
+  };
+
+  const localePath = locale === "en" ? "/en" : "";
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: locale === "ka" ? "მთავარი" : "Home",
+        item: `${siteConfig.url}${localePath}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: locale === "ka" ? "ვაკანსიები" : "Jobs",
+        item: `${siteConfig.url}${localePath}/jobs`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: categoryName,
+        item: `${siteConfig.url}${localePath}/jobs?category=${job.category.slug}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: title,
+      },
+    ],
   };
 
   return (
@@ -223,6 +303,10 @@ export default async function JobDetailPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <ViewTracker jobId={job.id} jobTitle={title} category={categoryName} />
 

@@ -1,109 +1,177 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+<h1 align="center">
+  <br>
+  <a href="https://www.dasaqmdi.com">dasaqmdi.com</a>
+  <br>
+</h1>
+
+<h4 align="center">Job board platform for Georgia — built with Next.js, Supabase, and AI.</h4>
 
 <p align="center">
- The fastest way to build apps with Next.js and Supabase
+  <a href="https://www.dasaqmdi.com">Live Site</a> &middot;
+  <a href="https://t.me/dasaqmdi_bot">Telegram Bot</a>
 </p>
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+---
+
+## Overview
+
+**dasaqmdi.com** (დასაქმდი) is a full-featured job board platform for the Georgian market. It connects job seekers with employers through smart matching, real-time Telegram notifications, AI-powered job drafting, and a bilingual (Georgian/English) interface.
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript (strict) |
+| Database | Supabase (PostgreSQL + Auth + Storage) |
+| Styling | Tailwind CSS + shadcn/ui |
+| i18n | next-intl (Georgian + English) |
+| AI | Vercel AI SDK + Gemini 2.5 Flash |
+| Payments | Lemon Squeezy |
+| Email | Resend |
+| Bot | Grammy (Telegram) |
+| Analytics | Facebook Pixel + Vercel Speed Insights |
+| Deploy | Vercel |
 
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+**For Job Seekers**
+- Browse and search jobs with filters (category, city, type)
+- Smart matching — skills matched against job tags with percentage score
+- Preferred categories — personalized feed based on profile settings
+- Save jobs and track applications
+- Public portfolio page with privacy toggle
+- Telegram bot notifications for new jobs
 
-## Demo
+**For Employers**
+- Post and manage job listings
+- AI-powered job description generator (bilingual)
+- Review applicants with match scores
+- Custom email templates for accept/reject notifications
+- Company profile with culture section (tech stack, benefits)
+- Subscription plans (Free / Pro / Verified)
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+**For Admins**
+- User, job, and company management
+- Job moderation (approve/reject workflow)
+- Activity logs with full audit trail
+- Platform statistics dashboard
 
-## Deploy to Vercel
+**Platform**
+- Bilingual — Georgian (default) + English
+- Dark/Light theme
+- SEO optimized (JSON-LD, dynamic OG images, sitemap)
+- Telegram bot with category and company subscriptions
+- Responsive design (mobile-first)
 
-Vercel deployment will guide you through creating a Supabase account and project.
+## Getting Started
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+### Prerequisites
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+- Node.js 18+
+- Supabase project
+- npm
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+### Setup
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+```bash
+# Install dependencies
+npm install
 
-## Clone and run locally
+# Pull environment variables from Vercel (if linked)
+vercel env pull
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+# Or create .env.local manually with required variables
+# (see Environment Variables section below)
 
-2. Create a Next.js app using the Supabase Starter template npx command
+# Start development server
+npm run dev
+```
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+Open [http://localhost:3000](http://localhost:3000).
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+### Commands
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run start        # Production server
+npm run lint         # ESLint check
+```
 
-3. Use `cd` to change into the app's directory
+## Environment Variables
 
-   ```bash
-   cd with-supabase-app
-   ```
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 
-4. Rename `.env.example` to `.env.local` and update the following:
+# Site
+NEXT_PUBLIC_SITE_URL=https://www.dasaqmdi.com
 
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+# AI
+GOOGLE_GENERATIVE_AI_API_KEY=
 
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+# Telegram
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_WEBHOOK_SECRET=
 
-5. You can now run the Next.js local development server:
+# Email
+RESEND_API_KEY=
 
-   ```bash
-   npm run dev
-   ```
+# Payments
+LEMONSQUEEZY_API_KEY=
+LEMONSQUEEZY_STORE_ID=
+LEMONSQUEEZY_WEBHOOK_SECRET=
+LEMONSQUEEZY_PRO_VARIANT_ID=
+LEMONSQUEEZY_VERIFIED_VARIANT_ID=
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+# Security
+CRON_SECRET=
+```
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## Project Structure
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+```
+app/
+  [locale]/
+    (auth)/          # Login, signup, password reset
+    (public)/        # Homepage, jobs, companies, salaries, pricing
+    (dashboard)/     # Dashboard, profile, employer tools, admin
+  api/               # AI draft, Telegram webhook, email, payments
 
-## Feedback and issues
+lib/
+  actions/           # Server actions (mutations)
+  queries/           # Database reads
+  validations/       # Zod schemas
+  email/             # Email templates + HTML builder
+  supabase/          # Client configuration
+  config.ts          # Centralized site config
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+components/
+  ui/                # shadcn/ui primitives
+  layout/            # Header, footer, language switcher
+  dashboard/         # Sidebar, forms, dashboards
+  jobs/              # Job cards, filters, pagination
+  shared/            # File upload, modals, buttons
+```
 
-## More Supabase examples
+## Database
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+PostgreSQL via Supabase with Row Level Security on all tables. Key tables:
+
+- `profiles` — user data, skills, preferences
+- `companies` — employer profiles with culture info
+- `jobs` — listings with expiry, tags, salary
+- `applications` — applicant tracking with status workflow
+- `subscriptions` — Lemon Squeezy plan management
+- `telegram_subscriptions` — bot notification preferences
+- `email_templates` — custom employer email templates
+- `admin_logs` — audit trail for admin actions
+
+Migrations are in `supabase/migrations/` (001–013).
+
+## License
+
+Private. All rights reserved.
