@@ -63,7 +63,8 @@
       "Bash(taskkill:*)",
       "Bash(xargs sed:*)",
       "Bash(wc -l /c/Users/msamkharadze/Desktop/personal/my-app/components/**/*.tsx)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(npx --yes svg2ico app/icon.svg app/favicon.ico)"
     ]
   }
 }

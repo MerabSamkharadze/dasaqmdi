@@ -24,6 +24,23 @@ export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
+  try {
+    return await generateOGImage(request, params.id);
+  } catch (e) {
+    // Fallback — always return a valid image, never crash to HTML
+    console.error("OG image generation failed:", e);
+    return new ImageResponse(
+      (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#160905", fontFamily: "sans-serif" }}>
+          <span style={{ fontSize: 48, color: "#C7AE6A", fontWeight: 700 }}>dasaqmdi.com</span>
+        </div>
+      ),
+      { ...size },
+    );
+  }
+}
+
+async function generateOGImage(request: Request, id: string) {
   const url = new URL(request.url);
   const locale = url.searchParams.get("locale") === "en" ? "en" : "ka";
 
@@ -49,7 +66,7 @@ export async function GET(
       .select(
         "title, title_ka, city, job_type, salary_min, salary_max, salary_currency, company:companies!inner(name, name_ka, logo_url)",
       )
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
     job = data as unknown as JobRow;
   } catch {
