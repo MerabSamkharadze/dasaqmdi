@@ -95,7 +95,7 @@ export async function createJobAction(
 
   revalidatePath("/employer/jobs");
   revalidatePath("/jobs");
-  redirect("/employer/jobs");
+  redirect("/employer/jobs?created=1");
 }
 
 export async function updateJobAction(

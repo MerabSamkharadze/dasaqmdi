@@ -582,3 +582,92 @@ UX1 (ARIA Quick Wins) → UX4 (Contrast) → UX3 (Colors) → UX2 (Modal) → UX
 ```
 
 **პრიორიტეტი**: UX1 + UX4 — ყველაზე სწრაფი და მაღალი impact. UX2 (Modal) მოითხოვს ყველაზე მეტ ყურადღებას (focus trap logic). UX7 ყველაზე მნიშვნელოვანია conversion-ისთვის.
+
+---
+
+## Phase 15: Facebook Pixel Integration
+
+**მიზანი**: Meta (Facebook) Pixel-ის ინტეგრაცია რეკლამის ოპტიმიზაციისთვის — PageView tracking, Custom Events (ვაკანსიის ნახვა, რეგისტრაცია, განაცხადის გაგზავნა, ვაკანსიის გამოქვეყნება), Lookalike audiences-ის საფუძველი.
+
+### ⚠️ არქიტექტურული გადაწყვეტილებები
+
+- **Env var**: `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` — ცარიელისას pixel **არ ჩაიტვირთება** (dev/staging-ში off, production-ში on)
+- **Script strategy**: `next/script` `afterInteractive` — არ ბლოკავს initial render-ს
+- **GDPR**: Cookie consent banner **არ** არის ამ phase-ში. Pixel ჩაირთვება პირდაპირ. თუ EU traffic-ი მნიშვნელოვანია, Phase 16-ში consent management დაემატება
+- **SPA Navigation**: Next.js App Router-ში route change-ებს `usePathname` + `useEffect`-ით ვაკვირდებით PageView-სთვის
+- **Type safety**: `fbq` global function — `window.fbq` type declaration `types/facebook-pixel.d.ts`-ში
+- **No dependency**: არ ვამატებთ third-party package-ს (`react-facebook-pixel` და მსგავსი). პირდაპირ Meta-ს official snippet + custom wrapper
+
+### FP1 — Base Pixel Setup
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP1.1 | Type declaration | `types/facebook-pixel.d.ts` | ✅ |
+| FP1.2 | Pixel component | `components/tracking/facebook-pixel.tsx` + noscript fallback | ✅ |
+| FP1.3 | PageView tracker | `usePathname` + `useEffect` → PageView on route change | ✅ |
+| FP1.4 | Layout integration | `app/[locale]/layout.tsx` — `<FacebookPixel />` | ✅ |
+| FP1.5 | Env var | `.env.local` + Vercel-ში დასამატებელი | ✅ |
+
+### FP2 — Event Helper
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP2.1 | Event wrapper | `lib/tracking/pixel-events.ts` — 4 helper functions | ✅ |
+| FP2.2 | Standard Events mapping | ViewContent, CompleteRegistration, Lead, JobPosted (Custom) | ✅ |
+
+### FP3 — ViewContent Event (ვაკანსიის ნახვა)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP3.1 | ViewTracker update | `view-tracker.tsx` — `trackViewContent()` in existing useEffect | ✅ |
+| FP3.2 | Data props | `jobTitle`, `category` props added + passed from page.tsx | ✅ |
+
+### FP4 — CompleteRegistration Event (რეგისტრაცია)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP4.1 | Registration success | confirm route → `?registered=1` redirect + `RegistrationTracker` on homepage | ✅ |
+| FP4.2 | Role tracking | `trackRegistration("user")` — role-specific tracking მომავალში | ✅ |
+
+### FP5 — Lead Event (განაცხადის გაგზავნა)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP5.1 | Apply success | `apply-form.tsx` onSubmit → `trackLead()` before action | ✅ |
+| FP5.2 | Event data | jobId, jobTitle, category props added to ApplyForm | ✅ |
+
+### FP6 — Custom Event: JobPosted (ვაკანსიის გამოქვეყნება)
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP6.1 | Job creation success | `createJobAction` → redirect `?created=1` + `JobPostedTracker` | ✅ |
+| FP6.2 | Event data | `trackJobPosted()` custom event | ✅ |
+
+### FP7 — noscript Fallback + Verification
+
+| # | ამოცანა | დეტალი | სტატუსი |
+|---|---------|--------|---------|
+| FP7.1 | noscript img | `<noscript><img>` fallback — FacebookPixel component-ში | ✅ |
+| FP7.2 | Meta Pixel Helper | Deploy-ის შემდეგ Chrome extension-ით verification | ⏳ შენზეა |
+| FP7.3 | Events Manager | Meta Events Manager-ში (business.facebook.com) event-ების დადასტურება | ⬜ |
+
+### შესრულების თანმიმდევრობა
+
+```
+FP1 (Base Setup) → FP2 (Event Helper) → FP3 (ViewContent) → FP4 (Registration) → FP5 (Lead/Apply) → FP6 (JobPosted) → FP7 (Verify)
+```
+
+**პრიორიტეტი**: FP1 + FP2 + FP3 — ეს 3 ნაბიჯი საკმარისია Pixel-ის გასააქტიურებლად და ძირითადი data-ს დაგროვების დასაწყებად. FP4-FP6 conversion events-ებისთვის. FP7 ვერიფიკაცია — deploy-ის შემდეგ.
+
+### Environment Variables (Vercel-ში დასამატებელი)
+
+```
+NEXT_PUBLIC_FACEBOOK_PIXEL_ID=<pixel-id-from-meta-events-manager>
+```
+
+### Pixel ID-ის მიღება
+
+1. https://business.facebook.com/events_manager → "Connect Data Sources" → "Web" → "Meta Pixel"
+2. სახელი: "dasaqmdi.com"
+3. "Install Pixel Manually" → **კოპირე მხოლოდ ID** (15-ნიშნა რიცხვი)
+4. Vercel Dashboard → Settings → Environment Variables → `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` = copied ID

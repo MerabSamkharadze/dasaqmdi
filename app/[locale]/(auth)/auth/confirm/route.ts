@@ -17,7 +17,8 @@ export async function GET(request: NextRequest) {
       token_hash,
     });
     if (!error) {
-      redirect(next);
+      const dest = type === "signup" ? `${next}${next.includes("?") ? "&" : "?"}registered=1` : next;
+      redirect(dest);
     } else {
       redirect(`/auth/error?error=${error?.message}`);
     }

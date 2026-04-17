@@ -12,6 +12,7 @@ import Link from "next/link";
 import { JobActionButtons } from "@/components/dashboard/job-action-buttons";
 import { EmployerJobFilters } from "@/components/dashboard/employer-job-filters";
 import { Suspense } from "react";
+import { JobPostedTracker } from "@/components/tracking/job-posted-tracker";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -88,6 +89,7 @@ export default async function EmployerJobsPage({
 
   return (
     <div className="flex flex-col gap-6">
+      <Suspense><JobPostedTracker /></Suspense>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
         <CountBadge>{jobs.length}</CountBadge>

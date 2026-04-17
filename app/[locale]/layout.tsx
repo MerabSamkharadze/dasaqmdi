@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
 import { AuthModal } from "@/components/shared/auth-modal";
+import { FacebookPixel } from "@/components/tracking/facebook-pixel";
 import type { Locale } from "@/lib/types/enums";
 import { siteConfig } from "@/lib/config";
 
@@ -57,6 +58,7 @@ export default async function LocaleLayout({
         >
           {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
         </a>
+        <FacebookPixel />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

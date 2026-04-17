@@ -17,6 +17,7 @@ import { ShowAllLink } from "@/components/shared/show-all-link";
 import type { Metadata } from "next";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
+import { RegistrationTracker } from "@/components/tracking/registration-tracker";
 
 export async function generateMetadata({
   params,
@@ -177,6 +178,7 @@ export default async function HomePage({
 
   return (
     <>
+      <Suspense><RegistrationTracker /></Suspense>
       {/* Hero section — first page only, no filters active */}
       {page === 1 && !searchParams.q && !searchParams.category && !searchParams.type && !searchParams.city && (
         <section className="mb-10 flex flex-col-reverse md:flex-row items-center gap-8 md:gap-12">

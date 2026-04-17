@@ -222,7 +222,7 @@ export default async function JobDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ViewTracker jobId={job.id} />
+      <ViewTracker jobId={job.id} jobTitle={title} category={categoryName} />
 
       {/* ── Hero Card: Logo + Title + Actions ── */}
       <div className="rounded-xl border border-border/60 bg-card p-5 sm:p-8 shadow-soft">

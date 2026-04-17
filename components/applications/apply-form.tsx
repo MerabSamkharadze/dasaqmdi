@@ -8,23 +8,30 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { FileUpload } from "@/components/shared/file-upload";
+import { trackLead } from "@/lib/tracking/pixel-events";
 import type { ActionResult } from "@/lib/types";
 
 const initialState: ActionResult = { error: null };
 
 type ApplyFormProps = {
   jobId: string;
+  jobTitle?: string;
+  category?: string;
   userId: string;
   existingResumeUrl?: string | null;
 };
 
-export function ApplyForm({ jobId, userId, existingResumeUrl }: ApplyFormProps) {
+export function ApplyForm({ jobId, jobTitle, category, userId, existingResumeUrl }: ApplyFormProps) {
   const [state, formAction] = useFormState(applyToJobAction, initialState);
   const t = useTranslations("applications");
   const [resumeUrl, setResumeUrl] = useState(existingResumeUrl ?? "");
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form
+      action={formAction}
+      onSubmit={() => trackLead({ jobId, jobTitle: jobTitle ?? "", category })}
+      className="space-y-6"
+    >
       <input type="hidden" name="job_id" value={jobId} />
       <input type="hidden" name="resume_url" value={resumeUrl} />
 
