@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +26,10 @@ const ThemeSwitcher = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl">
+        <button
+          type="button"
+          className="inline-flex items-center justify-center h-8 w-8 rounded-xl text-muted-foreground/70 hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+        >
           {theme === "light" ? (
             <SunIcon key="light" className="h-4 w-4" />
           ) : theme === "dark" ? (
@@ -35,7 +37,7 @@ const ThemeSwitcher = () => {
           ) : (
             <LaptopIcon key="system" className="h-4 w-4" />
           )}
-        </Button>
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-content" align="start">
         <DropdownMenuRadioGroup
