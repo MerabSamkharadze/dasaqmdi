@@ -4,6 +4,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
+  verification: {
+    google: "zwPV8PnoBhuJvXbbZPjEPmRp1aUkuzfz4rUsE7WJOkk",
+  },
   title: {
     default: `დასაქმდი — ვაკანსიები და სამუშაოს ძიება საქართველოში | ${siteConfig.domain}`,
     template: "%s | დასაქმდი — ვაკანსიები საქართველოში",
