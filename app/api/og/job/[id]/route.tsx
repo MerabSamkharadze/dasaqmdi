@@ -8,6 +8,23 @@ export const dynamic = "force-dynamic";
 
 const size = { width: 1200, height: 630 };
 
+const FONT_URL =
+  "https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-georgian@5.0.11/files/noto-sans-georgian-georgian-500-normal.woff";
+
+async function loadFont(): Promise<{ fonts: { name: string; data: ArrayBuffer; style: "normal"; weight: 500 }[] } | undefined> {
+  try {
+    const res = await fetch(FONT_URL);
+    if (!res.ok) return undefined;
+    const data = await res.arrayBuffer();
+    if (data.byteLength < 100) return undefined;
+    return {
+      fonts: [{ name: "Noto Sans Georgian", data, style: "normal" as const, weight: 500 as const }],
+    };
+  } catch {
+    return undefined;
+  }
+}
+
 function publicClient() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -16,14 +33,14 @@ function publicClient() {
   );
 }
 
-function fallbackImage() {
+function fallbackImage(fontConfig?: object) {
   return new ImageResponse(
     (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#160905", color: "#C7AE6A", fontSize: 48, fontWeight: 700 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", background: "#160905", fontFamily: "Noto Sans Georgian, sans-serif", color: "#C7AE6A", fontSize: 48, fontWeight: 700 }}>
         {siteConfig.domain}
       </div>
     ),
-    { ...size },
+    { ...size, ...fontConfig },
   );
 }
 
@@ -33,6 +50,8 @@ export async function GET(
 ) {
   const url = new URL(request.url);
   const locale = url.searchParams.get("locale") === "en" ? "en" : "ka";
+
+  const fontConfig = await loadFont();
 
   type JobRow = {
     title: string;
@@ -57,10 +76,10 @@ export async function GET(
       .single();
     job = data as unknown as JobRow;
   } catch {
-    return fallbackImage();
+    return fallbackImage(fontConfig);
   }
 
-  if (!job) return fallbackImage();
+  if (!job) return fallbackImage(fontConfig);
 
   const companyName = localized(job.company, "name", locale);
   const jobTitle = localized(job, "title", locale);
@@ -92,6 +111,7 @@ export async function GET(
             padding: "64px 80px",
             background: "linear-gradient(135deg, #160905 0%, #1f120b 55%, #281b12 100%)",
             color: "#fbf7e1",
+            fontFamily: "Noto Sans Georgian, sans-serif",
           }}
         >
           {/* Company */}
@@ -177,9 +197,9 @@ export async function GET(
           </div>
         </div>
       ),
-      { ...size },
+      { ...size, ...fontConfig },
     );
   } catch {
-    return fallbackImage();
+    return fallbackImage(fontConfig);
   }
 }
