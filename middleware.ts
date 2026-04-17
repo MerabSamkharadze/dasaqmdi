@@ -30,8 +30,15 @@ function isMetadataRoute(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Root-level files: skip everything (no intl, no auth)
+  if (pathname === "/sitemap.xml" || pathname === "/robots.txt" || pathname === "/favicon.ico") {
+    return NextResponse.next();
+  }
+
   // Metadata routes: only intl rewrite, no auth/session
-  if (isMetadataRoute(request.nextUrl.pathname)) {
+  if (isMetadataRoute(pathname)) {
     return intlMiddleware(request);
   }
 
