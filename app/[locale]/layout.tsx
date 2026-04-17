@@ -11,6 +11,7 @@ import { FacebookPixel } from "@/components/tracking/facebook-pixel";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Locale } from "@/lib/types/enums";
 import { siteConfig } from "@/lib/config";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/structured-data";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -59,6 +60,14 @@ export default async function LocaleLayout({
         >
           {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
         </a>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         <FacebookPixel />
         <SpeedInsights debug={false} />
         <NextIntlClientProvider messages={messages}>
