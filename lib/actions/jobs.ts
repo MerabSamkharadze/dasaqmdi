@@ -93,6 +93,12 @@ export async function createJobAction(
     }).catch(() => {}); // Fire-and-forget, don't block job creation
   }
 
+  // SEO: notify search engines about new job
+  if (!moderationEnabled && newJob?.id) {
+    const { pingNewJob } = await import("@/lib/seo-ping");
+    pingNewJob(newJob.id);
+  }
+
   revalidatePath("/employer/jobs");
   revalidatePath("/jobs");
   redirect("/employer/jobs?created=1");

@@ -425,11 +425,12 @@ Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| SEO1.1 | `directApply` | `true` internal, `false` external jobs | ⬜ |
-| SEO1.2 | `identifier` | `PropertyValue` with job ID | ⬜ |
-| SEO1.3 | `hiringOrganization.sameAs` | Company website URL | ⬜ |
-| SEO1.4 | `applicantLocationRequirements` | Remote jobs country restriction | ⬜ |
-| SEO1.5 | Validation | Google Rich Results Test | ⏳ შენზეა |
+| SEO1.1 | `directApply` | `true` internal, `false` external | ✅ |
+| SEO1.2 | `identifier` | `PropertyValue` with job ID | ✅ |
+| SEO1.3 | `hiringOrganization.sameAs` | Company website URL | ✅ |
+| SEO1.4 | `applicantLocationRequirements` | Remote jobs — Country: Georgia | ✅ |
+| SEO1.5 | `skills` + `occupationalCategory` + `url` | Extra fields for richer results | ✅ |
+| SEO1.6 | Validation | Google Rich Results Test | ⏳ შენზეა |
 
 ### SEO2 — SEO Landing Pages
 
@@ -448,18 +449,18 @@ Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| SEO3.1 | Missing pages | about, salaries, pricing, landing pages sitemap-ში | ⬜ |
-| SEO3.2 | IndexNow | `app/api/indexnow/route.ts` — Bing instant index on job publish | ⬜ |
-| SEO3.3 | IndexNow hook | `createJobAction` + `createExternalJobAction` → ping IndexNow | ⬜ |
-| SEO3.4 | IndexNow key | `public/[key].txt` — Bing verification file | ⏳ შენზეა |
+| SEO3.1 | Missing pages | about, salaries, pricing + category pages sitemap-ში | ✅ |
+| SEO3.2 | IndexNow | `app/api/indexnow/route.ts` + `lib/seo-ping.ts` helper | ✅ |
+| SEO3.3 | IndexNow hooks | `createJobAction` + `createExternalJobAction` + `approveJobAction` → ping | ✅ |
+| SEO3.4 | IndexNow key | `INDEXNOW_KEY` env var + `public/[key].txt` | ⏳ შენზეა |
 
 ### SEO4 — Structured Data (Root-level schemas)
 
 | # | ამოცანა | დეტალი | სტატუსი |
 |---|---------|--------|---------|
-| SEO4.1 | Organization schema | Root layout — `@type: Organization`, name, url, logo, sameAs (telegram, facebook) | ⬜ |
-| SEO4.2 | BreadcrumbList | Job detail — `Home > Jobs > [Category] > [Title]` | ⬜ |
-| SEO4.3 | WebSite SearchAction | Root — `potentialAction: SearchAction` for Google sitelinks search box | ⬜ |
+| SEO4.1 | Organization schema | Root layout — Organization + logo + sameAs | ✅ |
+| SEO4.2 | BreadcrumbList | Job detail — Home > Jobs > Category > Title | ✅ |
+| SEO4.3 | WebSite SearchAction | Root layout — SearchAction for sitelinks search box | ✅ |
 
 ### SEO5 — არაკოდური (შენზეა)
 

@@ -8,14 +8,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient();
 
   // Static pages
+  const now = new Date();
+
   const staticPages: MetadataRoute.Sitemap = [
-    { url: BASE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    { url: `${BASE_URL}/en`, lastModified: new Date(), changeFrequency: "daily", priority: 1 },
-    { url: `${BASE_URL}/jobs`, lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
-    { url: `${BASE_URL}/en/jobs`, lastModified: new Date(), changeFrequency: "hourly", priority: 0.9 },
-    { url: `${BASE_URL}/companies`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE_URL}/en/companies`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
+    { url: BASE_URL, lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/en`, lastModified: now, changeFrequency: "daily", priority: 1 },
+    { url: `${BASE_URL}/jobs`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${BASE_URL}/en/jobs`, lastModified: now, changeFrequency: "hourly", priority: 0.9 },
+    { url: `${BASE_URL}/companies`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/en/companies`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/salaries`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${BASE_URL}/en/salaries`, lastModified: now, changeFrequency: "weekly", priority: 0.6 },
+    { url: `${BASE_URL}/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/en/pricing`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/en/about`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  // Category landing pages
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("slug");
+
+  const categoryPages: MetadataRoute.Sitemap = (categories ?? []).flatMap((c) => [
+    { url: `${BASE_URL}/jobs?category=${c.slug}`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
+    { url: `${BASE_URL}/en/jobs?category=${c.slug}`, lastModified: now, changeFrequency: "daily" as const, priority: 0.8 },
+  ]);
 
   // Active jobs
   const { data: jobs } = await supabase
@@ -63,5 +81,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]);
 
-  return [...staticPages, ...jobPages, ...companyPages];
+  return [...staticPages, ...categoryPages, ...jobPages, ...companyPages];
 }

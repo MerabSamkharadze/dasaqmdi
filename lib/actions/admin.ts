@@ -127,6 +127,10 @@ export async function approveJobAction(jobId: string): Promise<ActionResult> {
     }).catch(() => {});
   }
 
+  // SEO: notify search engines about newly approved job
+  const { pingNewJob } = await import("@/lib/seo-ping");
+  pingNewJob(jobId);
+
   revalidatePath("/admin/moderation");
   revalidatePath("/admin/jobs");
   revalidatePath("/employer/jobs");
@@ -254,7 +258,7 @@ export async function createExternalJobAction(
     ? parsed.data.tags.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
-  const { error } = await supabase.from("jobs").insert({
+  const { data: newJob, error } = await supabase.from("jobs").insert({
     title: parsed.data.title,
     title_ka: parsed.data.title_ka || null,
     description: parsed.data.description,
@@ -273,14 +277,20 @@ export async function createExternalJobAction(
     company_id: systemCompany.id,
     posted_by: adminId,
     status: "active",
-  });
+  }).select("id").single();
 
   if (error) return { error: error.message };
 
-  await logAdminAction(supabase, adminId, "create_external_job", "job", "new", {
+  await logAdminAction(supabase, adminId, "create_external_job", "job", newJob?.id ?? "new", {
     source: parsed.data.external_source,
     url: parsed.data.external_url,
   });
+
+  // SEO: notify search engines
+  if (newJob?.id) {
+    const { pingNewJob } = await import("@/lib/seo-ping");
+    pingNewJob(newJob.id);
+  }
 
   revalidatePath("/admin/jobs");
   revalidatePath("/jobs");
