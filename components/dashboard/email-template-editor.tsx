@@ -207,32 +207,29 @@ function TemplateForm({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowResetDialog(true)}
-              className="gap-1.5 text-[12px] text-muted-foreground"
-            >
-              <RotateCcw className="h-3 w-3" />
-              {t("templateReset")}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPreview(true)}
-              className="gap-1.5 text-[12px]"
-            >
-              {t("templatePreview")}
-            </Button>
-          </div>
+        <div className="flex items-center justify-end gap-2 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPreview(true)}
+            className="gap-1.5 text-[12px]"
+          >
+            {t("templatePreview")}
+          </Button>
           <SubmitButton size="sm" pendingText="...">
             {tc("save")}
           </SubmitButton>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowResetDialog(true)}
+          className="flex items-center gap-1.5 text-[11px] text-muted-foreground/40 hover:text-muted-foreground transition-colors duration-200 mt-3"
+        >
+          <RotateCcw className="h-3 w-3" />
+          {t("templateReset")}
+        </button>
       </form>
 
       {/* Reset confirmation dialog */}

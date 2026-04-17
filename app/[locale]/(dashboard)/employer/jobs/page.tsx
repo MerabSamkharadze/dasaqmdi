@@ -89,16 +89,8 @@ export default async function EmployerJobsPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
-          <CountBadge>{jobs.length}</CountBadge>
-        </div>
-        <Button asChild size="sm">
-          <Link href="/employer/jobs/new">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            {t("postJob")}
-          </Link>
-        </Button>
+        <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
+        <CountBadge>{jobs.length}</CountBadge>
       </div>
 
       <Suspense fallback={<div className="h-10 animate-pulse rounded-lg bg-muted/50" />}>
