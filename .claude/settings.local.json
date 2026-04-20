@@ -67,7 +67,8 @@
       "Bash(npx --yes svg2ico app/icon.svg app/favicon.ico)",
       "Bash(npm i *)",
       "Bash(npx shadcn@latest add alert-dialog -y)",
-      "Bash(npx shadcn@latest add alert-dialog --overwrite)"
+      "Bash(npx shadcn@latest add alert-dialog --overwrite)",
+      "WebFetch(domain:www.top.ge)"
     ]
   }
 }

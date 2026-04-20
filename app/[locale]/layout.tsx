@@ -9,6 +9,7 @@ import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
 import { AuthModal } from "@/components/shared/auth-modal";
 import { FacebookPixel } from "@/components/tracking/facebook-pixel";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 import type { Locale } from "@/lib/types/enums";
 import { siteConfig } from "@/lib/config";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/structured-data";
@@ -69,6 +70,8 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <FacebookPixel />
+        <div id="top-ge-counter-container" data-site-id="118671" />
+        <Script src="//counter.top.ge/counter.js" strategy="afterInteractive" />
         <SpeedInsights debug={false} />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
