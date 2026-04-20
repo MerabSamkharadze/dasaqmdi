@@ -55,6 +55,18 @@ export default async function LocaleLayout({
       <body
         className={`${inter.variable} ${notoGeorgian.variable} ${playfair.variable} font-sans antialiased`}
       >
+        <Script
+          id="org-jsonld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <Script
+          id="website-jsonld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         {/* L4 FIX: Skip to content link for keyboard/screen-reader users */}
         <a
           href="#main-content"
@@ -62,16 +74,8 @@ export default async function LocaleLayout({
         >
           {locale === "ka" ? "კონტენტზე გადასვლა" : "Skip to content"}
         </a>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
         <FacebookPixel />
-        <Script src="//counter.top.ge/counter.js" strategy="afterInteractive" />
+        <Script src="//counter.top.ge/counter.js" strategy="lazyOnload" />
         <SpeedInsights debug={false} />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider

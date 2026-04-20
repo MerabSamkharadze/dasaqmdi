@@ -37,6 +37,7 @@ No test framework is configured. No unit/integration tests exist yet.
 | Image Crop | `react-easy-crop` | Avatar/logo upload |
 | Email | Resend | Transactional emails (accepted/rejected) |
 | Analytics | Facebook Pixel | Conversion tracking |
+| Rankings | TOP.GE | Georgian website rating counter |
 | Monitoring | Vercel Speed Insights | `@vercel/speed-insights` |
 
 ### Next.js 14 Conventions (CRITICAL)
@@ -76,7 +77,7 @@ No test framework is configured. No unit/integration tests exist yet.
 - `localePrefix: "as-needed"` — defined in `i18n/routing.ts`
 - Navigation: `i18n/navigation.ts` — `createNavigation(routing)`
 - Server: `await getTranslations("namespace")`, Client: `useTranslations("namespace")`
-- Namespaces: `common`, `nav`, `home`, `jobs`, `categories`, `auth`, `profile`, `company`, `applications`, `dashboard`, `admin`, `errors`, `salaries`, `pricing`, `about`
+- Namespaces: `common`, `nav`, `home`, `jobs`, `categories`, `auth`, `profile`, `company`, `applications`, `dashboard`, `admin`, `errors`, `salaries`, `pricing`, `about`, `cookies`
 - Bilingual fields: `field` + `field_ka`. Use `localized(obj, "title", locale)` helper from `lib/utils.ts`
 - Language switching: `LanguageSwitcher` component — `router.replace` + `router.refresh()` via `startTransition`
 
@@ -228,7 +229,10 @@ components/
 │   ├── bookmark-button.tsx                 # Save/unsave with auth modal for guests
 │   ├── apply-button.tsx                    # Apply with auth modal for guests
 │   ├── top-matches.tsx                     # "Picked for You" section
-│   └── view-tracker.tsx                    # Increment job views + Facebook Pixel ViewContent
+│   ├── view-tracker.tsx                    # Increment job views + Facebook Pixel ViewContent
+│   ├── vip-spotlight.tsx                   # Homepage VIP jobs horizontal section
+│   ├── vip-carousel.tsx                    # Infinite auto-scroll carousel (drag + momentum + loop)
+│   └── vip-card.tsx                        # VIP job card for carousel
 ├── applications/                           # StatusBadge, DeleteButton, ApplyForm
 └── shared/
     ├── file-upload.tsx                     # Upload with crop dialog (avatars/logos), old file cleanup
@@ -239,7 +243,9 @@ components/
     ├── submit-button.tsx                   # Form submit with pending state
     ├── spinner.tsx                         # Reusable Loader2 spinner
     ├── count-badge.tsx                     # Gold pill badge for list counts
-    └── verified-badge.tsx                  # Gold star SVG verified badge + heartbeat hover
+    ├── verified-badge.tsx                  # Gold star SVG verified badge + heartbeat hover
+    ├── vip-badge.tsx                       # Gold/Silver star VIP badge
+    └── cookie-consent.tsx                  # Cookie consent banner (Accept/Decline + localStorage)
 ├── tracking/
 │   ├── facebook-pixel.tsx                  # Meta Pixel base snippet + PageView + noscript
 │   ├── registration-tracker.tsx            # CompleteRegistration on ?registered=1
@@ -257,7 +263,7 @@ components/
 | `profiles` | id (FK), role, full_name/ka, skills[], resume_url, preferred_categories[], is_public, email_digest |
 | `categories` | slug, name_en, name_ka (11 rows: IT, sales, admin, finance, hospitality, construction, food-service, retail, beauty-wellness, logistics, healthcare) |
 | `companies` | owner_id, name, slug, is_verified, logo_url, tech_stack[], benefits[], why_work_here |
-| `jobs` | company_id, category_id, title, job_type, status, salary_min/max, expires_at, tags[], is_featured |
+| `jobs` | company_id, category_id, title, job_type, status, salary_min/max, expires_at, tags[], is_featured, external_url, external_source, vip_level, vip_until |
 | `applications` | job_id, applicant_id, resume_url, status, is_viewed, viewed_at |
 | `saved_jobs` | user_id, job_id (unique) |
 | `subscriptions` | company_id, plan (free/pro/verified), status, lemon_squeezy_id, period dates |
@@ -286,6 +292,8 @@ components/
 014_admin_analytics.sql          # 4 RPC functions (registration/job/application trends + category breakdown)
 015_job_moderation.sql           # pending/rejected job status enum values
 016_admin_logs.sql               # admin_logs table + indexes + RLS
+017_external_jobs.sql            # external_url, external_source + system company "dasaqmdi"
+018_vip_jobs.sql                 # vip_level, vip_until + index
 ```
 
 ### Roles: `seeker` (apply, track, save), `employer` (post, review, billing), `admin` (moderate all)
@@ -316,7 +324,13 @@ components/
 14. **AI Draft**: Also suggests best-matching category + 10-15 skill tags
 15. **OG Images**: Route Handler at `/api/og/job/[id]` (not metadata convention — Next.js 14 route group bug workaround)
 16. **Facebook Pixel**: `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` env var. Events: PageView, ViewContent, CompleteRegistration, Lead, JobPosted (custom)
-17. **Admin Audit Log**: All admin actions (verify, role change, approve, reject, delete) auto-logged to `admin_logs` table
+17. **Admin Audit Log**: All admin actions (verify, role change, approve, reject, delete, vip upgrade) auto-logged to `admin_logs` table
+18. **External Jobs**: Admin-only. `external_url` + `external_source` fields. System company "dasaqmdi" (slug). Apply → external link. Source badge on card
+19. **VIP/Premium Jobs**: `vip_level` (normal/silver/gold) + `vip_until` (14 days). Feed sorting: gold → silver → featured → normal. VipSpotlight carousel on homepage. Admin upgrade/remove via AlertDialog
+20. **SEO Landing Pages**: `/jobs/explore/[slug]` — 18 pages (4 cities + 3 types + 11 categories). `lib/seo-landings.ts` config. Sitemap included
+21. **IndexNow**: Auto-ping Bing/Yandex on job publish/approve (`lib/seo-ping.ts`)
+22. **Cookie Consent**: Banner with Accept/Decline. `localStorage` key `cookie-consent`. Tracking works regardless (non-EU site)
+23. **TOP.GE Counter**: Site ID 118671. Script in layout, counter div in footer (must be visible per rules)
 
 ---
 
@@ -360,6 +374,7 @@ LEMONSQUEEZY_WEBHOOK_SECRET=<webhook-secret>
 LEMONSQUEEZY_PRO_VARIANT_ID=<variant-id>
 LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 MODERATION_ENABLED=false
+INDEXNOW_KEY=<bing-indexnow-key>
 ```
 
 ---
@@ -396,6 +411,10 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 - **Phase 13**: Admin panel enhancement (analytics charts, user/company detail, subscriptions, moderation, audit log, bulk actions)
 - **Phase 14**: UI/UX & Accessibility (ARIA, focus management, design system, contrast, touch targets)
 - **Phase 15**: Facebook Pixel integration (PageView, ViewContent, Registration, Lead, JobPosted events)
+- **Phase 16**: External Job Aggregation (admin-only external jobs, system company "dasaqmdi", source badge, external link)
+- **Phase 17**: SEO & Search Dominance (JSON-LD enhancement, BreadcrumbList, Organization/WebSite schemas, IndexNow, 18 SEO landing pages, sitemap expansion)
+- **Phase 18**: VIP/Premium Jobs (gold/silver levels, 14-day duration, VipSpotlight carousel, admin upgrade/remove, feed priority sorting)
+- **Phase 19**: Cookie Consent Banner, TOP.GE counter integration, Google Search Console verification
 
 ### Domain: `www.dasaqmdi.com` (Vercel)
 ### Bot: `@dasaqmdi_bot` (Telegram)
@@ -404,9 +423,14 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 
 ## დარჩენილი ამოცანები
 
-### Phase 16: External Job Aggregation ✅
+ამჟამად გასაკეთებელი ამოცანები არ არის.
 
-Migration `017_external_jobs.sql` გასაშვებია Supabase-ზე deploy-ის წინ.
+### Pending Migrations (Supabase SQL Editor-ში გასაშვები)
+
+| Migration | აღწერა |
+|---|---|
+| `017_external_jobs.sql` | external_url, external_source columns + system company |
+| `018_vip_jobs.sql` | vip_level, vip_until columns + index |
 
 ---
 
