@@ -116,7 +116,8 @@
     "copyLink": "Copy link",
     "linkCopied": "Link copied!",
     "externalSource": "Source",
-    "viewOriginal": "View Original"
+    "viewOriginal": "View Original",
+    "vipSpotlight": "Premium Jobs"
   },
   "categories": {
     "it-software": "IT & Software",
@@ -377,7 +378,10 @@
     "externalUrl": "External URL",
     "externalSourceName": "Source Name",
     "externalSourceInfo": "This job will link to an external source instead of the internal apply form.",
-    "externalJobs": "External"
+    "externalJobs": "External",
+    "upgradeToVip": "Upgrade to VIP",
+    "upgradeToVipDescription": "Select VIP level and duration. VIP jobs appear at the top of the feed with a premium badge.",
+    "days": "days"
   },
   "salaries": {
     "title": "Salaries in Georgia",

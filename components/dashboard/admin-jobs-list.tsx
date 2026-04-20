@@ -4,6 +4,7 @@ import { AdminSelectableList } from "@/components/dashboard/admin-selectable-lis
 import { batchDeleteJobsAction } from "@/lib/actions/admin";
 import { Badge } from "@/components/ui/badge";
 import { AdminDeleteJobButton } from "@/components/dashboard/admin-delete-job-button";
+import { AdminVipButton } from "@/components/dashboard/admin-vip-button";
 import { Calendar } from "lucide-react";
 import Link from "next/link";
 
@@ -14,6 +15,8 @@ type AdminJob = {
   views_count: number;
   status: string;
   expires_at: string;
+  vip_level: string;
+  vip_until: string | null;
 };
 
 type AdminJobsListProps = {
@@ -101,6 +104,7 @@ export function AdminJobsList({ jobs, locale, translations: t }: AdminJobsListPr
             </div>
           </div>
           <StatusBadge status={job.status} isExpired={isExpired} t={t} />
+          <AdminVipButton jobId={job.id} currentLevel={job.vip_level} vipUntil={job.vip_until} />
           <AdminDeleteJobButton jobId={job.id} />
         </div>
       ),

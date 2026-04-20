@@ -191,6 +191,8 @@ export type Database = {
           is_featured: boolean;
           external_url: string | null;
           external_source: string | null;
+          vip_level: "normal" | "silver" | "gold";
+          vip_until: string | null;
           created_at: string;
           updated_at: string;
         };

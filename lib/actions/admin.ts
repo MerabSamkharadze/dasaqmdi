@@ -297,6 +297,60 @@ export async function createExternalJobAction(
   return { error: null };
 }
 
+export async function upgradeToVipAction(
+  jobId: string,
+  level: "silver" | "gold",
+  days: number = 14,
+): Promise<ActionResult> {
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+
+  const vipUntil = new Date();
+  vipUntil.setDate(vipUntil.getDate() + days);
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({
+      vip_level: level,
+      vip_until: vipUntil.toISOString(),
+    })
+    .eq("id", jobId);
+
+  if (error) return { error: error.message };
+
+  await logAdminAction(supabase, adminId, "upgrade_vip", "job", jobId, {
+    level,
+    days,
+    vip_until: vipUntil.toISOString(),
+  });
+
+  revalidatePath("/admin/jobs");
+  revalidatePath("/jobs");
+  return { error: null };
+}
+
+export async function removeVipAction(jobId: string): Promise<ActionResult> {
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({ vip_level: "normal", vip_until: null })
+    .eq("id", jobId);
+
+  if (error) return { error: error.message };
+
+  await logAdminAction(supabase, adminId, "remove_vip", "job", jobId);
+
+  revalidatePath("/admin/jobs");
+  revalidatePath("/jobs");
+  return { error: null };
+}
+
 export async function deleteJobAdminAction(jobId: string): Promise<ActionResult> {
   const adminId = await verifyAdmin();
   if (!adminId) return { error: "Unauthorized" };

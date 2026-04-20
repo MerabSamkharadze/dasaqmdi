@@ -116,7 +116,8 @@
     "copyLink": "ლინკის კოპირება",
     "linkCopied": "ლინკი დაკოპირდა!",
     "externalSource": "წყარო",
-    "viewOriginal": "ორიგინალზე ნახვა"
+    "viewOriginal": "ორიგინალზე ნახვა",
+    "vipSpotlight": "პრემიუმ ვაკანსიები"
   },
   "categories": {
     "it-software": "IT და პროგრამირება",
@@ -376,7 +377,10 @@
     "externalUrl": "გარე ბმული",
     "externalSourceName": "წყაროს სახელი",
     "externalSourceInfo": "ეს ვაკანსია გარე წყაროზე გადამისამართდება, შიდა განაცხადის ფორმის ნაცვლად.",
-    "externalJobs": "გარე"
+    "externalJobs": "გარე",
+    "upgradeToVip": "VIP-ზე გადაყვანა",
+    "upgradeToVipDescription": "აირჩიეთ VIP დონე. VIP ვაკანსიები feed-ის თავში ჩნდება პრემიუმ badge-ით.",
+    "days": "დღე"
   },
   "salaries": {
     "title": "ხელფასები საქართველოში",

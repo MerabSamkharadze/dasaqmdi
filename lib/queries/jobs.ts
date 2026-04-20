@@ -46,6 +46,7 @@ const getJobsCached = unstable_cache(
       .eq("status", "active")
       .gte("expires_at", new Date().toISOString())
       .or(`application_deadline.is.null,application_deadline.gte.${new Date().toISOString()}`)
+      .order("vip_until", { ascending: false, nullsFirst: false })
       .order("is_featured", { ascending: false })
       .order("created_at", { ascending: false })
       .range(from, to);
@@ -67,8 +68,23 @@ const getJobsCached = unstable_cache(
       return { jobs: [], totalCount: 0, totalPages: 0, currentPage };
     }
 
+    // Sort: gold (PREMIUM) → silver (VIP) → featured → normal
+    const now = Date.now();
+    const sorted = (data ?? []).sort((a, b) => {
+      const aVip = a.vip_level !== "normal" && a.vip_until && new Date(a.vip_until).getTime() > now;
+      const bVip = b.vip_level !== "normal" && b.vip_until && new Date(b.vip_until).getTime() > now;
+      if (aVip && !bVip) return -1;
+      if (!aVip && bVip) return 1;
+      if (aVip && bVip) {
+        const aGold = a.vip_level === "gold" ? 0 : 1;
+        const bGold = b.vip_level === "gold" ? 0 : 1;
+        if (aGold !== bGold) return aGold - bGold;
+      }
+      return 0; // keep DB order for same tier
+    });
+
     return {
-      jobs: data ?? [],
+      jobs: sorted,
       totalCount: count ?? 0,
       totalPages: Math.ceil((count ?? 0) / JOBS_PER_PAGE),
       currentPage,
@@ -88,6 +104,32 @@ export async function getJobs({
 }: GetJobsParams = {}): Promise<GetJobsResult> {
   const categoriesJson = categories && categories.length > 0 ? JSON.stringify(categories) : undefined;
   return getJobsCached(page, category, categoriesJson, city, type, q);
+}
+
+const VIP_SORT_ORDER: Record<string, number> = { gold: 0, silver: 1 };
+
+export async function getVipJobs(limit = 20): Promise<JobWithCompany[]> {
+  const supabase = createClient();
+  const now = new Date().toISOString();
+  const { data } = await supabase
+    .from("jobs")
+    .select(`
+      *,
+      company:companies!inner(id, name, name_ka, slug, logo_url, is_verified),
+      category:categories!inner(id, slug, name_en, name_ka)
+    `)
+    .eq("status", "active")
+    .gte("expires_at", now)
+    .neq("vip_level", "normal")
+    .gte("vip_until", now)
+    .order("created_at", { ascending: false })
+    .limit(limit)
+    .returns<JobWithCompany[]>();
+
+  // Sort: gold (PREMIUM) first, then silver (VIP)
+  return (data ?? []).sort(
+    (a, b) => (VIP_SORT_ORDER[a.vip_level] ?? 9) - (VIP_SORT_ORDER[b.vip_level] ?? 9),
+  );
 }
 
 type EmployerJobFilters = {

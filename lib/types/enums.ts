@@ -22,5 +22,8 @@ export type SubscriptionPlan = (typeof SUBSCRIPTION_PLANS)[number];
 export const SUBSCRIPTION_STATUSES = ["active", "cancelled", "past_due", "expired"] as const;
 export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
 
+export const VIP_LEVELS = ["normal", "silver", "gold"] as const;
+export type VipLevel = (typeof VIP_LEVELS)[number];
+
 export const LOCALES = ["ka", "en"] as const;
 export type Locale = (typeof LOCALES)[number];

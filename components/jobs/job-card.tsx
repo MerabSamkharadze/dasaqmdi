@@ -1,10 +1,12 @@
 "use client";
 
-import { localized } from "@/lib/utils";
+import { localized, cn } from "@/lib/utils";
 import type { JobWithCompany } from "@/lib/types";
 import { Building2, Calendar, Clock, MapPin, Star, Zap, Wifi, ExternalLink as ExternalLinkIcon } from "lucide-react";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
+import { VipBadge } from "@/components/shared/vip-badge";
 import { LogoMark } from "@/components/brand/logo";
+import { isVipActive } from "@/lib/vip";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
@@ -68,11 +70,20 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   const typeColor = TYPE_COLORS[job.job_type] ?? "bg-secondary text-secondary-foreground";
 
   const isExternal = !!job.external_url;
+  const vipActive = isVipActive(job);
+  const vipLevel = vipActive ? (job.vip_level as "silver" | "gold") : null;
 
   return (
     <div
       onClick={() => router.push(`/jobs/${job.id}`)}
-      className="group relative block cursor-pointer rounded-xl border border-muted-foreground/10 bg-card p-4 sm:p-5 shadow-soft transition-all duration-200 hover:shadow-gold-glow hover:border-primary/20 hover:-translate-y-1"
+      className={cn(
+        "group relative block cursor-pointer rounded-xl border p-4 sm:p-5 shadow-soft transition-all duration-200 hover:-translate-y-1",
+        vipLevel === "gold"
+          ? "border-amber-300/60 bg-amber-50/30 shadow-[0_2px_12px_rgba(199,174,106,0.15)] hover:shadow-[0_4px_20px_rgba(199,174,106,0.25)] dark:border-amber-500/30 dark:bg-amber-500/5"
+          : vipLevel === "silver"
+            ? "border-slate-300/60 bg-slate-50/20 hover:shadow-gold-glow dark:border-slate-500/30 dark:bg-slate-500/5"
+            : "border-muted-foreground/10 bg-card hover:shadow-gold-glow hover:border-primary/20",
+      )}
     >
       <div className="flex items-start gap-4">
         {/* Company Logo */}
@@ -147,6 +158,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
           {/* Badges + Salary row */}
           <div className="flex items-center justify-between gap-3 pt-0.5">
             <div className="flex items-center gap-1.5 flex-wrap">
+              {vipLevel && <VipBadge level={vipLevel} />}
               {job.is_featured && (
                 <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-medium bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
                   <Star className="h-3 w-3" />

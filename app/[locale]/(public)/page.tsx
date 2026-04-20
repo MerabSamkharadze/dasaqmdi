@@ -2,7 +2,8 @@ import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { Pagination } from "@/components/jobs/pagination";
 import { TopMatches, TopMatchesEmpty } from "@/components/jobs/top-matches";
-import { getJobs } from "@/lib/queries/jobs";
+import { getJobs, getVipJobs } from "@/lib/queries/jobs";
+import { VipSpotlight } from "@/components/jobs/vip-spotlight";
 import { getCategories } from "@/lib/queries/categories";
 import { getProfile } from "@/lib/queries/profile";
 import { createClient } from "@/lib/supabase/server";
@@ -200,6 +201,11 @@ export default async function HomePage({
         </section>
       )}
 
+      {/* VIP Spotlight */}
+      {page === 1 && !searchParams.q && !searchParams.category && (
+        <VipSpotlightSection locale={locale} />
+      )}
+
       {/* Filters */}
       <div className="mb-8 rounded-xl border border-border/40 bg-card/50 p-3 sm:p-4 shadow-soft backdrop-blur-sm">
         <Suspense fallback={<div className="h-12 animate-pulse rounded-lg bg-muted/50" />}>
@@ -275,4 +281,11 @@ export default async function HomePage({
       />
     </>
   );
+}
+
+async function VipSpotlightSection({ locale }: { locale: string }) {
+  const t = await getTranslations("jobs");
+  const vipJobs = await getVipJobs(10);
+  if (vipJobs.length === 0) return null;
+  return <VipSpotlight jobs={vipJobs} locale={locale} title={t("vipSpotlight")} />;
 }

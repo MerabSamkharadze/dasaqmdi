@@ -50,6 +50,8 @@ export default async function AdminJobsPage({
     views_count: job.views_count,
     status: job.status,
     expires_at: job.expires_at,
+    vip_level: job.vip_level,
+    vip_until: job.vip_until,
   }));
 
   return (
