@@ -11,7 +11,9 @@ import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useRef, useCallback } from "react";
 import Link from "next/link";
+import { siteConfig } from "@/lib/config";
 
 type JobCardProps = {
   job: JobWithCompany;
@@ -73,9 +75,48 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   const vipActive = isVipActive(job);
   const vipLevel = vipActive ? (job.vip_level as "silver" | "gold") : null;
 
+  // Long press to share (mobile)
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressFired = useRef(false);
+
+  const shareJob = useCallback(async () => {
+    const fullUrl = `${window.location.origin}${locale === "en" ? "/en" : ""}/jobs/${job.id}`;
+    const shareText = `${title} — ${siteConfig.domain}`;
+    if (navigator.vibrate) navigator.vibrate(30);
+    if (navigator.share) {
+      try { await navigator.share({ title, text: shareText, url: fullUrl }); } catch {}
+    } else {
+      try { await navigator.clipboard.writeText(fullUrl); } catch {}
+    }
+  }, [job.id, title, locale]);
+
+  const onTouchStart = useCallback(() => {
+    longPressFired.current = false;
+    longPressTimer.current = setTimeout(() => {
+      longPressFired.current = true;
+      shareJob();
+    }, 500);
+  }, [shareJob]);
+
+  const onTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (!longPressFired.current) {
+      router.push(`/jobs/${job.id}`);
+    }
+  }, [router, job.id]);
+
   return (
     <div
-      onClick={() => router.push(`/jobs/${job.id}`)}
+      onClick={handleClick}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onTouchCancel={onTouchEnd}
       className={cn(
         "group relative block cursor-pointer rounded-xl border p-4 sm:p-5 shadow-soft transition-all duration-200 hover:-translate-y-1",
         vipLevel === "gold"
@@ -196,7 +237,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             )}
           </div>
 
-          {/* Mobile bottom row: salary + share + bookmark */}
+          {/* Mobile bottom row: salary + bookmark */}
           <div className="flex sm:hidden items-center justify-between pt-1" onClick={(e) => e.stopPropagation()}>
             {salary ? (
               <span className="text-[12px] font-semibold text-success tabular-nums">
@@ -205,13 +246,7 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
             ) : (
               <span />
             )}
-            <div className="flex items-center">
-              <ShareJobButton
-                jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
-                jobTitle={title}
-              />
-              <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
-            </div>
+            <BookmarkButton jobId={job.id} isSaved={isSaved ?? false} isLoggedIn={isLoggedIn} />
           </div>
         </div>
       </div>
