@@ -185,8 +185,8 @@ export function VipCarousel({ children, speed = 0.5 }: VipCarouselProps) {
   return (
     <div
       ref={scrollRef}
-      className="flex gap-4 overflow-x-hidden pt-10 pb-2 select-none touch-pan-y [&_*]:!cursor-grab"
-      style={{ cursor: "grab" }}
+      className="flex gap-4 overflow-x-scroll pt-10 pb-2 select-none touch-pan-y [&_*]:!cursor-grab scrollbar-none"
+      style={{ cursor: "grab", WebkitOverflowScrolling: "touch", willChange: "scroll-position", transform: "translate3d(0,0,0)" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
