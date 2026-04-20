@@ -48,8 +48,16 @@ export function VipCarousel({ children, speed = 0.5 }: VipCarouselProps) {
     }
 
     animationRef.current = requestAnimationFrame(tick);
+
+    // Listen for card hover pause/resume
+    function onCardPause(e: Event) {
+      pausedRef.current = (e as CustomEvent).detail;
+    }
+    window.addEventListener("vip-carousel-pause", onCardPause);
+
     return () => {
       if (animationRef.current) cancelAnimationFrame(animationRef.current);
+      window.removeEventListener("vip-carousel-pause", onCardPause);
     };
   }, [speed, handleInfiniteLoop]);
 
@@ -138,6 +146,12 @@ export function VipCarousel({ children, speed = 0.5 }: VipCarouselProps) {
     } else {
       pausedRef.current = false;
     }
+
+    // Reset drag positions so next click isn't blocked
+    setTimeout(() => {
+      dragRef.current.startX = 0;
+      dragRef.current.lastX = 0;
+    }, 0);
   }, [startMomentum]);
 
   const handleMouseEnter = useCallback(() => {
@@ -171,7 +185,7 @@ export function VipCarousel({ children, speed = 0.5 }: VipCarouselProps) {
   return (
     <div
       ref={scrollRef}
-      className="flex gap-4 overflow-x-hidden pb-2 select-none touch-pan-y [&_*]:!cursor-grab"
+      className="flex gap-4 overflow-x-hidden pt-10 pb-2 select-none touch-pan-y [&_*]:!cursor-grab"
       style={{ cursor: "grab" }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
