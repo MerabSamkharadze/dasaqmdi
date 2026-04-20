@@ -2,6 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## ⚡ სამუშაო პრინციპი (CRITICAL — ყოველთვის დაიცავი)
+
+**ყველა ტასკი HIGH EFFORT-ით შეასრულე — თუნდაც მცირე და უმნიშვნელო ჩანდეს.**
+
+- არასოდეს იჩქარო. ყოველთვის გაიარე სრული ციკლი: დაგეგმე → იმპლემენტირე → შეამოწმე → რევიუ
+- კოდის წერამდე გაიაზრე არსებული არქიტექტურა, naming conventions და design patterns
+- ყოველი ფაილის შეცვლის შემდეგ: TypeScript check, i18n consistency, ლოგიკური რევიუ
+- `window.confirm()` / `window.alert()` არასოდეს — ყოველთვის shadcn `AlertDialog`
+- `<script>` tag-ები არასოდეს პირდაპირ JSX-ში — ყოველთვის `next/script` `<Script>` component
+- Hardcoded strings არასოდეს — i18n keys ან `siteConfig`
+- ტესტირებადი edge cases-ზე ყოველთვის იფიქრე: empty data, null values, expired dates
+- შეცდომა რომ დაუშვა — აღიარე, გაასწორე და მიზეზი ახსენი
+
 # dasaqmdi.com — Project Source of Truth
 
 ## Development Commands
