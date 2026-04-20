@@ -13,7 +13,6 @@ import {
   SheetTrigger,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, LogOut, Menu, User, Settings, ChevronUp } from "lucide-react";
 import { logoutAction } from "@/lib/actions/auth";
 import { getNavItems, isNavActive } from "./nav-items";
@@ -42,10 +41,13 @@ export function DashboardMobileNav({ role, fullName, avatarUrl }: DashboardMobil
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden h-8 w-8 rounded-xl">
+        <button
+          type="button"
+          className="lg:hidden inline-flex items-center justify-center h-8 w-8 rounded-xl text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+        >
           <Menu className="h-4 w-4" />
           <span className="sr-only">Menu</span>
-        </Button>
+        </button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0 flex flex-col">
         <SheetTitle className="flex h-14 items-center border-b border-border/30 px-5">
