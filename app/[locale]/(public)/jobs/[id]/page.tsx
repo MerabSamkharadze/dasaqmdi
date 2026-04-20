@@ -359,7 +359,7 @@ export default async function JobDetailPage({ params }: PageProps) {
               variant="button"
             />
             <BookmarkButton jobId={job.id} isSaved={isJobSaved} isLoggedIn={isLoggedIn} />
-            {isExpired ? (
+            {(isExternal || (isLoggedIn && !isSeeker)) ? null : isExpired ? (
               <Badge variant="destructive" className="text-sm px-3 py-1">{t("jobClosed")}</Badge>
             ) : hasApplied ? (
               <Badge
@@ -369,15 +369,15 @@ export default async function JobDetailPage({ params }: PageProps) {
                 <CheckCircle className="h-3.5 w-3.5" />
                 {t("alreadyApplied")}
               </Badge>
-            ) : !hasApplied ? (
-              <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} externalUrl={job.external_url} externalLabel={job.external_source ? `${t("viewOriginal")} → ${job.external_source}` : undefined} />
-            ) : null}
+            ) : (
+              <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
+            )}
           </div>
         </div>
 
         {/* Mobile: Apply + actions row */}
         <div className="flex sm:hidden items-center gap-2 mt-4">
-          {isExpired ? (
+          {(isExternal || (isLoggedIn && !isSeeker)) ? null : isExpired ? (
             <Badge variant="destructive" className="text-[12px] px-2.5 py-1">{t("jobClosed")}</Badge>
           ) : hasApplied ? (
             <Badge
@@ -387,9 +387,9 @@ export default async function JobDetailPage({ params }: PageProps) {
               <CheckCircle className="h-3 w-3" />
               {t("alreadyApplied")}
             </Badge>
-          ) : !hasApplied ? (
+          ) : (
             <ApplyButton jobId={job.id} label={t("applyNow")} isLoggedIn={isLoggedIn} />
-          ) : null}
+          )}
           <ShareJobButton
             jobUrl={`${locale === "en" ? "/en" : ""}/jobs/${job.id}`}
             jobTitle={title}

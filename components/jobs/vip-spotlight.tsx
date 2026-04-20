@@ -2,7 +2,7 @@ import { localized } from "@/lib/utils";
 import { VipBadge } from "@/components/shared/vip-badge";
 import { VipCarousel } from "@/components/jobs/vip-carousel";
 import { LogoMark } from "@/components/brand/logo";
-import { MapPin } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { JobWithCompany } from "@/lib/types";
@@ -45,12 +45,18 @@ export function VipSpotlight({ jobs, locale, title }: VipSpotlightProps) {
           const vipLevel = (job.vip_level ?? "silver") as "silver" | "gold";
 
           return (
-            <Link
+            <div
               key={job.id}
-              href={`/jobs/${job.id}`}
-              className="flex-shrink-0 w-[280px] sm:w-[320px] rounded-xl border border-amber-300/50 bg-gradient-to-br from-amber-50/50 to-card p-4 shadow-soft hover:shadow-[0_4px_20px_rgba(199,174,106,0.2)] transition-all duration-200 hover:-translate-y-0.5 animate-fade-in dark:from-amber-500/5 dark:to-card dark:border-amber-500/20"
+              className="relative flex-shrink-0 w-[280px] sm:w-[320px] rounded-xl border border-amber-300/50 bg-gradient-to-br from-amber-50/50 to-card p-4 shadow-soft transition-all duration-200 animate-fade-in dark:from-amber-500/5 dark:to-card dark:border-amber-500/20"
               style={{ animationDelay: `${i * 60}ms` }}
             >
+              {/* Detail link — top-right, clickable above carousel drag */}
+              <Link
+                href={`/jobs/${job.id}`}
+                className="absolute top-3 right-3 z-10 pointer-events-auto inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-[10px] font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+              >
+                <ArrowRight className="h-3 w-3" />
+              </Link>
               <div className="flex items-start gap-3 mb-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/8 ring-1 ring-amber-200/50 dark:ring-amber-500/20">
                   {isExternal ? (
@@ -91,7 +97,7 @@ export function VipSpotlight({ jobs, locale, title }: VipSpotlightProps) {
                   </span>
                 )}
               </div>
-            </Link>
+            </div>
           );
         })}
       </VipCarousel>

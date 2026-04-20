@@ -88,6 +88,10 @@ export function VipCarousel({ children, speed = 0.5 }: VipCarouselProps) {
       const el = scrollRef.current;
       if (!el) return;
 
+      // Skip drag for interactive elements (links, buttons)
+      const target = e.target as HTMLElement;
+      if (target.closest("a, button, [data-no-drag]")) return;
+
       stopMomentum();
       pausedRef.current = true;
       el.setPointerCapture(e.pointerId);
