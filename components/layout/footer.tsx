@@ -62,6 +62,20 @@ export async function Footer() {
                 </svg>
                 {t("telegramSubscribe")}
               </a>
+              <a
+                href="https://www.facebook.com/share/g/19fVqpZqAo/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-lg bg-[#1877F2]/10 px-3 py-2 text-sm font-medium text-[#1877F2] transition-all duration-200 hover:bg-[#1877F2] hover:text-white hover:shadow-md"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="shrink-0">
+                  <path
+                    d="M24 12c0-6.627-5.373-12-12-12S0 5.373 0 12c0 5.99 4.388 10.954 10.125 11.854V15.47H7.078V12h3.047V9.356c0-3.007 1.792-4.668 4.533-4.668 1.312 0 2.686.234 2.686.234v2.953H15.83c-1.491 0-1.956.925-1.956 1.875V12h3.328l-.532 3.47h-2.796v8.385C19.612 22.954 24 17.99 24 12z"
+                    className="fill-[#1877F2] transition-colors duration-200 group-hover:fill-white"
+                  />
+                </svg>
+                Facebook
+              </a>
             </nav>
           </div>
         </div>
