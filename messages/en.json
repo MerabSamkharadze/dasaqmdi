@@ -527,5 +527,11 @@
     "dashboardError": "An error occurred while loading this page.",
     "unauthorized": "You don't have permission to access this page",
     "authError": "Authentication error"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "description": "We use cookies to improve your experience, analyze traffic, and serve personalized ads. By clicking Accept, you consent to our use of cookies.",
+    "accept": "Accept All",
+    "decline": "Decline"
   }
 }

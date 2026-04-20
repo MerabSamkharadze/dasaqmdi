@@ -8,6 +8,7 @@ import { routing } from "@/i18n/routing";
 import { AuthModalProvider } from "@/lib/hooks/use-auth-modal";
 import { AuthModal } from "@/components/shared/auth-modal";
 import { FacebookPixel } from "@/components/tracking/facebook-pixel";
+import { CookieConsent } from "@/components/shared/cookie-consent";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Script from "next/script";
 import type { Locale } from "@/lib/types/enums";
@@ -88,6 +89,7 @@ export default async function LocaleLayout({
             <AuthModalProvider>
               {children}
               <AuthModal />
+              <CookieConsent />
             </AuthModalProvider>
           </ThemeProvider>
         </NextIntlClientProvider>

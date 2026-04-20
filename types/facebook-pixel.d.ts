@@ -13,6 +13,7 @@ type FbqFunction = {
   (action: "init", pixelId: string): void;
   (action: "track", event: string, params?: FacebookPixelEvent): void;
   (action: "trackCustom", event: string, params?: FacebookPixelEvent): void;
+  (action: "consent", mode: string): void;
   callMethod?: (...args: unknown[]) => void;
   queue?: unknown[];
   loaded?: boolean;
