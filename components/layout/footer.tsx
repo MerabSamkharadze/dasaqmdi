@@ -86,7 +86,11 @@ export async function Footer() {
             &copy; {new Date().getFullYear()} {siteConfig.brand.name} &mdash; {siteConfig.domain}
           </p>
           {/* TOP.GE counter — must be visible per their rules */}
-          <div id="top-ge-counter-container" data-site-id="118671" />
+          <div
+            id="top-ge-counter-container"
+            data-site-id="118671"
+            className="shrink-0 min-h-[31px] min-w-[88px] [&_img]:block [&_img]:h-auto [&_img]:max-h-[31px]"
+          />
         </div>
       </div>
     </footer>
