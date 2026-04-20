@@ -67,10 +67,12 @@ export async function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 pt-6 border-t border-border/20">
+        <div className="mt-8 pt-6 border-t border-border/20 flex items-center justify-between">
           <p className="text-xs text-muted-foreground/40 tracking-normal">
             &copy; {new Date().getFullYear()} {siteConfig.brand.name} &mdash; {siteConfig.domain}
           </p>
+          {/* TOP.GE counter — must be visible per their rules */}
+          <div id="top-ge-counter-container" data-site-id="118671" />
         </div>
       </div>
     </footer>

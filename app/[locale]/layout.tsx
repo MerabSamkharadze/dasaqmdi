@@ -70,7 +70,6 @@ export default async function LocaleLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <FacebookPixel />
-        <div id="top-ge-counter-container" data-site-id="118671" />
         <Script src="//counter.top.ge/counter.js" strategy="afterInteractive" />
         <SpeedInsights debug={false} />
         <NextIntlClientProvider messages={messages}>
