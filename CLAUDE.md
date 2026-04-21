@@ -339,7 +339,7 @@ components/
 8. **Preferred Categories**: Seeker selects categories in profile → homepage/jobs auto-filter by them. `?all=1` to override
 9. **Auth Modal**: Guest clicks Apply/Bookmark → modal with Login/SignUp + `returnUrl` → post-login redirect back
 10. **Telegram Bot**: Job published → notify subscribers by category + company. Commands: /start, /categories, /companies, /language, /stop. Only verified companies in /companies
-11. **Feature Gating**: Free (3 jobs), Pro (unlimited + AI), Verified (badge + featured)
+11. **Feature Gating** (Phase 21): Plans `free`/`pro`/`verified` in DB → **Starter** (0₾, 2 active jobs) / **Business** (79₾/mo, 790₾/yr, unlimited + AI + match + 1 featured slot + analytics) / **Pro** (199₾/mo, 1990₾/yr, everything + verified badge + 3 featured slots + custom email templates). Helpers in `lib/subscription-helpers.ts`: `STARTER_JOB_LIMIT`, `canPostJob`, `canUseAIDraft`, `canSeeMatchScores`, `getFeaturedSlotLimit`. Analytics gated to Business+, email templates gated to Pro (verified) only. See "Monetization Model" section for full Boost + Featured mechanics.
 12. **Company website**: Auto-prefix `https://` if missing
 13. **Job Moderation**: `MODERATION_ENABLED` env var (default false). When true, new jobs start as `pending` → admin approves/rejects. Telegram notify only on approve
 14. **AI Draft**: Also suggests best-matching category + 10-15 skill tags
@@ -347,7 +347,7 @@ components/
 16. **Facebook Pixel**: `NEXT_PUBLIC_FACEBOOK_PIXEL_ID` env var. Events: PageView, ViewContent, CompleteRegistration, Lead, JobPosted (custom)
 17. **Admin Audit Log**: All admin actions (verify, role change, approve, reject, delete, vip upgrade) auto-logged to `admin_logs` table
 18. **External Jobs**: Admin-only. `external_url` + `external_source` fields. System company "dasaqmdi" (slug). Apply → external link. Source badge on card
-19. **VIP/Premium Jobs**: `vip_level` (normal/silver/gold) + `vip_until` (14 days). Feed sorting: gold → silver → featured → normal. VipSpotlight carousel on homepage. Admin upgrade/remove via AlertDialog
+19. **VIP/Premium Jobs (Boost)** (Phase 21): Self-service one-time purchase via Lemon Squeezy, independent of subscription. `vip_level` (normal/silver/gold) + `vip_until`. Silver = 30₾ / 7 days, Gold = 80₾ / 14 days. Feed sorting: gold → silver → featured → normal. VipSpotlight carousel on homepage (gold only). Entry via `<VipBoostButton>` on employer job actions; checkout flow in `lib/actions/vip-boost.ts`; webhook applies `vip_level`/`vip_until` on `order_created` event + logs to `admin_logs` for audit. Admin can still upgrade/remove manually via `<AdminVipButton>`. See "Monetization Model" for Boost vs Featured distinction.
 20. **SEO Landing Pages**: `/jobs/explore/[slug]` — 18 pages (4 cities + 3 types + 11 categories). `lib/seo-landings.ts` config. Sitemap included
 21. **IndexNow**: Auto-ping Bing/Yandex on job publish/approve (`lib/seo-ping.ts`)
 22. **Cookie Consent**: Banner with Accept/Decline. `localStorage` key `cookie-consent`. Tracking works regardless (non-EU site)
@@ -355,6 +355,90 @@ components/
 24. **OAuth**: Google + Facebook + LinkedIn. Callback at `/auth/callback` (outside [locale]). Middleware redirects `?code=` params to callback. Sign-up Google/FB/LinkedIn — seeker only (employer must use email). Login — all providers
 25. **Privacy Policy**: `/privacy` — 8 sections, bilingual, contact: samkharadzemerab@gmail.com
 26. **Supabase Email Templates**: Branded HTML (dark bg, gold accent, SVG logo) for: Confirm signup, Reset password, Invite user
+
+---
+
+## Monetization Model — Plans, Boost, Featured (Phase 21)
+
+### Subscription Plans (recurring)
+
+DB enum values `free`/`pro`/`verified` mapped to UI labels **Starter**/**Business**/**Pro**. Label mapping lives in `messages/*.json` under `billing.planLabel` — never rename the DB enum.
+
+| UI label | DB value | Monthly | Yearly (−2 mo) | Audience | Features |
+|---|---|---|---|---|---|
+| **Starter** | `free` | 0₾ | — | Occasional hiring | 2 active jobs, basic posting |
+| **Business** | `pro` | 79₾ | 790₾ | Regular recruiting | Unlimited jobs, AI draft, match scores, **1 featured slot**, employer analytics |
+| **Pro** | `verified` | 199₾ | 1990₾ | Active HR teams | Everything in Business + verified badge + **3 featured slots** + custom email templates |
+
+Yearly toggle hides automatically if `LEMONSQUEEZY_*_ANNUAL_VARIANT_ID` env vars are missing — see `hasAnnualVariants()` in `lib/lemonsqueezy.ts`.
+
+Legacy subscribers (on old variant IDs) keep their grandfathered price — Lemon Squeezy handles this at the subscription level. UI surfaces a `Legacy pricing` badge via `isLegacyVariant()`.
+
+### Two Independent Premium-Visibility Mechanisms
+
+There are **two separate ways** an employer can make a job more visible. They layer independently.
+
+#### 1. ⭐ Featured (subscription benefit, persistent)
+
+- **What**: Mark a job as `is_featured = true`. Shown with a star badge; sorted above normal listings in the feed.
+- **Cost**: Included in subscription — no extra charge.
+- **Limit**: Plan-gated slot count — Starter 0, Business 1, Pro 3. Enforced in `toggleJobFeaturedAction` via `getFeaturedSlotLimit(plan)`.
+- **Duration**: Active for as long as the subscription is active. Cleared on `subscription_expired`.
+- **UX**: ⭐ Star icon in `JobActionButtons` on `/employer/jobs`. Click toggles on/off. Over-limit returns a clear error.
+- **Webhook reconciliation** (`app/api/webhooks/lemonsqueezy/route.ts`):
+  - `subscription_created` with 0 currently featured → welcome-feature the N newest active jobs
+  - `subscription_updated` with over-limit (e.g. downgrade Pro → Business) → keeps the N newest, unfeatures the rest
+  - Otherwise leaves user's choices untouched
+- **Storage**: `jobs.is_featured` (boolean)
+
+#### 2. ✨ Boost / VIP (one-time purchase, time-boxed)
+
+- **What**: Pay-per-job premium placement that sits **above Featured** in the feed sort order. Available to anyone — subscription not required.
+- **Tiers**:
+  - 🥈 **Silver** — 30₾ for 7 days — VIP placement in the jobs feed
+  - 🥇 **Gold** — 80₾ for 14 days — top placement + appears in the Hero VipSpotlight carousel on the homepage
+- **Checkout**: `createVipBoostCheckoutAction(jobId, level)` opens a Lemon Squeezy one-time-product checkout. Custom data `{ type: "vip_boost", job_id, level, user_id }` flows through.
+- **Activation**: `order_created` webhook (filtered by `custom_data.type === "vip_boost"`) sets `vip_level` + `vip_until = now + VIP_CONFIG[level].days`. Variant-vs-level sanity check via `variantToVipLevel()`; mismatched payload returns 400. On success, logs `boost_purchased` to `admin_logs` for revenue audit.
+- **UX**: ✨ Sparkles button in `JobActionButtons`. Dialog offers both tiers with a "Best value" hint on Gold. If a boost is already active, shows disabled state "VIP until {date}" instead of a new purchase flow. Post-checkout redirect lands on `/employer/jobs?boost=success` which renders a confirmation banner.
+- **Storage**: `jobs.vip_level` (`normal`/`silver`/`gold`) + `jobs.vip_until` (timestamp). Active state checked via `isVipActive()` (`lib/vip.ts`).
+
+#### Feed Sort Priority
+
+```
+🥇 Gold VIP  (boost, 14d)    → highest
+🥈 Silver VIP (boost, 7d)
+⭐ Featured  (subscription, persistent)
+📋 Normal                      → default
+```
+
+Implementation: query order in `getJobsCached()` (`lib/queries/jobs.ts`) — VIP sorted first with client-side re-sort to handle expired `vip_until`, then `is_featured`, then `created_at DESC`.
+
+#### Strategic Positioning
+
+- **Business/Pro subscription + Featured**: cheaper at scale for regular recruiting (pay once per month, feature N jobs indefinitely).
+- **Boost** (Silver or Gold): best for a single standout job; the **only way to reach the homepage Hero carousel** is Gold Boost.
+- Layering: an employer on Pro can have 3 Featured AND any number of Boosts — independent systems.
+
+### Revenue Audit Trail
+
+Every `order_created` webhook for a VIP boost writes to `admin_logs`:
+- `action = "boost_purchased"`
+- `actor_id = user_id`, `target_type = "job"`, `target_id = jobId`
+- `metadata = { level, days, order_id, total_amount, currency }`
+
+Viewable in `/admin/logs`. Lemon Squeezy's own order history remains the source of truth for financial reporting; the audit log is for correlating boosts to specific jobs/users in the product.
+
+### Employer Analytics (Business+)
+
+`/employer/analytics` — funnel stats (views → applications → accepted + rates), 30-day trends (jobs posted, applications received), top 5 jobs by applications/views. Plan-gated: Starter sees an upsell card. Data aggregated in TypeScript from `jobs` + `applications` (no employer-scoped RPCs needed).
+
+### Upsell Touchpoints
+
+- `/employer/jobs/new` — Starter at 2-job limit sees upsell card (Upgrade vs Boost), form is not rendered
+- `/employer/email-templates` — non-Pro sees upsell card
+- `/employer/analytics` — non-Business+ sees upsell card
+- Pricing page (`/pricing`) — Monthly/Yearly toggle with "−2 months" badge on yearly; Boost info banner below the tier grid
+- Billing page (`/employer/billing`) — "Active Boosts" card listing currently-active VIP jobs with expiry dates
 
 ---
 

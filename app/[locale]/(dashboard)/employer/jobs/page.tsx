@@ -7,7 +7,7 @@ import { localized, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CountBadge } from "@/components/shared/count-badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Briefcase, Calendar } from "lucide-react";
+import { PlusCircle, Briefcase, Calendar, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { JobActionButtons } from "@/components/dashboard/job-action-buttons";
 import { EmployerJobFilters } from "@/components/dashboard/employer-job-filters";
@@ -29,7 +29,7 @@ function formatDate(dateString: string, locale: string): string {
 export default async function EmployerJobsPage({
   searchParams,
 }: {
-  searchParams: { q?: string; status?: string; category?: string };
+  searchParams: { q?: string; status?: string; category?: string; boost?: string };
 }) {
   const supabase = createClient();
   const {
@@ -90,6 +90,19 @@ export default async function EmployerJobsPage({
   return (
     <div className="flex flex-col gap-6">
       <Suspense><JobPostedTracker /></Suspense>
+
+      {searchParams.boost === "success" && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-300/50 bg-amber-50/60 px-4 py-3 text-[13px] text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 animate-fade-in">
+          <Sparkles className="h-4 w-4 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-semibold">{td("boostSuccessTitle")}</p>
+            <p className="mt-0.5 text-amber-700 dark:text-amber-400/80">
+              {td("boostSuccessDescription")}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold tracking-tight">{t("myJobs")}</h1>
         <CountBadge>{jobs.length}</CountBadge>

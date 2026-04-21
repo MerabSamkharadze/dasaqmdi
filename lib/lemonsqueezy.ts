@@ -50,6 +50,21 @@ export function isLegacyVariant(
   return known.length > 0 && !known.includes(variantId);
 }
 
+/**
+ * Infer billing cycle from a stored variant_id. Returns null if it can't be
+ * determined (e.g. legacy variant not present in current env).
+ */
+export function getBillingCycle(
+  variantId: string | null,
+  plan: PaidPlan,
+): BillingCycle | null {
+  if (!variantId) return null;
+  const current = PLAN_VARIANTS[plan];
+  if (variantId === current.monthly) return "monthly";
+  if (current.yearly && variantId === current.yearly) return "yearly";
+  return null;
+}
+
 // ── VIP Boost (one-time products) ────────────────────────────────────────
 export type VipBoostLevel = "silver" | "gold";
 

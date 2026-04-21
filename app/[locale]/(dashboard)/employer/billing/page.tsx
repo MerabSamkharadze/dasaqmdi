@@ -1,10 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSubscriptionByCompanyId } from "@/lib/queries/subscriptions";
 import { BillingCard } from "@/components/dashboard/billing-card";
-import { getTranslations } from "next-intl/server";
+import { ActiveBoostsCard, type ActiveBoost } from "@/components/dashboard/active-boosts-card";
+import { getTranslations, getLocale } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
-import { isLegacyVariant } from "@/lib/lemonsqueezy";
+import { isLegacyVariant, getBillingCycle } from "@/lib/lemonsqueezy";
+import { localized } from "@/lib/utils";
 import type { SubscriptionPlan } from "@/lib/types";
 
 export default async function BillingPage({
@@ -39,6 +41,31 @@ export default async function BillingPage({
       ? isLegacyVariant(subscription.variant_id, plan)
       : false;
 
+  const cycle =
+    subscription?.status === "active" && plan !== "free"
+      ? getBillingCycle(subscription.variant_id, plan)
+      : null;
+
+  // Active boosts on this employer's jobs
+  const locale = await getLocale();
+  const nowIso = new Date().toISOString();
+  const { data: boostedJobs } = await supabase
+    .from("jobs")
+    .select("id, title, title_ka, vip_level, vip_until")
+    .eq("company_id", company.id)
+    .neq("vip_level", "normal")
+    .gte("vip_until", nowIso)
+    .order("vip_until", { ascending: true });
+
+  const activeBoosts: ActiveBoost[] = (boostedJobs ?? [])
+    .filter((j) => j.vip_until)
+    .map((j) => ({
+      jobId: j.id,
+      title: localized(j, "title", locale),
+      vipLevel: j.vip_level as "silver" | "gold",
+      vipUntil: j.vip_until as string,
+    }));
+
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
       <h1 className="text-lg font-semibold tracking-tight text-foreground mb-6">
@@ -61,37 +88,52 @@ export default async function BillingPage({
         </div>
       )}
 
-      <BillingCard
-        plan={plan}
-        status={subscription?.status ?? null}
-        periodEnd={subscription?.current_period_end ?? null}
-        cancelAt={subscription?.cancel_at ?? null}
-        hasLsSubscription={!!subscription?.lemon_squeezy_id}
-        isLegacy={isLegacy}
-        translations={{
-          currentPlan: t("currentPlan"),
-          nextBilling: t("nextBilling"),
-          manageSub: t("manageSub"),
-          upgrade: t("upgrade"),
-          freePlan: t("freePlan"),
-          upgradePrompt: t("upgradePrompt"),
-          cancelledNotice: t("cancelledNotice"),
-          pastDue: t("pastDue"),
-          status: {
-            active: t("status.active"),
-            cancelled: t("status.cancelled"),
-            past_due: t("status.past_due"),
-            expired: t("status.expired"),
-          },
-          planLabel: {
-            free: t("planLabel.free"),
-            pro: t("planLabel.pro"),
-            verified: t("planLabel.verified"),
-          },
-          legacyBadge: t("legacyBadge"),
-          legacyNotice: t("legacyNotice"),
-        }}
-      />
+      <div className="flex flex-col gap-4">
+        <BillingCard
+          plan={plan}
+          status={subscription?.status ?? null}
+          periodEnd={subscription?.current_period_end ?? null}
+          cancelAt={subscription?.cancel_at ?? null}
+          hasLsSubscription={!!subscription?.lemon_squeezy_id}
+          isLegacy={isLegacy}
+          cycle={cycle}
+          translations={{
+            currentPlan: t("currentPlan"),
+            nextBilling: t("nextBilling"),
+            manageSub: t("manageSub"),
+            upgrade: t("upgrade"),
+            freePlan: t("freePlan"),
+            upgradePrompt: t("upgradePrompt"),
+            cancelledNotice: t("cancelledNotice"),
+            pastDue: t("pastDue"),
+            status: {
+              active: t("status.active"),
+              cancelled: t("status.cancelled"),
+              past_due: t("status.past_due"),
+              expired: t("status.expired"),
+            },
+            planLabel: {
+              free: t("planLabel.free"),
+              pro: t("planLabel.pro"),
+              verified: t("planLabel.verified"),
+            },
+            cycleLabel: {
+              monthly: t("billingCycleLabel.monthly"),
+              yearly: t("billingCycleLabel.yearly"),
+            },
+            legacyBadge: t("legacyBadge"),
+            legacyNotice: t("legacyNotice"),
+          }}
+        />
+
+        <ActiveBoostsCard
+          boosts={activeBoosts}
+          title={t("activeBoosts")}
+          emptyLabel={t("noActiveBoosts")}
+          untilLabel={t("boostUntil")}
+          locale={locale}
+        />
+      </div>
     </div>
   );
 }

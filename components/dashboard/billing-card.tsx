@@ -16,6 +16,7 @@ type BillingCardProps = {
   cancelAt: string | null;
   hasLsSubscription: boolean;
   isLegacy?: boolean;
+  cycle?: "monthly" | "yearly" | null;
   translations: {
     currentPlan: string;
     nextBilling: string;
@@ -27,6 +28,7 @@ type BillingCardProps = {
     pastDue: string;
     status: Record<string, string>;
     planLabel: Record<SubscriptionPlan, string>;
+    cycleLabel?: { monthly: string; yearly: string };
     legacyBadge?: string;
     legacyNotice?: string;
   };
@@ -39,6 +41,7 @@ export function BillingCard({
   cancelAt,
   hasLsSubscription,
   isLegacy = false,
+  cycle = null,
   translations: t,
 }: BillingCardProps) {
   const [isPending, startTransition] = useTransition();
@@ -64,10 +67,15 @@ export function BillingCard({
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm text-muted-foreground">{t.currentPlan}</p>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
             <p className="text-xl font-bold tracking-tight text-foreground">
               {t.planLabel[plan]}
             </p>
+            {cycle && t.cycleLabel && plan !== "free" && (
+              <Badge variant="secondary" className="text-[10px] font-normal">
+                {t.cycleLabel[cycle]}
+              </Badge>
+            )}
             {isLegacy && t.legacyBadge && (
               <Badge
                 variant="outline"

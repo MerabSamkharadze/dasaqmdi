@@ -52,6 +52,7 @@ export async function POST(request: Request) {
   if (eventName === "order_created" && customData?.type === "vip_boost") {
     const jobId: string | undefined = customData.job_id;
     const level = customData.level as "silver" | "gold" | undefined;
+    const userId: string | undefined = customData.user_id;
     if (!jobId || !level || !VIP_CONFIG[level]) {
       return NextResponse.json({ error: "Invalid boost payload" }, { status: 400 });
     }
@@ -69,6 +70,23 @@ export async function POST(request: Request) {
       .from("jobs")
       .update({ vip_level: level, vip_until: vipUntil.toISOString() })
       .eq("id", jobId);
+
+    // Audit trail — captures revenue events independent of Lemon Squeezy
+    if (userId) {
+      await supabase.from("admin_logs").insert({
+        action: "boost_purchased",
+        actor_id: userId,
+        target_type: "job",
+        target_id: jobId,
+        metadata: {
+          level,
+          days: VIP_CONFIG[level].days,
+          order_id: String(body.data?.id ?? ""),
+          total_amount: attrs?.total_formatted ?? null,
+          currency: attrs?.currency ?? null,
+        },
+      });
+    }
 
     return NextResponse.json({ received: true });
   }
