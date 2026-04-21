@@ -86,15 +86,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const { title, skills, seniority, language } = parsed.data;
-
-  // Build language instruction
-  const languageInstruction =
-    language === "both"
-      ? `Write the response in BOTH languages. First write the full description in English, then add a separator line "---", then write the same description in Georgian (ქართული). Label each section with [EN] and [KA].`
-      : language === "ka"
-        ? "Write the entire response in Georgian (ქართული)."
-        : "Write the entire response in English.";
+  const { title, skills, seniority } = parsed.data;
 
   // Fetch categories for AI to suggest the best match
   const { data: categories } = await supabase

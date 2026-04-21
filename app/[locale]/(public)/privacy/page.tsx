@@ -1,4 +1,4 @@
-import { getTranslations, getLocale } from "next-intl/server";
+import { getLocale } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
 import type { Metadata } from "next";

@@ -11,7 +11,6 @@ import { calculateMatchScores } from "@/lib/matching";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
-import Link from "next/link";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { RefreshButton } from "@/components/shared/refresh-button";
 import { ShowAllLink } from "@/components/shared/show-all-link";

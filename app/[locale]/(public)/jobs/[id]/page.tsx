@@ -10,7 +10,6 @@ import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Building2,
   MapPin,

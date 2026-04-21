@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getAllEmployerApplications } from "@/lib/queries/employer-applications";
 import { getSignedResumeUrl } from "@/lib/queries/applications";
-import { markApplicationsBatchViewedAction } from "@/lib/actions/applications";
 import { getTranslations, getLocale } from "next-intl/server";
 import { localized } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";

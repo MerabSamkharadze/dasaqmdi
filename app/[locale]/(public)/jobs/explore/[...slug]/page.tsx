@@ -1,5 +1,4 @@
 import { getJobs } from "@/lib/queries/jobs";
-import { getCategories } from "@/lib/queries/categories";
 import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { createClient } from "@/lib/supabase/server";
 import { getProfile } from "@/lib/queries/profile";

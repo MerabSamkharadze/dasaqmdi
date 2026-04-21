@@ -1,4 +1,4 @@
-import { getTranslations, getLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
 import { createClient } from "@/lib/supabase/server";
@@ -55,7 +55,6 @@ const FEATURES = [
 
 export default async function AboutPage() {
   const t = await getTranslations("about");
-  const locale = await getLocale();
 
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();

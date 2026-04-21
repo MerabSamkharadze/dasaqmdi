@@ -336,7 +336,7 @@ function setupBotHandlers() {
 
   // Set localized command menus (only once per cold start)
   let commandsSet = false;
-  bot.use(async (ctx, next) => {
+  bot.use(async (_ctx, next) => {
     if (!commandsSet) {
       commandsSet = true;
       Promise.all([
