@@ -144,27 +144,34 @@ export default async function EmployerAllApplicationsPage({
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   {/* Applicant */}
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60">
+                    <Link
+                      href={`/employer/applicants/${app.applicant.id}`}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/60 ring-0 hover:ring-2 hover:ring-primary/30 transition-all duration-200 overflow-hidden"
+                      aria-label={applicantName}
+                    >
                       {app.applicant.avatar_url ? (
                         <Image
                           src={app.applicant.avatar_url}
                           alt={applicantName}
                           width={36}
                           height={36}
-                    sizes="36px"
+                          sizes="36px"
                           className="h-9 w-9 rounded-full object-cover"
                         />
                       ) : (
                         <User className="h-4 w-4 text-muted-foreground/50" />
                       )}
-                    </div>
+                    </Link>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-semibold tracking-tight text-foreground truncate flex items-center gap-1.5">
+                      <Link
+                        href={`/employer/applicants/${app.applicant.id}`}
+                        className="inline-flex items-center gap-1.5 text-[14px] font-semibold tracking-tight text-foreground hover:text-primary transition-colors duration-200 max-w-full"
+                      >
                         {!app.is_viewed && (
                           <Circle className="h-2 w-2 fill-primary text-primary shrink-0" />
                         )}
-                        {applicantName}
-                      </p>
+                        <span className="truncate">{applicantName}</span>
+                      </Link>
                       <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground/60">
                         <span className="flex items-center gap-1">
                           <Briefcase className="h-3 w-3 opacity-50" />

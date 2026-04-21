@@ -263,7 +263,12 @@
     "filterByJob": "Filter by Job",
     "filterByStatus": "Filter by Status",
     "noResults": "No applications match these filters",
-    "confirmStatusChange": "Are you sure you want to change the application status? The applicant will be notified by email."
+    "confirmStatusChange": "Are you sure you want to change the application status? The applicant will be notified by email.",
+    "applicantProfile": "Applicant Profile",
+    "backToApplications": "Back to all applications",
+    "appliedFor": "Applied to",
+    "contactInfo": "Contact Info",
+    "noContactInfo": "No contact info available"
   },
   "dashboard": {
     "title": "Dashboard",
