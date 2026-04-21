@@ -169,20 +169,22 @@ export function SignUpForm({
         <SubmitButton />
       </form>
 
-      {/* Divider */}
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-border/40" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-background px-3 text-[12px] text-muted-foreground/60">
-            {t("orContinueWith")}
-          </span>
-        </div>
-      </div>
-
-      {/* Google OAuth */}
-      <GoogleAuthButton />
+      {/* Google OAuth — only for seekers */}
+      {selectedRole === "seeker" && (
+        <>
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/40" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-background px-3 text-[12px] text-muted-foreground/60">
+                {t("orContinueWith")}
+              </span>
+            </div>
+          </div>
+          <GoogleAuthButton />
+        </>
+      )}
 
       {/* Login link */}
       <p className="mt-8 text-center text-sm text-muted-foreground">
