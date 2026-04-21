@@ -12,6 +12,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Briefcase, User } from "lucide-react";
+import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 
 const initialState: ActionResult = { error: null };
 
@@ -58,42 +59,28 @@ export function SignUpForm({
         {/* Role selection */}
         <div className="space-y-2.5">
           <Label className="text-[13px]">{t("selectRole")}</Label>
-          <div role="radiogroup" aria-label={t("selectRole")} className="grid grid-cols-2 gap-3">
+          <div role="radiogroup" aria-label={t("selectRole")} className="grid grid-cols-2 gap-2">
             <button
               type="button"
               role="radio"
               aria-checked={selectedRole === "seeker"}
               onClick={() => setSelectedRole("seeker")}
               className={cn(
-                "flex flex-col items-center gap-2.5 rounded-xl border-2 p-4 transition-all duration-200",
+                "flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5 transition-all duration-200",
                 selectedRole === "seeker"
-                  ? "border-primary bg-primary/8 shadow-soft"
-                  : "border-border hover:border-primary/30 hover:bg-primary/[0.03]",
+                  ? "border-primary bg-primary/8"
+                  : "border-border hover:border-primary/30",
               )}
             >
-              <div
+              <User
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
-                  selectedRole === "seeker" ? "bg-primary/12" : "bg-muted",
+                  "h-4 w-4 shrink-0",
+                  selectedRole === "seeker" ? "text-primary" : "text-muted-foreground",
                 )}
-              >
-                <User
-                  className={cn(
-                    "h-5 w-5",
-                    selectedRole === "seeker"
-                      ? "text-primary"
-                      : "text-muted-foreground",
-                  )}
-                />
-              </div>
-              <div className="text-center">
-                <span className="text-sm font-medium block">
-                  {t("roleSeekerLabel")}
-                </span>
-                <span className="text-[11px] text-muted-foreground mt-0.5 block">
-                  {t("roleSeekerDescription")}
-                </span>
-              </div>
+              />
+              <span className="text-[13px] font-medium">
+                {t("roleSeekerLabel")}
+              </span>
             </button>
 
             <button
@@ -102,35 +89,21 @@ export function SignUpForm({
               aria-checked={selectedRole === "employer"}
               onClick={() => setSelectedRole("employer")}
               className={cn(
-                "flex flex-col items-center gap-2.5 rounded-xl border-2 p-4 transition-all duration-200",
+                "flex items-center gap-2.5 rounded-xl border-2 px-3 py-2.5 transition-all duration-200",
                 selectedRole === "employer"
-                  ? "border-primary bg-primary/8 shadow-soft"
-                  : "border-border hover:border-primary/30 hover:bg-primary/[0.03]",
+                  ? "border-primary bg-primary/8"
+                  : "border-border hover:border-primary/30",
               )}
             >
-              <div
+              <Briefcase
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-lg transition-colors",
-                  selectedRole === "employer" ? "bg-primary/12" : "bg-muted",
+                  "h-4 w-4 shrink-0",
+                  selectedRole === "employer" ? "text-primary" : "text-muted-foreground",
                 )}
-              >
-                <Briefcase
-                  className={cn(
-                    "h-5 w-5",
-                    selectedRole === "employer"
-                      ? "text-primary"
-                      : "text-muted-foreground",
-                  )}
-                />
-              </div>
-              <div className="text-center">
-                <span className="text-sm font-medium block">
-                  {t("roleEmployerLabel")}
-                </span>
-                <span className="text-[11px] text-muted-foreground mt-0.5 block">
-                  {t("roleEmployerDescription")}
-                </span>
-              </div>
+              />
+              <span className="text-[13px] font-medium">
+                {t("roleEmployerLabel")}
+              </span>
             </button>
           </div>
           <input type="hidden" name="role" value={selectedRole} />
@@ -195,6 +168,21 @@ export function SignUpForm({
         {/* Submit */}
         <SubmitButton />
       </form>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border/40" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-[12px] text-muted-foreground/60">
+            {t("orContinueWith")}
+          </span>
+        </div>
+      </div>
+
+      {/* Google OAuth */}
+      <GoogleAuthButton />
 
       {/* Login link */}
       <p className="mt-8 text-center text-sm text-muted-foreground">

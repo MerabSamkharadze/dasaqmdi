@@ -163,7 +163,9 @@
     "modalSignUp": "Create Account",
     "actionApply": "apply to this job",
     "actionSave": "save this job",
-    "actionBookmark": "bookmark this job"
+    "actionBookmark": "bookmark this job",
+    "continueWithGoogle": "Continue with Google",
+    "orContinueWith": "or"
   },
   "profile": {
     "title": "My Profile",

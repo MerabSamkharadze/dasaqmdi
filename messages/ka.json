@@ -163,7 +163,9 @@
     "modalSignUp": "რეგისტრაცია",
     "actionApply": "განაცხადის გასაგზავნად",
     "actionSave": "ვაკანსიის შესანახად",
-    "actionBookmark": "ვაკანსიის ჩასანიშნად"
+    "actionBookmark": "ვაკანსიის ჩასანიშნად",
+    "continueWithGoogle": "Google-ით გაგრძელება",
+    "orContinueWith": "ან"
   },
   "profile": {
     "title": "ჩემი პროფილი",

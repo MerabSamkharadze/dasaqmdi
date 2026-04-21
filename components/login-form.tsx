@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
+import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
@@ -105,6 +106,21 @@ export function LoginForm({
         {/* Submit */}
         <SubmitButton />
       </form>
+
+      {/* Divider */}
+      <div className="relative my-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border/40" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-background px-3 text-[12px] text-muted-foreground/60">
+            {t("orContinueWith")}
+          </span>
+        </div>
+      </div>
+
+      {/* Google OAuth */}
+      <GoogleAuthButton />
 
       {/* Sign up link */}
       <p className="mt-8 text-center text-sm text-muted-foreground">

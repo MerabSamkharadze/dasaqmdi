@@ -33,8 +33,22 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Root-level files: skip everything (no intl, no auth)
-  if (pathname === "/sitemap.xml" || pathname === "/robots.txt" || pathname === "/favicon.ico") {
+  if (
+    pathname === "/sitemap.xml" ||
+    pathname === "/robots.txt" ||
+    pathname === "/favicon.ico" ||
+    pathname === "/auth/callback"
+  ) {
     return NextResponse.next();
+  }
+
+  // OAuth code exchange: if ?code= param present, redirect to callback handler
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && pathname !== "/auth/callback") {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = "/auth/callback";
+    callbackUrl.searchParams.set("code", code);
+    return NextResponse.redirect(callbackUrl);
   }
 
   // Metadata routes: only intl rewrite, no auth/session
