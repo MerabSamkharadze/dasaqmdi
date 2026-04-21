@@ -188,54 +188,33 @@ function StatCard({
   href?: string;
 }) {
   const content = (
-    <>
-      <div className="flex items-center gap-3">
-        <div
-          className={cn(
-            "relative flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-200",
-            highlight ? "bg-primary/20" : "bg-primary/12",
-          )}
-        >
-          <Icon className={cn("h-4 w-4", highlight ? "text-primary" : "text-primary/70")} />
-          {highlight && (
-            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
-            </span>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p
-            className={cn(
-              "text-2xl font-semibold tracking-tight tabular-nums",
-              highlight ? "text-primary" : "text-foreground",
-            )}
-          >
-            {value}
-          </p>
-          <p
-            className={cn(
-              "text-[12px]",
-              highlight ? "text-primary/80 font-medium" : "text-muted-foreground/60",
-            )}
-          >
-            {label}
-          </p>
-        </div>
+    <div className="flex items-center gap-3">
+      <div className="relative flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12">
+        <Icon className="h-4 w-4 text-primary/70" />
+        {highlight && (
+          <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+          </span>
+        )}
       </div>
-    </>
+      <div className="flex-1 min-w-0">
+        <p className={cn(
+          "text-2xl font-semibold tracking-tight tabular-nums",
+          highlight ? "text-primary" : "text-foreground",
+        )}>
+          {value}
+        </p>
+        <p className="text-[12px] text-muted-foreground/60">{label}</p>
+      </div>
+    </div>
   );
 
-  const baseClasses = cn(
-    "rounded-xl border p-5 transition-all duration-200",
-    highlight
-      ? "border-primary/40 bg-primary/5 shadow-gold-glow animate-pulse-soft"
-      : "border-border/60 bg-card shadow-soft",
-  );
+  const baseClasses = "rounded-xl border border-border/60 bg-card p-5 shadow-soft";
 
   if (href && highlight) {
     return (
-      <Link href={href} className={cn(baseClasses, "hover:shadow-gold-glow hover:-translate-y-0.5 hover:bg-primary/8 block")}>
+      <Link href={href} className={cn(baseClasses, "block transition-all duration-200 hover:border-border hover:shadow-soft-md")}>
         {content}
       </Link>
     );
