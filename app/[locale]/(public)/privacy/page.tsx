@@ -45,8 +45,8 @@ export default async function PrivacyPage() {
           </h2>
           <p>
             {isKa
-              ? `${siteConfig.domain} (შემდგომში "პლატფორმა") არის დასაქმების ვებ-საიტი, რომელიც აკავშირებს სამუშაოს მაძიებლებს დამსაქმებლებთან საქართველოში. ჩვენ ვიცავთ თქვენი პერსონალური მონაცემების კონფიდენციალურობას.`
-              : `${siteConfig.domain} (the "Platform") is a job board website connecting job seekers with employers in Georgia. We are committed to protecting your personal data privacy.`}
+              ? `dasaqmdi.com  არის დასაქმების ვებ-საიტი, რომელიც აკავშირებს სამუშაოს მაძიებლებს დამსაქმებლებთან საქართველოში. ჩვენ ვიცავთ თქვენი პერსონალური მონაცემების კონფიდენციალურობას.`
+              : `dasaqmdi.com  is a job board website connecting job seekers with employers in Georgia. We are committed to protecting your personal data privacy.`}
           </p>
         </section>
 
@@ -156,8 +156,8 @@ export default async function PrivacyPage() {
           </h2>
           <p>
             {isKa
-              ? `კონფიდენციალურობასთან დაკავშირებული კითხვებისთვის მოგვწერეთ: support@${siteConfig.domain}`
-              : `For privacy-related questions, contact us at: support@${siteConfig.domain}`}
+              ? "კონფიდენციალურობასთან დაკავშირებული კითხვებისთვის მოგვწერეთ: samkharadzemerab@gmail.com"
+              : "For privacy-related questions, contact us at: samkharadzemerab@gmail.com"}
           </p>
         </section>
       </div>
