@@ -11,9 +11,8 @@ import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useRef, useCallback } from "react";
+import { useCallback } from "react";
 import Link from "next/link";
-import { siteConfig } from "@/lib/config";
 
 type JobCardProps = {
   job: JobWithCompany;
@@ -75,48 +74,13 @@ export function JobCard({ job, locale, matchScore, isSaved, isLoggedIn, translat
   const vipActive = isVipActive(job);
   const vipLevel = vipActive ? (job.vip_level as "silver" | "gold") : null;
 
-  // Long press to share (mobile)
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const longPressFired = useRef(false);
-
-  const shareJob = useCallback(async () => {
-    const fullUrl = `${window.location.origin}${locale === "en" ? "/en" : ""}/jobs/${job.id}`;
-    const shareText = `${title} — ${siteConfig.domain}`;
-    if (navigator.vibrate) navigator.vibrate(30);
-    if (navigator.share) {
-      try { await navigator.share({ title, text: shareText, url: fullUrl }); } catch {}
-    } else {
-      try { await navigator.clipboard.writeText(fullUrl); } catch {}
-    }
-  }, [job.id, title, locale]);
-
-  const onTouchStart = useCallback(() => {
-    longPressFired.current = false;
-    longPressTimer.current = setTimeout(() => {
-      longPressFired.current = true;
-      shareJob();
-    }, 500);
-  }, [shareJob]);
-
-  const onTouchEnd = useCallback(() => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
-  }, []);
-
   const handleClick = useCallback(() => {
-    if (!longPressFired.current) {
-      router.push(`/jobs/${job.id}`);
-    }
+    router.push(`/jobs/${job.id}`);
   }, [router, job.id]);
 
   return (
     <div
       onClick={handleClick}
-      onTouchStart={onTouchStart}
-      onTouchEnd={onTouchEnd}
-      onTouchCancel={onTouchEnd}
       className={cn(
         "group relative block cursor-pointer rounded-xl border p-4 sm:p-5 shadow-soft transition-all duration-200 hover:-translate-y-1",
         vipLevel === "gold"
