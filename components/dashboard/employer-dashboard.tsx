@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { localized } from "@/lib/utils";
+import { cn, localized } from "@/lib/utils";
 import { Briefcase, FileText, Eye, PlusCircle, Building2 } from "lucide-react";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { Badge } from "@/components/ui/badge";
@@ -86,6 +86,7 @@ export function EmployerDashboard({ data, locale, t }: EmployerDashboardProps) {
           label={t("newApplications")}
           value={data.newApplications}
           highlight={data.newApplications > 0}
+          href="/employer/applications"
         />
         <StatCard
           icon={Briefcase}
@@ -178,27 +179,69 @@ function StatCard({
   label,
   value,
   highlight = false,
+  href,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: number;
   highlight?: boolean;
+  href?: string;
 }) {
-  return (
-    <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
+  const content = (
+    <>
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/12">
-          <Icon className="h-4 w-4 text-primary/70" />
+        <div
+          className={cn(
+            "relative flex h-9 w-9 items-center justify-center rounded-lg transition-colors duration-200",
+            highlight ? "bg-primary/20" : "bg-primary/12",
+          )}
+        >
+          <Icon className={cn("h-4 w-4", highlight ? "text-primary" : "text-primary/70")} />
+          {highlight && (
+            <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-destructive" />
+            </span>
+          )}
         </div>
-        <div>
-          <p className={`text-2xl font-semibold tracking-tight tabular-nums ${highlight ? "text-primary" : "text-foreground"}`}>
+        <div className="flex-1 min-w-0">
+          <p
+            className={cn(
+              "text-2xl font-semibold tracking-tight tabular-nums",
+              highlight ? "text-primary" : "text-foreground",
+            )}
+          >
             {value}
           </p>
-          <p className="text-[12px] text-muted-foreground/60">{label}</p>
+          <p
+            className={cn(
+              "text-[12px]",
+              highlight ? "text-primary/80 font-medium" : "text-muted-foreground/60",
+            )}
+          >
+            {label}
+          </p>
         </div>
       </div>
-    </div>
+    </>
   );
+
+  const baseClasses = cn(
+    "rounded-xl border p-5 transition-all duration-200",
+    highlight
+      ? "border-primary/40 bg-primary/5 shadow-gold-glow animate-pulse-soft"
+      : "border-border/60 bg-card shadow-soft",
+  );
+
+  if (href && highlight) {
+    return (
+      <Link href={href} className={cn(baseClasses, "hover:shadow-gold-glow hover:-translate-y-0.5 hover:bg-primary/8 block")}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={baseClasses}>{content}</div>;
 }
 
 function JobStatusBadge({

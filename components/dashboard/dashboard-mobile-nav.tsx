@@ -29,23 +29,32 @@ type DashboardMobileNavProps = {
   role: UserRole;
   fullName: string | null;
   avatarUrl: string | null;
+  badgeCount?: number;
 };
 
-export function DashboardMobileNav({ role, fullName, avatarUrl }: DashboardMobileNavProps) {
+export function DashboardMobileNav({ role, fullName, avatarUrl, badgeCount = 0 }: DashboardMobileNavProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations("nav");
   const navItems = getNavItems(role);
   const normalizedPath = pathname.replace(/^\/(ka|en)/, "") || "/";
+  const hasUnread = badgeCount > 0;
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <button
           type="button"
-          className="lg:hidden inline-flex items-center justify-center h-8 w-8 rounded-xl text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+          aria-label={hasUnread ? `Menu (${badgeCount} unread)` : "Menu"}
+          className="lg:hidden relative inline-flex items-center justify-center h-8 w-8 rounded-xl text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all duration-200"
         >
           <Menu className="h-4 w-4" />
+          {hasUnread && (
+            <span className="absolute top-1 right-1 flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+          )}
           <span className="sr-only">Menu</span>
         </button>
       </SheetTrigger>
@@ -78,7 +87,12 @@ export function DashboardMobileNav({ role, fullName, avatarUrl }: DashboardMobil
                 )}
               >
                 <Icon className="h-4 w-4 shrink-0 opacity-70" />
-                {t(item.labelKey)}
+                <span className="flex-1">{t(item.labelKey)}</span>
+                {item.labelKey === "applicants" && hasUnread && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground tabular-nums">
+                    {badgeCount > 99 ? "99+" : badgeCount}
+                  </span>
+                )}
               </Link>
             );
           })}

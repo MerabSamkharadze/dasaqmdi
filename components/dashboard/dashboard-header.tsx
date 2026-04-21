@@ -8,13 +8,14 @@ type DashboardHeaderProps = {
   email: string;
   role: UserRole;
   avatarUrl: string | null;
+  badgeCount?: number;
 };
 
-export function DashboardHeader({ fullName, email, role, avatarUrl }: DashboardHeaderProps) {
+export function DashboardHeader({ fullName, email, role, avatarUrl, badgeCount = 0 }: DashboardHeaderProps) {
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border/30 bg-background/80 backdrop-blur-xl px-4 sm:px-6">
       <div className="flex items-center gap-3">
-        <DashboardMobileNav role={role} fullName={fullName} avatarUrl={avatarUrl} />
+        <DashboardMobileNav role={role} fullName={fullName} avatarUrl={avatarUrl} badgeCount={badgeCount} />
         <div className="hidden sm:block">
           <p className="text-[13px] font-medium text-foreground truncate max-w-[200px] leading-tight">
             {fullName ?? email.split("@")[0]}

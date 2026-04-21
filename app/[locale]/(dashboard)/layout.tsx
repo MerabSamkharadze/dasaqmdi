@@ -52,6 +52,7 @@ export default async function DashboardLayout({
           email={user.email ?? ""}
           role={role}
           avatarUrl={avatarUrl}
+          badgeCount={newApplicationsCount}
         />
 
         <main id="main-content" className="flex-1 overflow-y-auto">
