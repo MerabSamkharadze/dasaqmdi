@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Briefcase, User } from "lucide-react";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { FacebookAuthButton } from "@/components/auth/facebook-auth-button";
+import { LinkedInAuthButton } from "@/components/auth/linkedin-auth-button";
 
 const initialState: ActionResult = { error: null };
 
@@ -186,6 +187,7 @@ export function SignUpForm({
           <div className="flex flex-col gap-2.5">
             <GoogleAuthButton />
             <FacebookAuthButton />
+            <LinkedInAuthButton />
           </div>
         </>
       )}

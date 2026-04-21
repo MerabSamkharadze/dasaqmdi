@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { FacebookAuthButton } from "@/components/auth/facebook-auth-button";
+import { LinkedInAuthButton } from "@/components/auth/linkedin-auth-button";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
@@ -124,6 +125,7 @@ export function LoginForm({
       <div className="flex flex-col gap-2.5">
         <GoogleAuthButton />
         <FacebookAuthButton />
+        <LinkedInAuthButton />
       </div>
 
       {/* Sign up link */}
