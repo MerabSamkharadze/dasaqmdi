@@ -80,7 +80,6 @@ export async function buildDigestData(): Promise<DigestEntry[]> {
     .order("created_at", { ascending: false });
 
   if (jobsError || !recentJobs?.length) {
-    console.log("Digest: no recent jobs found");
     return [];
   }
 

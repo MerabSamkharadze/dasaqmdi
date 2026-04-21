@@ -28,6 +28,7 @@ export function buildStatusEmailHtml({
 
   const safeSubject = escapeHtml(subject);
   const safeJobTitle = escapeHtml(jobTitle);
+  const safeCompanyName = escapeHtml(companyName);
   const safeJobUrl = encodeURI(jobUrl);
 
   return `
@@ -74,7 +75,10 @@ export function buildStatusEmailHtml({
           <!-- Footer -->
           <tr>
             <td style="padding:20px 32px;border-top:1px solid rgba(199,174,106,0.1);text-align:center;">
-              <p style="margin:0;font-size:12px;color:#6b6560;">
+              <p style="margin:0 0 4px;font-size:12px;color:#8a827b;font-weight:500;">
+                ${safeCompanyName}
+              </p>
+              <p style="margin:0;font-size:11px;color:#6b6560;">
                 ${footerText}
               </p>
             </td>

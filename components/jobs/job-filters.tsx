@@ -16,6 +16,8 @@ import {
 import { Search } from "lucide-react";
 import { JOB_TYPES } from "@/lib/types/enums";
 
+const SEARCH_DEBOUNCE_MS = 2000;
+
 type Category = {
   slug: string;
   label: string;
@@ -78,7 +80,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
             if (debounceRef.current) clearTimeout(debounceRef.current);
             debounceRef.current = setTimeout(() => {
               updateParams("q", e.target.value.trim());
-            }, 350);
+            }, SEARCH_DEBOUNCE_MS);
           }}
         />
       </div>
@@ -132,7 +134,7 @@ export function JobFilters({ categories, translations }: JobFiltersProps) {
           if (debounceRef.current) clearTimeout(debounceRef.current);
           debounceRef.current = setTimeout(() => {
             updateParams("city", e.target.value.trim());
-          }, 350);
+          }, SEARCH_DEBOUNCE_MS);
         }}
       />
 

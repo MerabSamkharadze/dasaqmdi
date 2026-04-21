@@ -240,7 +240,7 @@ components/
 ├── jobs/
 │   ├── job-card.tsx                        # Card with share + bookmark (auth modal for guests)
 │   ├── job-list.tsx                        # Staggered fade-in list
-│   ├── job-filters.tsx                     # Search (debounce 350ms), category, type, city dropdowns
+│   ├── job-filters.tsx                     # Search + city (debounce 2000ms via SEARCH_DEBOUNCE_MS), category, type dropdowns
 │   ├── pagination.tsx                      # Page numbers with query params preserved
 │   ├── share-job-button.tsx                # Dropdown: copy, Facebook, LinkedIn, X, WhatsApp
 │   ├── bookmark-button.tsx                 # Save/unsave with auth modal for guests

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { uploadFile, deleteFile, getFilePath } from "@/lib/storage";
 import { ImageCropDialog } from "@/components/shared/image-crop-dialog";
@@ -57,7 +58,7 @@ export function FileUpload({
   const enableCrop = bucket === "avatars" || bucket === "company-logos";
   const cropShape = bucket === "avatars" ? "round" as const : "rect" as const;
 
-  async function uploadBlob(blob: Blob, fileName: string) {
+  const uploadBlob = useCallback(async (blob: Blob, fileName: string) => {
     setUploading(true);
 
     // Delete old file
@@ -81,7 +82,7 @@ export function FileUpload({
       setPreviewUrl(result.url);
       onUploadComplete(result.url);
     }
-  }
+  }, [previewUrl, bucket, userId, prefix, onUploadComplete]);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -130,7 +131,7 @@ export function FileUpload({
     setCropSrc(null);
     const fileName = `${prefix ?? "file"}.webp`;
     uploadBlob(croppedBlob, fileName);
-  }, [prefix]);
+  }, [prefix, uploadBlob]);
 
   const handleCropCancel = useCallback(() => {
     setCropSrc(null);
@@ -165,9 +166,12 @@ export function FileUpload({
       )}
       {previewUrl && isImage && (
         <div className="relative inline-block">
-          <img
+          <Image
             src={previewUrl}
             alt="Preview"
+            width={80}
+            height={80}
+            sizes="80px"
             className="h-20 w-20 rounded-xl border border-border/30 object-cover"
           />
           <button
