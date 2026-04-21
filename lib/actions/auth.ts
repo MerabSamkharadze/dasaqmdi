@@ -108,7 +108,10 @@ export async function updatePasswordAction(
   _prevState: ActionResult,
   formData: FormData,
 ): Promise<ActionResult> {
-  const raw = { password: formData.get("password") };
+  const raw = {
+    password: formData.get("password"),
+    confirmPassword: formData.get("confirmPassword"),
+  };
 
   const parsed = updatePasswordSchema.safeParse(raw);
   if (!parsed.success) {

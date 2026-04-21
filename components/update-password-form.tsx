@@ -53,6 +53,19 @@ export function UpdatePasswordForm({
                   name="password"
                   type="password"
                   required
+                  minLength={8}
+                  autoComplete="new-password"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">{t("confirmPassword")}</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
                 />
               </div>
               {state.error && (
