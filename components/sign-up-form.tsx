@@ -13,6 +13,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Briefcase, User } from "lucide-react";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
+import { FacebookAuthButton } from "@/components/auth/facebook-auth-button";
 
 const initialState: ActionResult = { error: null };
 
@@ -182,7 +183,10 @@ export function SignUpForm({
               </span>
             </div>
           </div>
-          <GoogleAuthButton />
+          <div className="flex flex-col gap-2.5">
+            <GoogleAuthButton />
+            <FacebookAuthButton />
+          </div>
         </>
       )}
 

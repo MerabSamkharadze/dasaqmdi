@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { GoogleAuthButton } from "@/components/auth/google-auth-button";
+import { FacebookAuthButton } from "@/components/auth/facebook-auth-button";
 import Link from "next/link";
 import { useFormState, useFormStatus } from "react-dom";
 import { useSearchParams } from "next/navigation";
@@ -119,8 +120,11 @@ export function LoginForm({
         </div>
       </div>
 
-      {/* Google OAuth */}
-      <GoogleAuthButton />
+      {/* OAuth buttons */}
+      <div className="flex flex-col gap-2.5">
+        <GoogleAuthButton />
+        <FacebookAuthButton />
+      </div>
 
       {/* Sign up link */}
       <p className="mt-8 text-center text-sm text-muted-foreground">

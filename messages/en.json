@@ -165,6 +165,7 @@
     "actionSave": "save this job",
     "actionBookmark": "bookmark this job",
     "continueWithGoogle": "Continue with Google",
+    "continueWithFacebook": "Continue with Facebook",
     "orContinueWith": "or"
   },
   "profile": {
