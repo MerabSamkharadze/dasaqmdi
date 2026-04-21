@@ -22,7 +22,6 @@ export function FacebookAuthButton() {
       provider: "facebook",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: "email",
       },
     });
 
