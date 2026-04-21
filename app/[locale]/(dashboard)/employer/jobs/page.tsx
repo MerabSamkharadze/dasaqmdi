@@ -122,7 +122,7 @@ export default async function EmployerJobsPage({
                     ? "border-red-200/60 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10"
                     : "border-border/60",
                 )}
-                style={{ animationDelay: `${i * 50}ms` }}
+                style={{ animationDelay: `${i * 20}ms` }}
               >
                 <div className="flex items-center gap-4">
                   <div className="flex-1 min-w-0">

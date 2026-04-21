@@ -48,7 +48,7 @@ export function TopMatches({
           <div
             key={job.id}
             className="animate-fade-in"
-            style={{ animationDelay: `${i * 50}ms` }}
+            style={{ animationDelay: `${i * 20}ms` }}
           >
             <JobCard
               job={job}

@@ -116,7 +116,7 @@ export default async function JobApplicationsPage({
             <div
               key={app.id}
               className="rounded-xl border border-border/60 bg-card px-5 py-4 sm:px-6 shadow-soft animate-fade-in"
-              style={{ animationDelay: `${i * 50}ms` }}
+              style={{ animationDelay: `${i * 20}ms` }}
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 {/* Applicant info */}

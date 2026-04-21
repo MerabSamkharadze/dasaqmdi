@@ -187,7 +187,7 @@ export default async function SalariesPage({
                       <div
                         key={`${item.category_slug}-${item.city}-${item.currency}`}
                         className="rounded-xl border border-border/60 bg-card p-5 shadow-soft transition-all duration-200 hover:shadow-soft-md hover:border-border animate-fade-in"
-                        style={{ animationDelay: `${i * 50}ms` }}
+                        style={{ animationDelay: `${i * 20}ms` }}
                       >
                         {/* City + currency */}
                         <div className="flex items-center justify-between mb-3">

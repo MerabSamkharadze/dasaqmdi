@@ -230,16 +230,16 @@ export default async function JobsPage({
           </h2>
           <div className="flex flex-wrap gap-2">
             {[
-              { href: "/jobs/explore/tbilisi", label: locale === "ka" ? "თბილისი" : "Tbilisi" },
-              { href: "/jobs/explore/batumi", label: locale === "ka" ? "ბათუმი" : "Batumi" },
-              { href: "/jobs/explore/remote", label: locale === "ka" ? "დისტანციური" : "Remote" },
-              { href: "/jobs/explore/internship", label: locale === "ka" ? "სტაჟირება" : "Internship" },
-              { href: "/jobs/explore/it-software", label: "IT" },
-              { href: "/jobs/explore/sales-marketing", label: locale === "ka" ? "მარკეტინგი" : "Marketing" },
-              { href: "/jobs/explore/finance", label: locale === "ka" ? "ფინანსები" : "Finance" },
-              { href: "/jobs/explore/hospitality", label: locale === "ka" ? "სტუმართმოყვარეობა" : "Hospitality" },
-              { href: "/jobs/explore/healthcare", label: locale === "ka" ? "ჯანდაცვა" : "Healthcare" },
-              { href: "/jobs/explore/part-time", label: locale === "ka" ? "ნახევარი განაკვეთი" : "Part-time" },
+              { href: "/jobs?city=tbilisi", label: locale === "ka" ? "თბილისი" : "Tbilisi" },
+              { href: "/jobs?city=batumi", label: locale === "ka" ? "ბათუმი" : "Batumi" },
+              { href: "/jobs?type=remote", label: locale === "ka" ? "დისტანციური" : "Remote" },
+              { href: "/jobs?type=internship", label: locale === "ka" ? "სტაჟირება" : "Internship" },
+              { href: "/jobs?category=it-software", label: "IT" },
+              { href: "/jobs?category=sales-marketing", label: locale === "ka" ? "მარკეტინგი" : "Marketing" },
+              { href: "/jobs?category=finance", label: locale === "ka" ? "ფინანსები" : "Finance" },
+              { href: "/jobs?category=hospitality", label: locale === "ka" ? "სტუმართმოყვარეობა" : "Hospitality" },
+              { href: "/jobs?category=healthcare", label: locale === "ka" ? "ჯანდაცვა" : "Healthcare" },
+              { href: "/jobs?type=part-time", label: locale === "ka" ? "ნახევარი განაკვეთი" : "Part-time" },
             ].map((link) => (
               <Link
                 key={link.href}

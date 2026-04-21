@@ -105,7 +105,7 @@ export default async function AboutPage() {
             <div
               key={key}
               className="rounded-xl border border-border/60 bg-card p-5 shadow-soft animate-fade-in hover:shadow-gold-glow transition-all duration-200"
-              style={{ animationDelay: `${i * 60}ms` }}
+              style={{ animationDelay: `${i * 20}ms` }}
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 mb-3">
                 <Icon className="h-5 w-5 text-primary" />
@@ -191,10 +191,15 @@ export default async function AboutPage() {
         href={siteConfig.social.telegramBot}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 rounded-xl border border-border/60 bg-card py-5 text-sm text-muted-foreground hover:text-primary hover:border-primary/30 transition-all duration-200"
+        className="group flex flex-col sm:flex-row items-center justify-center gap-3 rounded-xl border-2 border-[#229ED9]/30 bg-[#229ED9]/5 px-6 py-5 text-center text-sm font-medium text-foreground cursor-pointer hover:bg-[#229ED9]/10 hover:border-[#229ED9]/50 active:scale-[0.98] transition-all duration-200"
       >
-        <Send className="h-4 w-4" />
-        {t("telegramCta")}
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="shrink-0" aria-hidden="true">
+          <path
+            d="M22.05 1.577c-.393-.016-.784.08-1.117.235-2.093.94-17.648 7.583-19.77 8.5-.39.168-.883.44-.883 1.003 0 .385.22.694.567.867l4.948 1.993 1.79 5.86c.164.48.546.68.96.68.34 0 .625-.14.85-.37l2.56-2.37 4.987 3.74c.38.285.755.43 1.146.43.82 0 1.36-.58 1.5-1.36L23.85 3.147c.2-1.02-.43-1.57-1.3-1.57h-.5zM9.33 13.78l-.81 3.58-1.5-5.31 11.76-7.26L9.33 13.78z"
+            fill="#229ED9"
+          />
+        </svg>
+        <span>{t("telegramCta")}</span>
       </a>
     </div>
   );

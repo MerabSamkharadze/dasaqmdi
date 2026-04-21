@@ -67,7 +67,7 @@ export default async function SavedJobsPage() {
               <div
                 key={job.id}
                 className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft hover:shadow-soft-md hover:border-border transition-all duration-200 animate-fade-in"
-                style={{ animationDelay: `${i * 50}ms` }}
+                style={{ animationDelay: `${i * 20}ms` }}
               >
                 <Link href={`/jobs/${job.id}`} className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted/50">

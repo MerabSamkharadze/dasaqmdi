@@ -36,7 +36,7 @@ No test framework is configured. No unit/integration tests exist yet.
 | Language | TypeScript (strict) | ^5 |
 | Runtime | React | 18.3.1 |
 | Database | Supabase (PostgreSQL) | ^2.47.12 |
-| Auth | Supabase Auth + @supabase/ssr | ^0.5.2 |
+| Auth | Supabase Auth + @supabase/ssr + OAuth (Google, Facebook, LinkedIn) | ^0.5.2 |
 | Styling | Tailwind CSS + tailwindcss-animate | ^3.4.1 |
 | Components | shadcn/ui (Radix primitives) | new-york style |
 | Icons | Lucide React | ^0.511.0 |
@@ -109,6 +109,9 @@ app/
 │   ├── (auth)/
 │   │   ├── layout.tsx                      # Auth layout (branding + form panels, redirect if logged in)
 │   │   └── auth/                           # login, sign-up, forgot-password, update-password, confirm
+├── auth/
+│   └── callback/route.ts                   # OAuth callback (outside [locale] — no middleware interference)
+│   │   └── auth/                           # login, sign-up, forgot-password, update-password, confirm
 │   ├── (public)/
 │   │   ├── layout.tsx                      # Header + Footer + main content
 │   │   ├── page.tsx                        # Homepage — hero + job feed + auto-filter by preferred categories
@@ -123,7 +126,8 @@ app/
 │   │   ├── seekers/[id]/page.tsx           # Public seeker portfolio (privacy-gated)
 │   │   ├── salaries/page.tsx               # Salary aggregation dashboard
 │   │   ├── pricing/page.tsx                # Subscription plans
-│   │   └── about/page.tsx                  # About page (public, all roles)
+│   │   ├── about/page.tsx                  # About page (public, all roles)
+│   │   └── privacy/page.tsx                # Privacy Policy (bilingual, public)
 │   └── (dashboard)/
 │       ├── layout.tsx                      # Auth guard + sidebar + header + badge count
 │       ├── dashboard/page.tsx              # Role-aware: SeekerDashboard / EmployerDashboard / AdminDashboard
@@ -259,6 +263,10 @@ components/
     ├── verified-badge.tsx                  # Gold star SVG verified badge + heartbeat hover
     ├── vip-badge.tsx                       # Gold/Silver star VIP badge
     └── cookie-consent.tsx                  # Cookie consent banner (Accept/Decline + localStorage)
+├── auth/
+│   ├── google-auth-button.tsx              # Google OAuth button
+│   ├── facebook-auth-button.tsx            # Facebook OAuth button
+│   └── linkedin-auth-button.tsx            # LinkedIn OAuth button
 ├── tracking/
 │   ├── facebook-pixel.tsx                  # Meta Pixel base snippet + PageView + noscript
 │   ├── registration-tracker.tsx            # CompleteRegistration on ?registered=1
@@ -344,6 +352,9 @@ components/
 21. **IndexNow**: Auto-ping Bing/Yandex on job publish/approve (`lib/seo-ping.ts`)
 22. **Cookie Consent**: Banner with Accept/Decline. `localStorage` key `cookie-consent`. Tracking works regardless (non-EU site)
 23. **TOP.GE Counter**: Site ID 118671. Script in layout, counter div in footer (must be visible per rules)
+24. **OAuth**: Google + Facebook + LinkedIn. Callback at `/auth/callback` (outside [locale]). Middleware redirects `?code=` params to callback. Sign-up Google/FB/LinkedIn — seeker only (employer must use email). Login — all providers
+25. **Privacy Policy**: `/privacy` — 8 sections, bilingual, contact: samkharadzemerab@gmail.com
+26. **Supabase Email Templates**: Branded HTML (dark bg, gold accent, SVG logo) for: Confirm signup, Reset password, Invite user
 
 ---
 
@@ -428,6 +439,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 - **Phase 17**: SEO & Search Dominance (JSON-LD enhancement, BreadcrumbList, Organization/WebSite schemas, IndexNow, 18 SEO landing pages, sitemap expansion)
 - **Phase 18**: VIP/Premium Jobs (gold/silver levels, 14-day duration, VipSpotlight carousel, admin upgrade/remove, feed priority sorting)
 - **Phase 19**: Cookie Consent Banner, TOP.GE counter integration, Google Search Console verification
+- **Phase 20**: OAuth (Google + Facebook + LinkedIn sign-in), Privacy Policy page, OAuth callback handler, Supabase email templates (branded)
 
 ### Domain: `www.dasaqmdi.com` (Vercel)
 ### Bot: `@dasaqmdi_bot` (Telegram)
