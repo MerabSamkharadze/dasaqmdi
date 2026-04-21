@@ -395,8 +395,12 @@ RESEND_API_KEY=<resend-key>
 LEMONSQUEEZY_API_KEY=<api-key>
 LEMONSQUEEZY_STORE_ID=<store-id>
 LEMONSQUEEZY_WEBHOOK_SECRET=<webhook-secret>
-LEMONSQUEEZY_PRO_VARIANT_ID=<variant-id>
-LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
+LEMONSQUEEZY_PRO_VARIANT_ID=<variant-id>                          # Business plan, monthly (79₾)
+LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>                     # Pro plan, monthly (199₾)
+LEMONSQUEEZY_PRO_ANNUAL_VARIANT_ID=<variant-id>                   # Business plan, yearly (790₾) — optional; hides toggle if absent
+LEMONSQUEEZY_VERIFIED_ANNUAL_VARIANT_ID=<variant-id>              # Pro plan, yearly (1990₾) — optional; hides toggle if absent
+LEMONSQUEEZY_VIP_SILVER_VARIANT_ID=<one-time-product-variant-id>  # 30₾ Silver boost (7 days)
+LEMONSQUEEZY_VIP_GOLD_VARIANT_ID=<one-time-product-variant-id>    # 80₾ Gold boost (14 days)
 MODERATION_ENABLED=false
 INDEXNOW_KEY=<bing-indexnow-key>
 ```
@@ -440,6 +444,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 - **Phase 18**: VIP/Premium Jobs (gold/silver levels, 14-day duration, VipSpotlight carousel, admin upgrade/remove, feed priority sorting)
 - **Phase 19**: Cookie Consent Banner, TOP.GE counter integration, Google Search Console verification
 - **Phase 20**: OAuth (Google + Facebook + LinkedIn sign-in), Privacy Policy page, OAuth callback handler, Supabase email templates (branded)
+- **Phase 21**: Pricing overhaul — tier rename (Free→Starter 2 jobs, Pro→Business 79₾, Verified→Pro 199₾), annual billing toggle (2 months free), VIP Boost self-service (Silver 30₾/7d + Gold 80₾/14d one-time), employer analytics dashboard (views/applications funnel + trends + top jobs), legacy pricing grandfathering badge
 
 ### Domain: `www.dasaqmdi.com` (Vercel)
 ### Bot: `@dasaqmdi_bot` (Telegram)
@@ -448,7 +453,16 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 
 ## დარჩენილი ამოცანები
 
-ამჟამად გასაკეთებელი ამოცანები არ არის.
+### Lemon Squeezy Setup (შენზე — Phase 21 სრულყოფისთვის)
+
+| Task | დეტალი | სტატუსი |
+|---|---|---|
+| Silver Spotlight one-time product | LS-ში შექმნა, 30₾, env: `LEMONSQUEEZY_VIP_SILVER_VARIANT_ID` | ⏳ |
+| Gold Premium one-time product | LS-ში შექმნა, 80₾, env: `LEMONSQUEEZY_VIP_GOLD_VARIANT_ID` | ⏳ |
+| Business annual variant | 790₾/yr subscription variant, env: `LEMONSQUEEZY_PRO_ANNUAL_VARIANT_ID` (optional — toggle hides if missing) | ⏳ |
+| Pro annual variant | 1990₾/yr subscription variant, env: `LEMONSQUEEZY_VERIFIED_ANNUAL_VARIANT_ID` (optional) | ⏳ |
+| Webhook event `order_created` | LS Dashboard → Webhooks → ჩართე ეს event | ⏳ |
+| Env vars Vercel-ზე | ოთხივე ცვლადი production-ში | ⏳ |
 
 ### Pending Migrations (Supabase SQL Editor-ში გასაშვები)
 

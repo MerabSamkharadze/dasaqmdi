@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { getActivePlan } from "@/lib/queries/subscriptions";
 import type { ActionResult } from "@/lib/types";
 
 export async function upsertEmailTemplateAction(
@@ -36,6 +37,12 @@ export async function upsertEmailTemplateAction(
     .single();
 
   if (!company) return { error: "Unauthorized" };
+
+  // Pro-only feature
+  const plan = await getActivePlan(companyId);
+  if (plan !== "verified") {
+    return { error: "Custom email templates are a Pro plan feature. Upgrade to unlock." };
+  }
 
   const { error } = await supabase
     .from("email_templates")
@@ -75,6 +82,11 @@ export async function deleteEmailTemplateAction(
     .single();
 
   if (!company) return { error: "Unauthorized" };
+
+  const plan = await getActivePlan(companyId);
+  if (plan !== "verified") {
+    return { error: "Custom email templates are a Pro plan feature." };
+  }
 
   await supabase
     .from("email_templates")

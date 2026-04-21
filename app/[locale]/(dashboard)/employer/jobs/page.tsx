@@ -165,6 +165,9 @@ export default async function EmployerJobsPage({
                     jobId={job.id}
                     isExpired={isExpired}
                     isClosed={isClosed}
+                    isFeatured={job.is_featured}
+                    vipLevel={job.vip_level}
+                    vipUntil={job.vip_until}
                   />
                 </div>
               </div>

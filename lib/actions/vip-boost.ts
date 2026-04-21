@@ -4,15 +4,14 @@ import { createClient } from "@/lib/supabase/server";
 import { createCheckout } from "@lemonsqueezy/lemonsqueezy.js";
 import {
   configureLemonSqueezy,
-  getVariantId,
-  type BillingCycle,
-  type PaidPlan,
+  VIP_VARIANTS,
+  type VipBoostLevel,
 } from "@/lib/lemonsqueezy";
 import type { ActionResult } from "@/lib/types";
 
-export async function createCheckoutAction(
-  plan: PaidPlan,
-  cycle: BillingCycle = "monthly",
+export async function createVipBoostCheckoutAction(
+  jobId: string,
+  level: VipBoostLevel,
 ): Promise<ActionResult<{ checkoutUrl: string }>> {
   const supabase = createClient();
   const {
@@ -20,35 +19,34 @@ export async function createCheckoutAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Unauthorized" };
 
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name")
-    .eq("owner_id", user.id)
+  // Verify job ownership — only the job's poster can boost it
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, posted_by, company_id, status, title, title_ka")
+    .eq("id", jobId)
     .single();
 
-  if (!company) return { error: "You must create a company first" };
-
-  const variantId = getVariantId(plan, cycle);
-  if (!variantId) {
-    return { error: `No ${cycle} variant configured for plan ${plan}` };
-  }
+  if (!job) return { error: "Job not found" };
+  if (job.posted_by !== user.id) return { error: "Not authorized for this job" };
+  if (job.status !== "active") return { error: "Only active jobs can be boosted" };
 
   configureLemonSqueezy();
 
   const { data: checkout, error } = await createCheckout(
     process.env.LEMONSQUEEZY_STORE_ID!,
-    variantId,
+    VIP_VARIANTS[level],
     {
       checkoutData: {
         email: user.email!,
         custom: {
-          company_id: company.id,
+          type: "vip_boost",
+          job_id: job.id,
+          level,
           user_id: user.id,
-          billing_cycle: cycle,
         },
       },
       productOptions: {
-        redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/employer/billing?success=true`,
+        redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/employer/jobs?boost=success`,
       },
     },
   );
@@ -57,6 +55,5 @@ export async function createCheckoutAction(
     return { error: "Failed to create checkout session" };
   }
 
-  const url = checkout.data.attributes.url;
-  return { error: null, data: { checkoutUrl: url } };
+  return { error: null, data: { checkoutUrl: checkout.data.attributes.url } };
 }

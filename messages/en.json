@@ -476,38 +476,80 @@
     },
     "telegramCta": "Join our Telegram bot for instant job alerts"
   },
+  "emailTemplates": {
+    "upgradeTitle": "Custom email templates are a Pro feature",
+    "upgradeDescription": "Write your own acceptance and rejection emails for applicants. Your voice, your branding in every message you send.",
+    "upgradeCta": "Upgrade to Pro"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Last {days} days",
+    "views": "Job Views",
+    "applications": "Applications",
+    "accepted": "Accepted",
+    "activeJobs": "Active Jobs",
+    "conversionRate": "Apply rate",
+    "acceptanceRate": "Accept rate",
+    "jobsPosted": "Jobs posted",
+    "applicationsReceived": "Applications received",
+    "last30Days": "Last 30 days",
+    "topJobs": "Top performing jobs",
+    "noJobs": "No jobs posted yet",
+    "upgradeTitle": "Analytics is a Business plan feature",
+    "upgradeDescription": "See how many views your jobs get, who's applying, and which postings perform best. Upgrade to Business to unlock insights.",
+    "upgradeCta": "Upgrade plan"
+  },
   "pricing": {
     "title": "Pricing",
-    "subtitle": "Choose the right plan for your hiring needs",
+    "subtitle": "Pick the plan that fits your hiring stage",
     "free": {
-      "name": "Free",
-      "price": "0₾",
-      "cta": "Get Started"
+      "name": "Starter",
+      "priceMonthly": "0₾",
+      "priceYearly": "0₾",
+      "cta": "Get Started",
+      "description": "For occasional hiring"
     },
     "pro": {
-      "name": "Pro",
-      "price": "50₾",
-      "cta": "Subscribe"
+      "name": "Business",
+      "priceMonthly": "79₾",
+      "priceYearly": "790₾",
+      "cta": "Subscribe",
+      "description": "For regular recruiting"
     },
     "verified": {
-      "name": "Verified",
-      "price": "100₾",
-      "cta": "Subscribe"
+      "name": "Pro",
+      "priceMonthly": "199₾",
+      "priceYearly": "1990₾",
+      "cta": "Subscribe",
+      "description": "For active HR teams"
     },
     "perMonth": "/month",
+    "perYear": "/year",
+    "billingCycle": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "saveBadge": "-2 months"
+    },
     "features": {
-      "activeJobs3": "Up to 3 active jobs",
+      "activeJobs": "{count} active jobs",
       "unlimitedJobs": "Unlimited active jobs",
       "basicPosting": "Basic job posting",
       "aiDraft": "AI job description drafts",
       "matchScores": "Applicant match scores",
       "verifiedBadge": "Verified company badge",
-      "featuredJobs": "Featured job placement",
-      "allProFeatures": "Everything in Pro"
+      "featuredSlot1": "1 featured job slot",
+      "featuredSlot3": "3 featured job slots",
+      "customEmailTemplates": "Custom email templates",
+      "everythingInBusiness": "Everything in Business"
     },
     "popular": "Most Popular",
     "currentPlan": "Current Plan",
-    "needCompany": "You need to create a company first"
+    "needCompany": "You need to create a company first",
+    "boostTitle": "One-time Boost",
+    "boostSubtitle": "No subscription — pay once to highlight a single job",
+    "boostSilverDesc": "VIP placement in the jobs feed for 7 days",
+    "boostGoldDesc": "Premium placement + Hero carousel on homepage for 14 days",
+    "boostFromJob": "💡 Launch a Boost from any job in your dashboard"
   },
   "billing": {
     "title": "Billing & Plan",
@@ -525,7 +567,23 @@
       "cancelled": "Cancelled",
       "past_due": "Past Due",
       "expired": "Expired"
-    }
+    },
+    "planLabel": {
+      "free": "Starter",
+      "pro": "Business",
+      "verified": "Pro"
+    },
+    "legacyBadge": "Legacy pricing",
+    "legacyNotice": "You're on legacy pricing — your original rate is locked in. New prices apply only to new subscriptions.",
+    "boost": "Boost",
+    "boostActive": "VIP until {date}",
+    "boostTitle": "Boost your job posting",
+    "boostDescription": "Get 3-5x more applicants with premium placement. One-time payment, no subscription required.",
+    "silverTitle": "🥈 Silver Spotlight",
+    "silverSubtitle": "VIP placement in the jobs feed for {days} days",
+    "goldTitle": "🥇 Gold Premium",
+    "goldSubtitle": "Top placement + Hero carousel on homepage for {days} days",
+    "cancel": "Cancel"
   },
   "errors": {
     "generic": "Something went wrong",

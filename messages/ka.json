@@ -475,38 +475,80 @@
     },
     "telegramCta": "შემოგვიერთდი Telegram ბოტში ვაკანსიების შეტყობინებებისთვის"
   },
+  "emailTemplates": {
+    "upgradeTitle": "ელ-ფოსტის შაბლონები Pro-ს ფიჩრია",
+    "upgradeDescription": "შექმენი საკუთარი მისაღები და უარყოფის ელ-ფოსტის შაბლონები აპლიკანტებისთვის. საკუთარი ხმა და ბრენდინგი ყველა შეტყობინებაში.",
+    "upgradeCta": "Pro-ზე გადასვლა"
+  },
+  "analytics": {
+    "title": "ანალიტიკა",
+    "subtitle": "ბოლო {days} დღის მონაცემები",
+    "views": "ვაკანსიების ნახვა",
+    "applications": "განაცხადები",
+    "accepted": "მიღებული",
+    "activeJobs": "აქტიური ვაკანსიები",
+    "conversionRate": "Apply rate",
+    "acceptanceRate": "Accept rate",
+    "jobsPosted": "გამოქვეყნებული ვაკანსიები",
+    "applicationsReceived": "მიღებული განაცხადები",
+    "last30Days": "ბოლო 30 დღე",
+    "topJobs": "ყველაზე წარმატებული ვაკანსიები",
+    "noJobs": "ჯერ არ გაქვთ გამოქვეყნებული ვაკანსია",
+    "upgradeTitle": "ანალიტიკა ხელმისაწვდომია Business-იდან",
+    "upgradeDescription": "შეხედე რამდენჯერ ნახეს შენი ვაკანსიები, რამდენმა მიაკითხა, და რომელი ვაკანსია მუშაობს ყველაზე კარგად. განაახლე Business პაკეტზე.",
+    "upgradeCta": "განახლება"
+  },
   "pricing": {
     "title": "ფასები",
-    "subtitle": "აირჩიეთ თქვენთვის შესაფერისი პაკეტი",
+    "subtitle": "აირჩიე შეთავაზება შენი ბიზნესის ზომისთვის",
     "free": {
-      "name": "უფასო",
-      "price": "0₾",
-      "cta": "დაწყება"
+      "name": "Starter",
+      "priceMonthly": "0₾",
+      "priceYearly": "0₾",
+      "cta": "დაწყება",
+      "description": "ზომიერად ტესტირებისთვის"
     },
     "pro": {
-      "name": "პრო",
-      "price": "50₾",
-      "cta": "გამოწერა"
+      "name": "Business",
+      "priceMonthly": "79₾",
+      "priceYearly": "790₾",
+      "cta": "გამოწერა",
+      "description": "რეგულარული რეკრუტინგისთვის"
     },
     "verified": {
-      "name": "ვერიფიცირებული",
-      "price": "100₾",
-      "cta": "გამოწერა"
+      "name": "Pro",
+      "priceMonthly": "199₾",
+      "priceYearly": "1990₾",
+      "cta": "გამოწერა",
+      "description": "აქტიური HR გუნდისთვის"
     },
     "perMonth": "/თვე",
+    "perYear": "/წელი",
+    "billingCycle": {
+      "monthly": "თვიური",
+      "yearly": "წლიური",
+      "saveBadge": "-2 თვე"
+    },
     "features": {
-      "activeJobs3": "3 აქტიური ვაკანსია",
+      "activeJobs": "{count} აქტიური ვაკანსია",
       "unlimitedJobs": "ულიმიტო ვაკანსიები",
       "basicPosting": "ვაკანსიის გამოქვეყნება",
       "aiDraft": "AI აღწერის გენერაცია",
       "matchScores": "კანდიდატთა შესაბამისობის ქულა",
       "verifiedBadge": "ვერიფიცირებული კომპანიის ბეჯი",
-      "featuredJobs": "გამორჩეული ვაკანსიის განთავსება",
-      "allProFeatures": "ყველაფერი პრო პაკეტიდან"
+      "featuredSlot1": "1 გამორჩეული ვაკანსიის სლოტი",
+      "featuredSlot3": "3 გამორჩეული ვაკანსიის სლოტი",
+      "customEmailTemplates": "საკუთარი ელ-ფოსტის შაბლონები",
+      "everythingInBusiness": "ყველაფერი Business პაკეტიდან"
     },
     "popular": "პოპულარული",
     "currentPlan": "მიმდინარე პაკეტი",
-    "needCompany": "ჯერ კომპანია უნდა შექმნათ"
+    "needCompany": "ჯერ კომპანია უნდა შექმნათ",
+    "boostTitle": "ერთჯერადი Boost",
+    "boostSubtitle": "გამოწერის გარეშე — მხოლოდ კონკრეტული ვაკანსიის გამოსარჩევად",
+    "boostSilverDesc": "VIP placement ვაკანსიების feed-ში 7 დღე",
+    "boostGoldDesc": "Premium placement + Hero carousel მთავარ გვერდზე 14 დღე",
+    "boostFromJob": "💡 Boost ერთვის ვაკანსიის page-იდან შენს dashboard-ში"
   },
   "billing": {
     "title": "გადახდა და პაკეტი",
@@ -524,7 +566,23 @@
       "cancelled": "გაუქმებული",
       "past_due": "ვადაგადაცილებული",
       "expired": "ვადაგასული"
-    }
+    },
+    "planLabel": {
+      "free": "Starter",
+      "pro": "Business",
+      "verified": "Pro"
+    },
+    "legacyBadge": "Legacy pricing",
+    "legacyNotice": "თქვენ იყენებთ ძველი ფასის ტარიფს — შენარჩუნებული გაქვთ თავდაპირველი ფასი. ახალი ფასები მოქმედებს მხოლოდ ახალი გამოწერებისთვის.",
+    "boost": "Boost",
+    "boostActive": "VIP-აქტიურია {date}-მდე",
+    "boostTitle": "ვაკანსიის გამორჩევა",
+    "boostDescription": "გამოარჩიე ვაკანსია და მიიღე 3-5x მეტი აპლიკანტი. უერთდება ერთჯერადი საფასურით, გამოწერის გარეშე.",
+    "silverTitle": "🥈 Silver Spotlight",
+    "silverSubtitle": "VIP placement ვაკანსიების feed-ში {days} დღე",
+    "goldTitle": "🥇 Gold Premium",
+    "goldSubtitle": "Premium placement + Hero carousel მთავარ გვერდზე {days} დღე",
+    "cancel": "გაუქმება"
   },
   "errors": {
     "generic": "რაღაც შეცდომა მოხდა",

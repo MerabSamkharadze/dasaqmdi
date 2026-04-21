@@ -1,11 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { closeJobAction, renewJobAction } from "@/lib/actions/jobs";
-import { Edit, XCircle, RefreshCw, Users } from "lucide-react";
+import {
+  closeJobAction,
+  renewJobAction,
+  toggleJobFeaturedAction,
+} from "@/lib/actions/jobs";
+import { Edit, XCircle, RefreshCw, Users, Star } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { VipBoostButton } from "@/components/dashboard/vip-boost-button";
+import { cn } from "@/lib/utils";
 
 // E6: Standalone renew button for dashboard
 export function RenewJobButton({ jobId }: { jobId: string }) {
@@ -30,9 +36,19 @@ type JobActionButtonsProps = {
   jobId: string;
   isExpired: boolean;
   isClosed: boolean;
+  isFeatured?: boolean;
+  vipLevel?: string;
+  vipUntil?: string | null;
 };
 
-export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButtonsProps) {
+export function JobActionButtons({
+  jobId,
+  isExpired,
+  isClosed,
+  isFeatured = false,
+  vipLevel = "normal",
+  vipUntil = null,
+}: JobActionButtonsProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -48,6 +64,14 @@ export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButton
     setError(null);
     startTransition(async () => {
       const result = await renewJobAction(jobId);
+      if (result.error) setError(result.error);
+    });
+  }
+
+  function handleToggleFeatured() {
+    setError(null);
+    startTransition(async () => {
+      const result = await toggleJobFeaturedAction(jobId);
       if (result.error) setError(result.error);
     });
   }
@@ -70,6 +94,30 @@ export function JobActionButtons({ jobId, isExpired, isClosed }: JobActionButton
           <RefreshCw className="h-3 w-3" />
           Renew
         </Button>
+      )}
+
+      {!isClosed && !isExpired && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleToggleFeatured}
+          disabled={isPending}
+          aria-label={isFeatured ? "Unfeature job" : "Feature job"}
+          className="h-8 w-8 rounded-xl"
+        >
+          <Star
+            className={cn(
+              "h-3.5 w-3.5 transition-colors duration-200",
+              isFeatured
+                ? "fill-amber-500 text-amber-500"
+                : "text-muted-foreground/70 hover:text-amber-500",
+            )}
+          />
+        </Button>
+      )}
+
+      {!isClosed && !isExpired && (
+        <VipBoostButton jobId={jobId} vipLevel={vipLevel} vipUntil={vipUntil} />
       )}
 
       {!isClosed && !isExpired && (

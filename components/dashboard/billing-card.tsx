@@ -15,6 +15,7 @@ type BillingCardProps = {
   periodEnd: string | null;
   cancelAt: string | null;
   hasLsSubscription: boolean;
+  isLegacy?: boolean;
   translations: {
     currentPlan: string;
     nextBilling: string;
@@ -25,6 +26,9 @@ type BillingCardProps = {
     cancelledNotice: string;
     pastDue: string;
     status: Record<string, string>;
+    planLabel: Record<SubscriptionPlan, string>;
+    legacyBadge?: string;
+    legacyNotice?: string;
   };
 };
 
@@ -34,6 +38,7 @@ export function BillingCard({
   periodEnd,
   cancelAt,
   hasLsSubscription,
+  isLegacy = false,
   translations: t,
 }: BillingCardProps) {
   const [isPending, startTransition] = useTransition();
@@ -47,12 +52,6 @@ export function BillingCard({
     });
   }
 
-  const planLabels: Record<SubscriptionPlan, string> = {
-    free: "Free",
-    pro: "Pro",
-    verified: "Verified",
-  };
-
   const statusVariant = status === "active"
     ? "default"
     : status === "past_due"
@@ -65,9 +64,19 @@ export function BillingCard({
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm text-muted-foreground">{t.currentPlan}</p>
-          <p className="text-xl font-bold tracking-tight text-foreground mt-1">
-            {planLabels[plan]}
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-xl font-bold tracking-tight text-foreground">
+              {t.planLabel[plan]}
+            </p>
+            {isLegacy && t.legacyBadge && (
+              <Badge
+                variant="outline"
+                className="text-[10px] font-normal border-amber-300/50 text-amber-700 dark:border-amber-500/30 dark:text-amber-400"
+              >
+                {t.legacyBadge}
+              </Badge>
+            )}
+          </div>
         </div>
         {status && (
           <Badge variant={statusVariant}>
@@ -75,6 +84,13 @@ export function BillingCard({
           </Badge>
         )}
       </div>
+
+      {/* Legacy pricing notice */}
+      {isLegacy && t.legacyNotice && (
+        <div className="mb-4 rounded-lg border border-amber-200/50 bg-amber-50/40 p-3 text-[12px] text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/5 dark:text-amber-400">
+          {t.legacyNotice}
+        </div>
+      )}
 
       {/* Warnings */}
       {status === "past_due" && (

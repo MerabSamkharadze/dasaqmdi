@@ -5,7 +5,11 @@ import { createJobSchema, updateJobSchema } from "@/lib/validations/job";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getActivePlan } from "@/lib/queries/subscriptions";
-import { canPostJob } from "@/lib/subscription-helpers";
+import {
+  canPostJob,
+  getFeaturedSlotLimit,
+  STARTER_JOB_LIMIT,
+} from "@/lib/subscription-helpers";
 import type { ActionResult } from "@/lib/types";
 import { siteConfig } from "@/lib/config";
 
@@ -57,7 +61,9 @@ export async function createJobAction(
       .gte("expires_at", new Date().toISOString());
 
     if (!canPostJob(plan, count ?? 0)) {
-      return { error: "Free plan is limited to 3 active jobs. Upgrade to Pro for unlimited." };
+      return {
+        error: `Starter plan is limited to ${STARTER_JOB_LIMIT} active jobs. Upgrade to Business for unlimited.`,
+      };
     }
   }
 
@@ -163,6 +169,73 @@ export async function incrementJobViewAction(jobId: string): Promise<void> {
   const supabase = createClient();
 
   await supabase.rpc("increment_job_views", { job_id_input: jobId });
+}
+
+/**
+ * Toggle a job's featured state. Plan-gated:
+ *   - Starter: cannot feature anything
+ *   - Business: up to 1 featured active job
+ *   - Pro: up to 3 featured active jobs
+ */
+export async function toggleJobFeaturedAction(jobId: string): Promise<ActionResult> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthorized" };
+
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, posted_by, company_id, is_featured, status")
+    .eq("id", jobId)
+    .single();
+
+  if (!job) return { error: "Job not found" };
+  if (job.posted_by !== user.id) return { error: "Not authorized for this job" };
+
+  // Unfeaturing is always allowed
+  if (job.is_featured) {
+    const { error } = await supabase
+      .from("jobs")
+      .update({ is_featured: false })
+      .eq("id", jobId);
+    if (error) return { error: error.message };
+    revalidatePath("/employer/jobs");
+    revalidatePath("/jobs");
+    return { error: null };
+  }
+
+  // Featuring — check plan limit
+  const plan = await getActivePlan(job.company_id);
+  const limit = getFeaturedSlotLimit(plan);
+  if (limit === 0) {
+    return { error: "Featured jobs are a Business plan feature. Upgrade to unlock." };
+  }
+
+  const { count: currentCount } = await supabase
+    .from("jobs")
+    .select("id", { count: "exact", head: true })
+    .eq("company_id", job.company_id)
+    .eq("status", "active")
+    .eq("is_featured", true);
+
+  if ((currentCount ?? 0) >= limit) {
+    return {
+      error: `Featured slot limit reached (${limit}). Unfeature another job first.`,
+    };
+  }
+
+  const { error } = await supabase
+    .from("jobs")
+    .update({ is_featured: true })
+    .eq("id", jobId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/employer/jobs");
+  revalidatePath("/jobs");
+  return { error: null };
 }
 
 export async function renewJobAction(jobId: string): Promise<ActionResult> {

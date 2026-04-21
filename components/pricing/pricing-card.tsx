@@ -2,9 +2,11 @@ import { Check, X } from "lucide-react";
 import { CheckoutButton } from "@/components/pricing/checkout-button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import type { BillingCycle } from "@/lib/lemonsqueezy";
 
 type PricingCardProps = {
   name: string;
+  description?: string;
   price: string;
   period: string;
   features: string[];
@@ -14,6 +16,7 @@ type PricingCardProps = {
   ctaLabel: string;
   ctaHref?: string;
   plan?: "pro" | "verified";
+  cycle?: BillingCycle;
   isLoggedIn?: boolean;
   currentPlanLabel?: string;
   isCurrent?: boolean;
@@ -21,6 +24,7 @@ type PricingCardProps = {
 
 export function PricingCard({
   name,
+  description,
   price,
   period,
   features,
@@ -30,6 +34,7 @@ export function PricingCard({
   ctaLabel,
   ctaHref,
   plan,
+  cycle = "monthly",
   isLoggedIn,
   currentPlanLabel,
   isCurrent,
@@ -53,6 +58,9 @@ export function PricingCard({
 
       <div className="mb-6">
         <h3 className="text-[15px] font-semibold text-foreground">{name}</h3>
+        {description && (
+          <p className="mt-1 text-[12px] text-muted-foreground/70">{description}</p>
+        )}
         <div className="mt-3 flex items-baseline gap-1">
           <span className="text-3xl font-bold tracking-tight text-foreground">
             {price}
@@ -93,6 +101,7 @@ export function PricingCard({
       ) : plan && isLoggedIn ? (
         <CheckoutButton
           plan={plan}
+          cycle={cycle}
           label={ctaLabel}
           variant={highlighted ? "default" : "outline"}
         />

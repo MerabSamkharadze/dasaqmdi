@@ -50,6 +50,7 @@ const employerNav: NavItem[] = [
   { href: "/employer/company", labelKey: "myCompany", icon: Building2 },
   { href: "/employer/jobs", labelKey: "myJobs", icon: Briefcase, exact: true },
   { href: "/employer/applications", labelKey: "applicants", icon: FileText },
+  { href: "/employer/analytics", labelKey: "analytics", icon: BarChart3 },
   { href: "/employer/jobs/new", labelKey: "postJob", icon: PlusCircle, exact: true },
   { href: "/employer/email-templates", labelKey: "emailTemplates", icon: Mail },
   { href: "/employer/billing", labelKey: "billing", icon: CreditCard },

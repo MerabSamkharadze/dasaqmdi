@@ -4,6 +4,7 @@ import { BillingCard } from "@/components/dashboard/billing-card";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { isLegacyVariant } from "@/lib/lemonsqueezy";
 import type { SubscriptionPlan } from "@/lib/types";
 
 export default async function BillingPage({
@@ -33,6 +34,11 @@ export default async function BillingPage({
     ? subscription.plan
     : "free";
 
+  const isLegacy =
+    subscription?.status === "active" && plan !== "free"
+      ? isLegacyVariant(subscription.variant_id, plan)
+      : false;
+
   return (
     <div className="mx-auto max-w-2xl px-4 sm:px-6 py-8">
       <h1 className="text-lg font-semibold tracking-tight text-foreground mb-6">
@@ -61,6 +67,7 @@ export default async function BillingPage({
         periodEnd={subscription?.current_period_end ?? null}
         cancelAt={subscription?.cancel_at ?? null}
         hasLsSubscription={!!subscription?.lemon_squeezy_id}
+        isLegacy={isLegacy}
         translations={{
           currentPlan: t("currentPlan"),
           nextBilling: t("nextBilling"),
@@ -76,6 +83,13 @@ export default async function BillingPage({
             past_due: t("status.past_due"),
             expired: t("status.expired"),
           },
+          planLabel: {
+            free: t("planLabel.free"),
+            pro: t("planLabel.pro"),
+            verified: t("planLabel.verified"),
+          },
+          legacyBadge: t("legacyBadge"),
+          legacyNotice: t("legacyNotice"),
         }}
       />
     </div>

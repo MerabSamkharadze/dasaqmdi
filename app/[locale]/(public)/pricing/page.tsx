@@ -1,7 +1,8 @@
-import { PricingCard } from "@/components/pricing/pricing-card";
+import { PricingGrid } from "@/components/pricing/pricing-grid";
 import { getTranslations, getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActivePlan } from "@/lib/queries/subscriptions";
+import { hasAnnualVariants } from "@/lib/lemonsqueezy";
 import type { Metadata } from "next";
 import type { SubscriptionPlan } from "@/lib/types";
 import { buildAlternates } from "@/lib/seo";
@@ -40,9 +41,8 @@ export async function generateMetadata({
 
 export default async function PricingPage() {
   const t = await getTranslations("pricing");
-  const locale = await getLocale();
+  await getLocale();
 
-  // Check if user is logged in and has a company
   let isLoggedIn = false;
   let currentPlan: SubscriptionPlan = "free";
 
@@ -64,11 +64,8 @@ export default async function PricingPage() {
     }
   }
 
-  const period = t("perMonth");
-
   return (
     <div className="py-6 sm:py-8">
-      {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           {t("title")}
@@ -78,72 +75,93 @@ export default async function PricingPage() {
         </p>
       </div>
 
-      {/* Pricing cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Free */}
-        <PricingCard
-          name={t("free.name")}
-          price={t("free.price")}
-          period={period}
-          features={[
-            t("features.activeJobs3"),
+      <PricingGrid
+        starter={{
+          name: t("free.name"),
+          description: t("free.description"),
+          priceMonthly: t("free.priceMonthly"),
+          priceYearly: t("free.priceYearly"),
+          cta: t("free.cta"),
+        }}
+        business={{
+          name: t("pro.name"),
+          description: t("pro.description"),
+          priceMonthly: t("pro.priceMonthly"),
+          priceYearly: t("pro.priceYearly"),
+          cta: t("pro.cta"),
+        }}
+        pro={{
+          name: t("verified.name"),
+          description: t("verified.description"),
+          priceMonthly: t("verified.priceMonthly"),
+          priceYearly: t("verified.priceYearly"),
+          cta: t("verified.cta"),
+        }}
+        features={{
+          starter: [
+            t("features.activeJobs", { count: 2 }),
             t("features.basicPosting"),
-          ]}
-          disabledFeatures={[
+          ],
+          starterDisabled: [
             t("features.aiDraft"),
             t("features.matchScores"),
+            t("features.featuredSlot1"),
             t("features.verifiedBadge"),
-            t("features.featuredJobs"),
-          ]}
-          ctaLabel={t("free.cta")}
-          ctaHref={isLoggedIn ? "/dashboard" : "/auth/register"}
-          currentPlanLabel={t("currentPlan")}
-          isCurrent={currentPlan === "free"}
-        />
-
-        {/* Pro */}
-        <PricingCard
-          name={t("pro.name")}
-          price={t("pro.price")}
-          period={period}
-          features={[
-            t("features.unlimitedJobs"),
-            t("features.basicPosting"),
-            t("features.aiDraft"),
-            t("features.matchScores"),
-            t("features.featuredJobs"),
-          ]}
-          disabledFeatures={[
-            t("features.verifiedBadge"),
-          ]}
-          highlighted
-          popularLabel={t("popular")}
-          ctaLabel={t("pro.cta")}
-          plan="pro"
-          isLoggedIn={isLoggedIn}
-          currentPlanLabel={t("currentPlan")}
-          isCurrent={currentPlan === "pro"}
-        />
-
-        {/* Verified */}
-        <PricingCard
-          name={t("verified.name")}
-          price={t("verified.price")}
-          period={period}
-          features={[
-            t("features.allProFeatures"),
+          ],
+          business: [
             t("features.unlimitedJobs"),
             t("features.aiDraft"),
             t("features.matchScores"),
-            t("features.featuredJobs"),
+            t("features.featuredSlot1"),
+          ],
+          businessDisabled: [
             t("features.verifiedBadge"),
-          ]}
-          ctaLabel={t("verified.cta")}
-          plan="verified"
-          isLoggedIn={isLoggedIn}
-          currentPlanLabel={t("currentPlan")}
-          isCurrent={currentPlan === "verified"}
-        />
+            t("features.customEmailTemplates"),
+          ],
+          pro: [
+            t("features.everythingInBusiness"),
+            t("features.verifiedBadge"),
+            t("features.featuredSlot3"),
+            t("features.customEmailTemplates"),
+          ],
+        }}
+        perMonth={t("perMonth")}
+        perYear={t("perYear")}
+        popular={t("popular")}
+        currentPlanLabel={t("currentPlan")}
+        currentPlan={currentPlan}
+        isLoggedIn={isLoggedIn}
+        supportsAnnual={hasAnnualVariants()}
+        billingCycleLabels={{
+          monthly: t("billingCycle.monthly"),
+          yearly: t("billingCycle.yearly"),
+          saveBadge: t("billingCycle.saveBadge"),
+        }}
+      />
+
+      {/* One-time Boost info */}
+      <div className="mt-12 rounded-xl border border-amber-300/40 bg-gradient-to-br from-amber-50/50 to-transparent dark:from-amber-500/5 p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+          <div className="min-w-0">
+            <h2 className="text-[15px] font-semibold tracking-tight text-foreground">
+              {t("boostTitle")}
+            </h2>
+            <p className="mt-1 text-[13px] text-muted-foreground">
+              {t("boostSubtitle")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card px-3 py-1.5 text-[12px] font-medium">
+              🥈 Silver — 30₾ / 7d
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-1.5 text-[12px] font-semibold text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30">
+              🥇 Gold — 80₾ / 14d
+            </span>
+          </div>
+        </div>
+        <p className="mt-3 text-[11px] text-muted-foreground/60">
+          {t("boostFromJob")}
+        </p>
       </div>
     </div>
   );
