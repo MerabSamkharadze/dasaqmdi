@@ -358,6 +358,49 @@ components/
 
 ---
 
+## Performance Monitoring
+
+### Wired instrumentation
+- **`@vercel/speed-insights`** (`SpeedInsights` component in `app/[locale]/layout.tsx`) — field data (RUM). Dashboard: Vercel project → Speed Insights tab.
+- **`WebVitalsReporter`** (`components/tracking/web-vitals-reporter.tsx`) — client-side `useReportWebVitals` hook logs LCP/INP/CLS/TTFB/FCP to console when budgets exceed and dispatches a `web-vital` CustomEvent on window for external observers (Sentry, custom analytics).
+
+### Budget thresholds (Core Web Vitals "Good" boundaries)
+| Metric | Budget | Meaning |
+|---|---|---|
+| **LCP** | ≤ 2500ms | Largest Contentful Paint — hero content visible |
+| **INP** | ≤ 200ms | Interaction to Next Paint — input responsiveness |
+| **CLS** | ≤ 0.1 | Cumulative Layout Shift — visual stability |
+| **TTFB** | ≤ 800ms | Time to First Byte — server responsiveness |
+| **FCP** | ≤ 1800ms | First Contentful Paint — any pixel rendered |
+
+### How to observe
+
+**Dev** (localhost): Every web vital prints `[WebVitals] { metric, value, rating, budget, exceeded, path }` to devtools console when value exceeds budget. Successful metrics log only in `NODE_ENV=development`.
+
+**Prod** (Vercel):
+1. Vercel Dashboard → Project → **Speed Insights** tab
+2. Filter by page/route; aggregates P75 (75th percentile) per metric
+3. **Red segments = poor (>p75 budget)**, watch those pages first
+4. Compare week-over-week for regression detection
+
+### Pages to watch first
+1. `/` (homepage) — entry point, currently fully dynamic (baseline candidate)
+2. `/jobs` — main flow, heavy list rendering
+3. `/jobs/[id]` — ISR 60s, should be fast; if not, RLS or image heavy
+4. `/companies` — ISR 3600s, expect low TTFB
+5. `/salaries` — ISR + searchParams conflict, known bottleneck
+
+### Regression playbook
+- If LCP regression on `/`: check VipSpotlight image priority, logo loading
+- If INP regression: JobFilters debounce or Carousel re-renders
+- If CLS spike: HeroIllustration runtime fetch or missing image dimensions
+- If TTFB spike: check `getVipJobs()` / `getJobs()` cache hit rate in Vercel logs
+
+### Next step
+Baseline 2-4 weeks of RUM data on production before applying optimizations (Quick Wins QW1-8 or Architectural AC1-9) — so the improvement delta is measurable, not just theoretical.
+
+---
+
 ## Monetization Model — Plans, Boost, Featured (Phase 21)
 
 ### Subscription Plans (recurring)

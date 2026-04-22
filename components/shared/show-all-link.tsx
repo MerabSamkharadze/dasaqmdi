@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";

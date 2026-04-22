@@ -10,7 +10,7 @@ import { isVipActive } from "@/lib/vip";
 import { BookmarkButton } from "@/components/jobs/bookmark-button";
 import { ShareJobButton } from "@/components/jobs/share-job-button";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useCallback } from "react";
 import Link from "next/link";
 

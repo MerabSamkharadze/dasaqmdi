@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { Search, MapPin, Briefcase } from "lucide-react";
 
 export function AuthSearchBar({
