@@ -1,39 +1,31 @@
-import { cache } from "react";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
-
 /**
- * Server-rendered inline SVG illustration. The underlying SVGs embed their
- * own <style> animation blocks (see /public/illustrations/*.svg), so we must
- * inline them to preserve animation — `next/image` strips <style> content.
+ * Static SVG illustration usable from both server + client components.
+ * Uses a plain <img> tag because:
+ *   1. `next/image` requires `dangerouslyAllowSVG: true` in next.config
+ *   2. SVGs are already vector — no optimization benefit from next/image
+ *   3. This component is imported from client components (login-form),
+ *      so it cannot use Node-only APIs (fs/path)
  *
- * Previously this was a client component that fetched the SVG in useEffect,
- * which blocked LCP until the secondary network round-trip completed. Now
- * the SVG markup is in the initial HTML response.
+ * `loading="eager"` + `fetchPriority="high"` signals this is LCP content
+ * and should bypass lazy-loading heuristics.
  */
-
-const readSvg = cache(async (src: string): Promise<string> => {
-  try {
-    const publicDir = path.join(process.cwd(), "public");
-    // `src` is always of the form "/illustrations/<name>.svg"
-    const absolute = path.join(publicDir, src);
-    return await readFile(absolute, "utf8");
-  } catch {
-    return "";
-  }
-});
-
-export async function HeroIllustration({
+export function HeroIllustration({
   src = "/illustrations/hero.svg",
+  priority = true,
 }: {
   src?: string;
+  priority?: boolean;
 }) {
-  const svg = await readSvg(src);
-
   return (
-    <div
-      className="w-full aspect-square [&>svg]:w-full [&>svg]:h-full"
-      dangerouslySetInnerHTML={{ __html: svg }}
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt=""
+      aria-hidden="true"
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : "auto"}
+      decoding="async"
+      className="w-full h-auto aspect-square"
     />
   );
 }
