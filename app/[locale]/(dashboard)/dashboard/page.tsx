@@ -1,6 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getProfile } from "@/lib/queries/profile";
+import { getProfile, getCachedUser } from "@/lib/queries/profile";
 import { getSeekerDashboardData, getEmployerDashboardData } from "@/lib/queries/dashboard";
 import { getAdminStats } from "@/lib/queries/admin";
 import { getTranslations, getLocale } from "next-intl/server";
@@ -11,11 +10,7 @@ import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
 import type { UserRole } from "@/lib/types/enums";
 
 export default async function DashboardPage() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = await getCachedUser();
   if (!user) redirect("/auth/login");
 
   const locale = await getLocale();

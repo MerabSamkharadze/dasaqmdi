@@ -1,5 +1,11 @@
+import { unstable_cache } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import type { Company } from "@/lib/types";
+
+// Narrow column set matching what the /companies list view actually renders.
+// Avoids fetching heavy JSONB/text columns (tech_stack, benefits, why_work_here*,
+// address*) on every ISR regeneration.
+const LIST_COLUMNS = "id, name, name_ka, slug, logo_url, is_verified, city, employee_count, description, description_ka, created_at";
 
 export async function getCompanyByOwner(ownerId: string): Promise<Company | null> {
   const supabase = createClient();
@@ -34,12 +40,20 @@ export async function getCompanyById(id: string): Promise<Company | null> {
   return data;
 }
 
-export async function getAllCompanies(): Promise<Company[]> {
-  const supabase = createClient();
-  const { data } = await supabase
-    .from("companies")
-    .select("*")
-    .order("created_at", { ascending: false });
+/**
+ * Cached company list for the /companies page. Revalidates hourly or on
+ * demand via `revalidateTag("companies")` after verify/create/update actions.
+ */
+export const getAllCompanies = unstable_cache(
+  async (): Promise<Company[]> => {
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("companies")
+      .select(LIST_COLUMNS)
+      .order("created_at", { ascending: false });
 
-  return data ?? [];
-}
+    return (data as Company[] | null) ?? [];
+  },
+  ["all-companies"],
+  { revalidate: 3600, tags: ["companies"] },
+);

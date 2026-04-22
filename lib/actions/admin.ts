@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { logAdminAction } from "@/lib/admin-log";
 import type { ActionResult } from "@/lib/types";
 
@@ -60,6 +60,7 @@ export async function verifyCompanyAction(companyId: string): Promise<ActionResu
   });
 
   revalidatePath("/admin/companies");
+  revalidateTag("companies");
   return { error: null };
 }
 

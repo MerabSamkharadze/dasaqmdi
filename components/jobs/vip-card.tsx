@@ -70,6 +70,8 @@ export function VipCard({
               alt={companyName}
               width={32}
               height={32}
+              sizes="32px"
+              priority={index === 0}
               className="h-8 w-8 rounded-md object-contain"
             />
           ) : (

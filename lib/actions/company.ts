@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createCompanySchema, updateCompanySchema } from "@/lib/validations/company";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import type { ActionResult } from "@/lib/types";
 
@@ -74,6 +74,7 @@ export async function createCompanyAction(
   }
 
   revalidatePath("/employer/company");
+  revalidateTag("companies");
   redirect("/employer/company");
 }
 
@@ -130,5 +131,6 @@ export async function updateCompanyAction(
   }
 
   revalidatePath("/employer/company");
+  revalidateTag("companies");
   return { error: null };
 }

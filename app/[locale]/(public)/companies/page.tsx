@@ -95,6 +95,7 @@ export default async function CompaniesPage() {
                       width={32}
                       height={32}
                       sizes="32px"
+                      priority={i < 3}
                       className="h-8 w-8 rounded-md object-contain"
                     />
                   ) : (

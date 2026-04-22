@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
+import type { User } from "@supabase/supabase-js";
 
 // O2: React.cache deduplicates within a single request (layout + page)
 export const getProfile = cache(async (userId: string): Promise<Profile | null> => {
@@ -12,6 +13,19 @@ export const getProfile = cache(async (userId: string): Promise<Profile | null> 
     .single();
 
   return data;
+});
+
+/**
+ * Cached `auth.getUser()` — deduplicates auth roundtrips within a single
+ * request. Critical for /dashboard where layout + page both need the user;
+ * React.cache ensures a single network call to Supabase Auth per request.
+ */
+export const getCachedUser = cache(async (): Promise<User | null> => {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
 });
 
 export async function getPublicProfile(userId: string): Promise<Profile | null> {

@@ -8,7 +8,6 @@ import { Suspense } from "react";
 import { HeroIllustration } from "@/components/shared/hero-illustration";
 import { TrendingUp, TrendingDown, BarChart3, Briefcase } from "lucide-react";
 import type { Metadata } from "next";
-import type { SalaryCurrency } from "@/lib/types/enums";
 import { buildAlternates } from "@/lib/seo";
 import { siteConfig } from "@/lib/config";
 
@@ -63,15 +62,21 @@ export default async function SalariesPage({
   const locale = await getLocale();
   const t = await getTranslations("salaries");
 
-  const [salaryData, categories, cities] = await Promise.all([
-    getSalaryData({
-      category: searchParams.category,
-      city: searchParams.city,
-      currency: searchParams.currency as SalaryCurrency | undefined,
-    }),
+  // Queries are unstable_cache-wrapped (revalidate 300) — filter combos now
+  // hit the cache layer instead of triggering fresh DB scans per request.
+  const [fullSalaryData, categories, cities] = await Promise.all([
+    getSalaryData(),
     getCategories(),
     getSalaryCities(),
   ]);
+
+  // In-memory filter on cached dataset — no DB round-trip per filter change
+  const salaryData = fullSalaryData.filter((row) => {
+    if (searchParams.category && row.category_slug !== searchParams.category) return false;
+    if (searchParams.city && row.city !== searchParams.city) return false;
+    if (searchParams.currency && row.currency !== searchParams.currency) return false;
+    return true;
+  });
 
   const categoryOptions = categories.map((c) => ({
     slug: c.slug,

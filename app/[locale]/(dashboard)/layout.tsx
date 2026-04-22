@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { getProfile } from "@/lib/queries/profile";
+import { getProfile, getCachedUser } from "@/lib/queries/profile";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import type { UserRole } from "@/lib/types/enums";
@@ -10,36 +10,26 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/auth/login");
-  }
+  const user = await getCachedUser();
+  if (!user) redirect("/auth/login");
 
   const profile = await getProfile(user.id);
   const role: UserRole = profile?.role ?? "seeker";
   const fullName = profile?.full_name || profile?.full_name_ka || null;
   const avatarUrl = profile?.avatar_url ?? null;
 
-  // O10: Optimized unread count — head:true for both queries, no data transfer
+  // Employer unread applications — single JOIN query replaces the previous
+  // two sequential round-trips (jobIds then count). We select a boolean
+  // `applications(id)` subquery which Postgres JOINs efficiently.
   let newApplicationsCount = 0;
   if (role === "employer") {
-    const { data: jobIds } = await supabase
-      .from("jobs")
-      .select("id", { head: false })
-      .eq("posted_by", user.id);
-    const ids = (jobIds ?? []).map((j) => j.id);
-    if (ids.length > 0) {
-      const { count } = await supabase
-        .from("applications")
-        .select("id", { count: "exact", head: true })
-        .in("job_id", ids)
-        .eq("is_viewed", false);
-      newApplicationsCount = count ?? 0;
-    }
+    const supabase = createClient();
+    const { count } = await supabase
+      .from("applications")
+      .select("id, job:jobs!inner(posted_by)", { count: "exact", head: true })
+      .eq("is_viewed", false)
+      .eq("job.posted_by", user.id);
+    newApplicationsCount = count ?? 0;
   }
 
   return (
