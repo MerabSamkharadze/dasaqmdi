@@ -515,3 +515,90 @@ export async function deleteJobAdminAction(jobId: string): Promise<ActionResult>
   revalidatePath("/admin/jobs");
   return { error: null };
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// Log maintenance — admin can prune admin_logs to keep the table bounded
+// ─────────────────────────────────────────────────────────────────────────
+
+export async function deleteLogsAction(logIds: string[]): Promise<ActionResult> {
+  if (logIds.length === 0) return { error: null };
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  const supabase = createClient();
+
+  // `.select()` after delete returns deleted rows so we can verify the RLS
+  // policy actually allowed the delete (silent 0-row deletes were a bug).
+  const { data: deleted, error } = await supabase
+    .from("admin_logs")
+    .delete()
+    .in("id", logIds)
+    .select("id");
+
+  if (error) return { error: error.message };
+
+  const actualCount = deleted?.length ?? 0;
+  if (actualCount === 0) {
+    return {
+      error: "No logs were deleted. Ensure migration 020 (admin_logs DELETE policy) has been applied.",
+    };
+  }
+
+  // Meta-audit: record the cleanup so deletion history itself is traceable
+  await logAdminAction(supabase, adminId, "purge_logs", "system", "admin_logs", {
+    count: actualCount,
+    criteria: "selected",
+  });
+
+  revalidatePath("/admin/logs");
+  return { error: null };
+}
+
+export async function clearOldLogsAction(days: number): Promise<ActionResult<{ count: number }>> {
+  const adminId = await verifyAdmin();
+  if (!adminId) return { error: "Unauthorized" };
+
+  // Safety guard — don't allow 0 or negative (would wipe everything)
+  const safeDays = Math.max(1, Math.floor(days));
+
+  const supabase = createClient();
+
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - safeDays);
+  const cutoffIso = cutoff.toISOString();
+
+  const { data: deleted, error } = await supabase
+    .from("admin_logs")
+    .delete()
+    .lt("created_at", cutoffIso)
+    .select("id");
+
+  if (error) return { error: error.message };
+
+  const actualCount = deleted?.length ?? 0;
+  if (actualCount === 0) {
+    // Could mean nothing to delete OR RLS policy is missing. Disambiguate
+    // by checking whether any rows existed at the cutoff.
+    const { count: existedCount } = await supabase
+      .from("admin_logs")
+      .select("id", { count: "exact", head: true })
+      .lt("created_at", cutoffIso);
+
+    if ((existedCount ?? 0) > 0) {
+      return {
+        error: "Delete blocked by RLS. Ensure migration 020 (admin_logs DELETE policy) has been applied.",
+      };
+    }
+    // Genuinely nothing to clean — return success with 0 count
+    return { error: null, data: { count: 0 } };
+  }
+
+  await logAdminAction(supabase, adminId, "purge_logs", "system", "admin_logs", {
+    count: actualCount,
+    criteria: `older_than_${safeDays}d`,
+    cutoff: cutoffIso,
+  });
+
+  revalidatePath("/admin/logs");
+  return { error: null, data: { count: actualCount } };
+}

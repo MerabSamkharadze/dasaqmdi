@@ -452,18 +452,40 @@ export type AdminLog = {
   created_at: string;
 };
 
-export async function getAdminLogs(page = 1, perPage = 20): Promise<{ logs: AdminLog[]; total: number }> {
+export const ADMIN_LOG_ACTIONS = [
+  "verify_company",
+  "change_role",
+  "approve_job",
+  "reject_job",
+  "delete_job",
+  "upgrade_vip",
+  "remove_vip",
+  "boost_purchased",
+  "create_external_job",
+  "purge_logs",
+] as const;
+
+export type AdminLogAction = (typeof ADMIN_LOG_ACTIONS)[number];
+
+export async function getAdminLogs(
+  page = 1,
+  perPage = 20,
+  action?: string,
+): Promise<{ logs: AdminLog[]; total: number }> {
   const supabase = await requireAdmin();
   const from = (page - 1) * perPage;
   const to = from + perPage - 1;
 
-  const [{ data, count }, ] = await Promise.all([
-    supabase
-      .from("admin_logs")
-      .select("*", { count: "exact" })
-      .order("created_at", { ascending: false })
-      .range(from, to),
-  ]);
+  let query = supabase
+    .from("admin_logs")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false });
+
+  if (action && (ADMIN_LOG_ACTIONS as readonly string[]).includes(action)) {
+    query = query.eq("action", action);
+  }
+
+  const { data, count } = await query.range(from, to);
 
   return {
     logs: (data as AdminLog[]) ?? [],

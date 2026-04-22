@@ -12,6 +12,7 @@ import {
   Building2,
   User as UserIcon,
   Calendar,
+  Eraser,
 } from "lucide-react";
 import type { AdminLog } from "@/lib/queries/admin";
 
@@ -54,6 +55,7 @@ const ACTION_COLORS: Record<string, string> = {
   upgrade_vip: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
   remove_vip: "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400",
   create_external_job: "bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-400",
+  purge_logs: "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400",
 };
 
 const ACTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -66,6 +68,7 @@ const ACTION_ICONS: Record<string, React.ComponentType<{ className?: string }>> 
   upgrade_vip: Star,
   remove_vip: Star,
   create_external_job: ExternalLink,
+  purge_logs: Eraser,
 };
 
 function formatDateTime(iso: string, locale: string): string {
@@ -350,6 +353,21 @@ function renderBody(
               </a>
             )}
           </div>
+        </div>
+      );
+    }
+
+    case "purge_logs": {
+      const count = typeof meta.count === "number" ? meta.count : 0;
+      const criteria = typeof meta.criteria === "string" ? meta.criteria : "";
+      return (
+        <div className="flex items-center gap-2 text-[11px] text-muted-foreground/70 flex-wrap">
+          <span className="font-medium text-foreground/80 tabular-nums">
+            {count} logs
+          </span>
+          <Badge variant="outline" className="text-[9px] font-normal px-1.5 py-0">
+            {criteria}
+          </Badge>
         </div>
       );
     }

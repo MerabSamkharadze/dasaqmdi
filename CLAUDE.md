@@ -555,6 +555,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 | `017_external_jobs.sql` | external_url, external_source columns + system company |
 | `018_vip_jobs.sql` | vip_level, vip_until columns + index |
 | `019_storage_policies.sql` | RLS policies for avatars / company-logos / resumes buckets (owner-write, public/owner-read) |
+| `020_admin_logs_delete_policy.sql` | DELETE policy for admin_logs (was missing from M016, blocked bulk/age cleanup) |
 
 ---
 
