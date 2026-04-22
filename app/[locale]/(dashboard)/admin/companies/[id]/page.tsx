@@ -1,6 +1,6 @@
 import { getAdminCompanyDetail } from "@/lib/queries/admin";
 import { getTranslations, getLocale } from "next-intl/server";
-import { localized } from "@/lib/utils";
+import { localized, cn } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { AdminVerifyButton } from "@/components/dashboard/admin-verify-button";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
@@ -16,10 +16,13 @@ import {
   ArrowLeft,
   User,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { getBillingCycle, isLegacyVariant, type PaidPlan } from "@/lib/lemonsqueezy";
 import type { Metadata } from "next";
+import type { SubscriptionPlan } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Company Detail" };
 
@@ -37,14 +40,26 @@ export default async function AdminCompanyDetailPage({
   params: { id: string };
 }) {
   const t = await getTranslations("admin");
+  const tBilling = await getTranslations("billing");
   const locale = await getLocale();
   const data = await getAdminCompanyDetail(params.id);
 
   if (!data) notFound();
 
-  const { company, owner, activeJobsCount, totalJobsCount, totalApplicationsCount, subscription } = data;
+  const { company, owner, activeJobsCount, totalJobsCount, totalApplicationsCount, subscription, activeBoosts } = data;
   const name = localized(company, "name", locale);
   const description = localized(company, "description", locale);
+
+  const planLabels: Record<SubscriptionPlan, string> = {
+    free: tBilling("planLabel.free"),
+    pro: tBilling("planLabel.pro"),
+    verified: tBilling("planLabel.verified"),
+  };
+
+  const subPlan = subscription?.plan as SubscriptionPlan | undefined;
+  const paidPlan: PaidPlan | null = subPlan === "pro" || subPlan === "verified" ? subPlan : null;
+  const cycle = paidPlan ? getBillingCycle(subscription?.variant_id ?? null, paidPlan) : null;
+  const legacy = paidPlan ? isLegacyVariant(subscription?.variant_id ?? null, paidPlan) : false;
 
   const planColors: Record<string, string> = {
     free: "text-[11px]",
@@ -161,20 +176,74 @@ export default async function AdminCompanyDetailPage({
           {subscription ? (
             <>
               <Badge variant="outline" className={planColors[subscription.plan] ?? "text-[11px]"}>
-                {subscription.plan.toUpperCase()}
+                {planLabels[subscription.plan as SubscriptionPlan] ?? subscription.plan}
               </Badge>
               <Badge className={`mt-1 ${statusColors[subscription.status] ?? "text-[11px]"}`}>
                 {subscription.status}
               </Badge>
+              <div className="flex items-center justify-center gap-1 mt-1 flex-wrap">
+                {cycle && (
+                  <span className="text-[10px] text-muted-foreground/70">
+                    {cycle === "yearly" ? t("yearly") : t("monthly")}
+                  </span>
+                )}
+                {legacy && (
+                  <span className="text-[10px] text-amber-700 dark:text-amber-400">
+                    {t("legacy")}
+                  </span>
+                )}
+              </div>
               <p className="text-[10px] text-muted-foreground/50 mt-1">
                 {formatDate(subscription.current_period_end, locale)}
               </p>
             </>
           ) : (
-            <p className="text-sm text-muted-foreground">Free</p>
+            <p className="text-sm text-muted-foreground">{planLabels.free}</p>
           )}
         </div>
       </div>
+
+      {/* Active Boosts */}
+      {activeBoosts.length > 0 && (
+        <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-3.5 w-3.5 text-amber-500/70" />
+            <h2 className="text-[13px] font-semibold tracking-tight">
+              {t("activeBoosts")}
+            </h2>
+          </div>
+          <div className="flex flex-col gap-2">
+            {activeBoosts.map((boost) => (
+              <div
+                key={boost.jobId}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/60 px-3.5 py-2.5"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded-md px-1.5 py-0.5 text-[10px] font-semibold",
+                      boost.vipLevel === "gold"
+                        ? "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
+                        : "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400",
+                    )}
+                  >
+                    {boost.vipLevel === "gold" ? "🥇 GOLD" : "🥈 SILVER"}
+                  </span>
+                  <Link
+                    href={`/jobs/${boost.jobId}`}
+                    className="text-[13px] font-medium text-foreground hover:text-primary transition-colors truncate"
+                  >
+                    {locale === "ka" ? (boost.title_ka || boost.title) : boost.title}
+                  </Link>
+                </div>
+                <span className="text-[11px] text-muted-foreground/70 tabular-nums shrink-0">
+                  {formatDate(boost.vipUntil, locale)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Owner */}
       {owner && (

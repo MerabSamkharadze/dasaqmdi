@@ -22,6 +22,9 @@ const ACTION_COLORS: Record<string, string> = {
   reject_job: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
   delete_job: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-400",
   change_role: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400",
+  boost_purchased: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+  upgrade_vip: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
+  remove_vip: "bg-slate-100 text-slate-700 dark:bg-slate-500/15 dark:text-slate-400",
 };
 
 const PER_PAGE = 20;
@@ -82,6 +85,13 @@ export default async function AdminLogsPage({
                   {meta.old_role && meta.new_role && (
                     <span className="ml-2 text-[11px]">
                       {meta.old_role} → {meta.new_role}
+                    </span>
+                  )}
+                  {meta.level && (
+                    <span className="ml-2 text-[11px] text-amber-700 dark:text-amber-400 font-medium">
+                      {meta.level === "gold" ? "🥇" : "🥈"} {String(meta.level).toUpperCase()}
+                      {meta.days ? ` · ${meta.days}d` : ""}
+                      {meta.total_amount ? ` · ${meta.total_amount}` : ""}
                     </span>
                   )}
                 </div>

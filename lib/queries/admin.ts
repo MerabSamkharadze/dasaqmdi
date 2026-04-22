@@ -26,11 +26,43 @@ async function requireAdmin(): Promise<SupabaseClient> {
 export async function getAdminStats() {
   const supabase = await requireAdmin();
 
-  const [users, jobs, companies, applications] = await Promise.all([
+  const nowIso = new Date().toISOString();
+  const sinceWeek = new Date();
+  sinceWeek.setDate(sinceWeek.getDate() - 7);
+  const sinceWeekIso = sinceWeek.toISOString();
+
+  const [
+    users,
+    jobs,
+    companies,
+    applications,
+    paidSubs,
+    activeBoosts,
+    pendingJobs,
+    newUsersWeek,
+  ] = await Promise.all([
     supabase.from("profiles").select("id", { count: "exact", head: true }),
     supabase.from("jobs").select("id", { count: "exact", head: true }),
     supabase.from("companies").select("id", { count: "exact", head: true }),
     supabase.from("applications").select("id", { count: "exact", head: true }),
+    supabase
+      .from("subscriptions")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active")
+      .neq("plan", "free"),
+    supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .neq("vip_level", "normal")
+      .gte("vip_until", nowIso),
+    supabase
+      .from("jobs")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "pending"),
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", sinceWeekIso),
   ]);
 
   return {
@@ -38,6 +70,10 @@ export async function getAdminStats() {
     totalJobs: jobs.count ?? 0,
     totalCompanies: companies.count ?? 0,
     totalApplications: applications.count ?? 0,
+    paidSubscriptions: paidSubs.count ?? 0,
+    activeBoosts: activeBoosts.count ?? 0,
+    pendingJobs: pendingJobs.count ?? 0,
+    newUsersThisWeek: newUsersWeek.count ?? 0,
   };
 }
 
@@ -139,6 +175,62 @@ export async function getApplicationTrend(days = 30): Promise<TrendPoint[]> {
   return (data as TrendPoint[]) ?? [];
 }
 
+function emptyTrend(days: number): TrendPoint[] {
+  const out: TrendPoint[] = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    out.push({ date: d.toISOString().slice(0, 10), count: 0 });
+  }
+  return out;
+}
+
+function bucketByDay(rows: Array<{ created_at: string }>, days: number): TrendPoint[] {
+  const trend = emptyTrend(days);
+  const index = new Map<string, number>();
+  trend.forEach((p, i) => index.set(p.date, i));
+  for (const row of rows) {
+    const day = row.created_at.slice(0, 10);
+    const idx = index.get(day);
+    if (idx !== undefined) trend[idx].count += 1;
+  }
+  return trend;
+}
+
+/** New paid subscriptions (pro + verified) per day over the last N days. */
+export async function getSubscriptionTrend(days = 30): Promise<TrendPoint[]> {
+  const supabase = await requireAdmin();
+  const since = new Date();
+  since.setDate(since.getDate() - (days - 1));
+  since.setHours(0, 0, 0, 0);
+
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("created_at")
+    .neq("plan", "free")
+    .gte("created_at", since.toISOString());
+
+  return bucketByDay(data ?? [], days);
+}
+
+/** Boost purchases (from admin_logs) per day over the last N days. */
+export async function getBoostRevenueTrend(days = 30): Promise<TrendPoint[]> {
+  const supabase = await requireAdmin();
+  const since = new Date();
+  since.setDate(since.getDate() - (days - 1));
+  since.setHours(0, 0, 0, 0);
+
+  const { data } = await supabase
+    .from("admin_logs")
+    .select("created_at")
+    .eq("action", "boost_purchased")
+    .gte("created_at", since.toISOString());
+
+  return bucketByDay(data ?? [], days);
+}
+
 export async function getCategoryBreakdown(): Promise<CategoryCount[]> {
   const supabase = await requireAdmin();
   const { data } = await supabase.rpc("get_category_breakdown");
@@ -200,8 +292,16 @@ export type AdminCompanyDetail = {
   subscription: {
     plan: string;
     status: string;
+    variant_id: string | null;
     current_period_end: string | null;
   } | null;
+  activeBoosts: Array<{
+    jobId: string;
+    title: string;
+    title_ka: string | null;
+    vipLevel: "silver" | "gold";
+    vipUntil: string;
+  }>;
 };
 
 export async function getAdminCompanyDetail(companyId: string): Promise<AdminCompanyDetail | null> {
@@ -224,7 +324,7 @@ export async function getAdminCompanyDetail(companyId: string): Promise<AdminCom
     .eq("company_id", companyId);
   const jobIds = (companyJobs ?? []).map((j) => j.id);
 
-  const [owner, activeJobs, totalJobs, applications, subscription] = await Promise.all([
+  const [owner, activeJobs, totalJobs, applications, subscription, boosts] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, full_name, full_name_ka, role")
@@ -248,12 +348,29 @@ export async function getAdminCompanyDetail(companyId: string): Promise<AdminCom
       : Promise.resolve({ count: 0 }),
     supabase
       .from("subscriptions")
-      .select("plan, status, current_period_end")
+      .select("plan, status, variant_id, current_period_end")
       .eq("company_id", companyId)
       .order("created_at", { ascending: false })
       .limit(1)
       .single(),
+    supabase
+      .from("jobs")
+      .select("id, title, title_ka, vip_level, vip_until")
+      .eq("company_id", companyId)
+      .neq("vip_level", "normal")
+      .gte("vip_until", now)
+      .order("vip_until", { ascending: true }),
   ]);
+
+  const activeBoosts = (boosts.data ?? [])
+    .filter((b) => b.vip_until)
+    .map((b) => ({
+      jobId: b.id,
+      title: b.title,
+      title_ka: b.title_ka,
+      vipLevel: b.vip_level as "silver" | "gold",
+      vipUntil: b.vip_until as string,
+    }));
 
   return {
     company,
@@ -262,6 +379,7 @@ export async function getAdminCompanyDetail(companyId: string): Promise<AdminCom
     totalJobsCount: totalJobs.count ?? 0,
     totalApplicationsCount: applications.count ?? 0,
     subscription: subscription.data,
+    activeBoosts,
   };
 }
 
@@ -271,6 +389,7 @@ export type AdminSubscription = {
   id: string;
   plan: string;
   status: string;
+  variant_id: string | null;
   current_period_start: string | null;
   current_period_end: string | null;
   created_at: string;
@@ -287,7 +406,7 @@ export async function getAllSubscriptions(filters?: AdminSubscriptionFilters): P
 
   let query = supabase
     .from("subscriptions")
-    .select("id, plan, status, current_period_start, current_period_end, created_at, company:companies(id, name, slug)")
+    .select("id, plan, status, variant_id, current_period_start, current_period_end, created_at, company:companies(id, name, slug)")
     .order("created_at", { ascending: false });
 
   if (filters?.status && ["active", "cancelled", "past_due", "expired"].includes(filters.status)) {

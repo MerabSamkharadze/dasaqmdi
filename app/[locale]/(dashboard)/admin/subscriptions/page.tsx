@@ -6,7 +6,9 @@ import { AdminSubscriptionFilters } from "@/components/dashboard/admin-subscript
 import { CreditCard, Calendar } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { getBillingCycle, isLegacyVariant, type PaidPlan } from "@/lib/lemonsqueezy";
 import type { Metadata } from "next";
+import type { SubscriptionPlan } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Subscriptions" };
 
@@ -37,6 +39,7 @@ export default async function AdminSubscriptionsPage({
   searchParams: { status?: string; plan?: string };
 }) {
   const t = await getTranslations("admin");
+  const tBilling = await getTranslations("billing");
   const locale = await getLocale();
   const subscriptions = await getAllSubscriptions({
     status: searchParams.status,
@@ -46,6 +49,17 @@ export default async function AdminSubscriptionsPage({
   const activeCount = subscriptions.filter((s) => s.status === "active").length;
   const paidCount = subscriptions.filter((s) => s.plan !== "free").length;
 
+  // Revenue summary — active subs only, split by plan
+  const activeSubs = subscriptions.filter((s) => s.status === "active");
+  const businessActive = activeSubs.filter((s) => s.plan === "pro").length;
+  const proActive = activeSubs.filter((s) => s.plan === "verified").length;
+
+  const planLabels: Record<SubscriptionPlan, string> = {
+    free: tBilling("planLabel.free"),
+    pro: tBilling("planLabel.pro"),
+    verified: tBilling("planLabel.verified"),
+  };
+
   const filterTranslations = {
     allStatuses: t("allStatuses"),
     active: t("active"),
@@ -53,9 +67,9 @@ export default async function AdminSubscriptionsPage({
     pastDue: t("subscriptionPastDue"),
     expired: t("expired"),
     allPlans: t("allPlans"),
-    free: "Free",
-    pro: "Pro",
-    verified: "Verified",
+    free: planLabels.free,
+    pro: planLabels.pro,
+    verified: planLabels.verified,
   };
 
   return (
@@ -65,16 +79,12 @@ export default async function AdminSubscriptionsPage({
         <CountBadge>{subscriptions.length}</CountBadge>
       </div>
 
-      {/* Summary */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft text-center">
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">{activeCount}</p>
-          <p className="text-[11px] text-muted-foreground mt-1">{t("activeSubscriptions")}</p>
-        </div>
-        <div className="rounded-xl border border-border/60 bg-card p-5 shadow-soft text-center">
-          <p className="text-2xl font-bold text-primary tabular-nums">{paidCount}</p>
-          <p className="text-[11px] text-muted-foreground mt-1">{t("paidSubscriptions")}</p>
-        </div>
+      {/* Summary cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <SummaryCard value={activeCount} label={t("activeSubscriptions")} color="emerald" />
+        <SummaryCard value={paidCount} label={t("paidSubscriptions")} color="primary" />
+        <SummaryCard value={businessActive} label={planLabels.pro} color="primary" />
+        <SummaryCard value={proActive} label={planLabels.verified} color="emerald" />
       </div>
 
       <Suspense>
@@ -89,14 +99,16 @@ export default async function AdminSubscriptionsPage({
       ) : (
         <div className="flex flex-col gap-2">
           {subscriptions.map((sub, i) => {
-            const companyName = sub.company
-              ? sub.company.name
-              : "—";
+            const companyName = sub.company?.name ?? "—";
+            const plan = sub.plan as SubscriptionPlan;
+            const paidPlan: PaidPlan | null = plan === "pro" || plan === "verified" ? plan : null;
+            const cycle = paidPlan ? getBillingCycle(sub.variant_id, paidPlan) : null;
+            const legacy = paidPlan ? isLegacyVariant(sub.variant_id, paidPlan) : false;
 
             return (
               <div
                 key={sub.id}
-                className="flex items-center gap-4 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft animate-fade-in"
+                className="flex items-center gap-3 rounded-xl border border-border/60 bg-card px-5 py-3.5 shadow-soft animate-fade-in"
                 style={{ animationDelay: `${i * 30}ms` }}
               >
                 <CreditCard className="h-4 w-4 text-muted-foreground/40 shrink-0" />
@@ -112,16 +124,26 @@ export default async function AdminSubscriptionsPage({
                   ) : (
                     <p className="text-[13px] font-medium text-muted-foreground">—</p>
                   )}
-                  <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground/60">
+                  <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground/60 flex-wrap">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3 opacity-50" />
                       {formatDate(sub.current_period_end, locale)}
                     </span>
+                    {cycle && (
+                      <span className="text-muted-foreground/70">
+                        {cycle === "yearly" ? t("yearly") : t("monthly")}
+                      </span>
+                    )}
+                    {legacy && (
+                      <span className="text-amber-700 dark:text-amber-400">
+                        {t("legacy")}
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 <Badge variant="outline" className={planColors[sub.plan] ?? "text-[11px]"}>
-                  {sub.plan.toUpperCase()}
+                  {planLabels[plan] ?? sub.plan}
                 </Badge>
 
                 <Badge className={statusColors[sub.status] ?? "text-[11px]"}>
@@ -132,6 +154,27 @@ export default async function AdminSubscriptionsPage({
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function SummaryCard({
+  value,
+  label,
+  color,
+}: {
+  value: number;
+  label: string;
+  color: "emerald" | "primary";
+}) {
+  const colorClass =
+    color === "emerald"
+      ? "text-emerald-600 dark:text-emerald-400"
+      : "text-primary";
+  return (
+    <div className="rounded-xl border border-border/60 bg-card p-4 shadow-soft text-center">
+      <p className={`text-2xl font-bold tabular-nums ${colorClass}`}>{value}</p>
+      <p className="text-[11px] text-muted-foreground mt-1 truncate">{label}</p>
     </div>
   );
 }
