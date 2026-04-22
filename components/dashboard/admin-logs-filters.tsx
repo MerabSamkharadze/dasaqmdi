@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useCallback, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -10,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { IceCream } from "@/components/shared/loaders/ice-cream";
 import type { AdminLogAction } from "@/lib/queries/admin";
 
 type AdminLogsFiltersProps = {
@@ -26,6 +28,9 @@ export function AdminLogsFilters({ actions, translations: t }: AdminLogsFiltersP
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const currentAction = searchParams.get("action") ?? "all";
 
@@ -47,30 +52,39 @@ export function AdminLogsFilters({ actions, translations: t }: AdminLogsFiltersP
   );
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 transition-opacity duration-200",
-        isPending && "opacity-60",
-      )}
-    >
-      <Select value={currentAction} onValueChange={updateAction}>
-        <SelectTrigger
-          className="w-full sm:w-[240px] h-9 text-[13px]"
-          aria-label={t.filterByAction}
-        >
-          <SelectValue placeholder={t.allActions} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all" className="text-[13px]">
-            {t.allActions}
-          </SelectItem>
-          {actions.map((action) => (
-            <SelectItem key={action} value={action} className="text-[13px]">
-              {t.actionLabels[action] ?? action}
+    <>
+      <div
+        className={cn(
+          "flex items-center gap-3 transition-opacity duration-200",
+          isPending && "opacity-60",
+        )}
+      >
+        <Select value={currentAction} onValueChange={updateAction}>
+          <SelectTrigger
+            className="w-full sm:w-[240px] h-9 text-[13px]"
+            aria-label={t.filterByAction}
+          >
+            <SelectValue placeholder={t.allActions} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all" className="text-[13px]">
+              {t.allActions}
             </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+            {actions.map((action) => (
+              <SelectItem key={action} value={action} className="text-[13px]">
+                {t.actionLabels[action] ?? action}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {mounted && isPending && createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <IceCream />
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
