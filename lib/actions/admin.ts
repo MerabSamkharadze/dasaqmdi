@@ -281,12 +281,10 @@ export async function createExternalJobAction(
   const { externalJobSchema } = await import("@/lib/validations/external-job");
 
   const raw = {
+    source_language: formData.get("source_language") as string,
     title: formData.get("title") as string,
-    title_ka: formData.get("title_ka") as string,
     description: formData.get("description") as string,
-    description_ka: formData.get("description_ka") as string,
     requirements: formData.get("requirements") as string,
-    requirements_ka: formData.get("requirements_ka") as string,
     category_id: formData.get("category_id") as string,
     job_type: formData.get("job_type") as string,
     city: formData.get("city") as string,
@@ -318,13 +316,15 @@ export async function createExternalJobAction(
     ? parsed.data.tags.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
+  // Single-language: content goes into the NOT-NULL columns regardless of
+  // language; the *_ka sibling stays NULL and `localized()` falls back.
   const { data: newJob, error } = await supabase.from("jobs").insert({
     title: parsed.data.title,
-    title_ka: parsed.data.title_ka || null,
+    title_ka: null,
     description: parsed.data.description,
-    description_ka: parsed.data.description_ka || null,
+    description_ka: null,
     requirements: parsed.data.requirements || null,
-    requirements_ka: parsed.data.requirements_ka || null,
+    requirements_ka: null,
     category_id: Number(parsed.data.category_id),
     job_type: parsed.data.job_type,
     city: parsed.data.city || null,
@@ -350,7 +350,7 @@ export async function createExternalJobAction(
 
   await logAdminAction(supabase, adminId, "create_external_job", "job", newJob?.id ?? "new", {
     title: parsed.data.title,
-    title_ka: parsed.data.title_ka || null,
+    source_language: parsed.data.source_language,
     source: parsed.data.external_source,
     url: parsed.data.external_url,
     category_slug: category?.slug,

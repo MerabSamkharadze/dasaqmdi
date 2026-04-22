@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useScrollOnSave } from "@/lib/hooks/use-scroll-on-save";
 import { useTranslations } from "next-intl";
@@ -17,8 +17,11 @@ import {
 } from "@/components/ui/select";
 import { SubmitButton } from "@/components/shared/submit-button";
 import { JOB_TYPES, SALARY_CURRENCIES } from "@/lib/types/enums";
+import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/types";
 import type { ActionResult } from "@/lib/types";
+
+type SourceLanguage = "ka" | "en";
 
 const initialState: ActionResult = { error: null };
 
@@ -29,14 +32,19 @@ type ExternalJobFormProps = {
 
 export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
   const [state, formAction] = useFormState(createExternalJobAction, initialState);
+  const [sourceLang, setSourceLang] = useState<SourceLanguage>("ka");
   const t = useTranslations("admin");
   const tc = useTranslations("common");
   const tt = useTranslations("jobs.types");
   const formRef = useRef<HTMLFormElement>(null);
   useScrollOnSave(state, formRef);
 
+  const langLabel = sourceLang === "ka" ? t("externalLangKa") : t("externalLangEn");
+
   return (
     <form ref={formRef} action={formAction} className="space-y-6">
+      <input type="hidden" name="source_language" value={sourceLang} />
+
       {state.error && (
         <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-[13px] text-destructive/80">
           {state.error}
@@ -75,18 +83,36 @@ export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input id="title" name="title" required />
+      {/* Source language toggle */}
+      <div className="rounded-xl border border-border/60 bg-card p-5 space-y-3">
+        <div className="flex items-baseline justify-between gap-3 flex-wrap">
+          <Label className="text-[13px] font-semibold">{t("externalSourceLanguage")}</Label>
+          <p className="text-[11px] text-muted-foreground/70">{t("externalSourceLanguageHint")}</p>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="title_ka">Title (Georgian)</Label>
-          <Input id="title_ka" name="title_ka" />
+        <div className="inline-flex items-center gap-1 rounded-xl border border-border/60 bg-background p-1">
+          <LangButton
+            active={sourceLang === "ka"}
+            onClick={() => setSourceLang("ka")}
+            label={t("externalLangKa")}
+          />
+          <LangButton
+            active={sourceLang === "en"}
+            onClick={() => setSourceLang("en")}
+            label={t("externalLangEn")}
+          />
+        </div>
+      </div>
+
+      <div className="grid gap-6 sm:grid-cols-2">
+        <div className="space-y-2 sm:col-span-2">
+          <Label htmlFor="title">
+            {t("externalTitle")} <span className="text-muted-foreground/60 font-normal">({langLabel})</span>
+          </Label>
+          <Input id="title" name="title" required lang={sourceLang} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="category_id">Category</Label>
+          <Label htmlFor="category_id">{t("externalCategory")}</Label>
           <Select name="category_id">
             <SelectTrigger>
               <SelectValue />
@@ -102,7 +128,7 @@ export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="job_type">Job Type</Label>
+          <Label htmlFor="job_type">{t("externalJobType")}</Label>
           <Select name="job_type" defaultValue="full-time">
             <SelectTrigger>
               <SelectValue />
@@ -116,12 +142,12 @@ export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
+          <Label htmlFor="city">{t("externalCity")}</Label>
           <Input id="city" name="city" />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="salary_currency">Currency</Label>
+          <Label htmlFor="salary_currency">{t("externalCurrency")}</Label>
           <Select name="salary_currency" defaultValue="GEL">
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
@@ -133,33 +159,29 @@ export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="salary_min">Min Salary</Label>
+          <Label htmlFor="salary_min">{t("externalSalaryMin")}</Label>
           <Input id="salary_min" name="salary_min" type="number" min={0} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="salary_max">Max Salary</Label>
+          <Label htmlFor="salary_max">{t("externalSalaryMax")}</Label>
           <Input id="salary_max" name="salary_max" type="number" min={0} />
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea id="description" name="description" rows={6} required />
+        <Label htmlFor="description">
+          {t("externalDescription")} <span className="text-muted-foreground/60 font-normal">({langLabel})</span>
+        </Label>
+        <Textarea id="description" name="description" rows={6} required lang={sourceLang} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="description_ka">Description (Georgian)</Label>
-        <Textarea id="description_ka" name="description_ka" rows={6} />
+        <Label htmlFor="requirements">
+          {t("externalRequirements")} <span className="text-muted-foreground/60 font-normal">({langLabel})</span>
+        </Label>
+        <Textarea id="requirements" name="requirements" rows={4} lang={sourceLang} />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="requirements">Requirements</Label>
-        <Textarea id="requirements" name="requirements" rows={4} />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="requirements_ka">Requirements (Georgian)</Label>
-        <Textarea id="requirements_ka" name="requirements_ka" rows={4} />
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="tags">Tags / Skills</Label>
+        <Label htmlFor="tags">{t("externalTags")}</Label>
         <Input id="tags" name="tags" placeholder="React, TypeScript, Node.js" />
       </div>
 
@@ -167,5 +189,30 @@ export function ExternalJobForm({ categories, locale }: ExternalJobFormProps) {
         <SubmitButton pendingText="...">{tc("create")}</SubmitButton>
       </div>
     </form>
+  );
+}
+
+function LangButton({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "inline-flex items-center rounded-lg px-4 py-1.5 text-[13px] font-medium transition-all duration-200",
+        active
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {label}
+    </button>
   );
 }

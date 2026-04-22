@@ -1,12 +1,17 @@
 import { z } from "zod";
 
+/**
+ * External jobs are scraped from external boards (jobs.ge, hr.ge, etc.) and
+ * exist in a single source language. Admin picks which language the content
+ * is in; bilingual *_ka columns stay NULL for external jobs. The `localized()`
+ * helper falls back to whichever column has content, so KA users viewing an
+ * EN-source job still see the English text (and vice versa).
+ */
 export const externalJobSchema = z.object({
+  source_language: z.enum(["ka", "en"]).default("ka"),
   title: z.string().min(2).max(200),
-  title_ka: z.string().optional().default(""),
   description: z.string().min(10),
-  description_ka: z.string().optional().default(""),
   requirements: z.string().optional().default(""),
-  requirements_ka: z.string().optional().default(""),
   category_id: z.string().min(1, "Category required"),
   job_type: z.string().default("full-time"),
   city: z.string().optional().default(""),
