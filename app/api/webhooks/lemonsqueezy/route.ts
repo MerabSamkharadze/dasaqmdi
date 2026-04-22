@@ -66,6 +66,21 @@ export async function POST(request: Request) {
     const vipUntil = new Date();
     vipUntil.setDate(vipUntil.getDate() + VIP_CONFIG[level].days);
 
+    // Snapshot job + company + buyer context BEFORE updating — all captured into the audit log
+    const { data: job } = await supabase
+      .from("jobs")
+      .select("title, title_ka, vip_level, company_id, posted_by, company:companies!inner(name, name_ka, slug)")
+      .eq("id", jobId)
+      .single();
+
+    const { data: buyer } = userId
+      ? await supabase
+          .from("profiles")
+          .select("full_name, full_name_ka")
+          .eq("id", userId)
+          .single()
+      : { data: null };
+
     await supabase
       .from("jobs")
       .update({ vip_level: level, vip_until: vipUntil.toISOString() })
@@ -73,6 +88,7 @@ export async function POST(request: Request) {
 
     // Audit trail — captures revenue events independent of Lemon Squeezy
     if (userId) {
+      const jobCompany = job?.company as unknown as { name: string; name_ka: string | null; slug: string } | undefined;
       await supabase.from("admin_logs").insert({
         action: "boost_purchased",
         actor_id: userId,
@@ -81,9 +97,20 @@ export async function POST(request: Request) {
         metadata: {
           level,
           days: VIP_CONFIG[level].days,
+          previous_level: job?.vip_level ?? "normal",
+          vip_until: vipUntil.toISOString(),
           order_id: String(body.data?.id ?? ""),
           total_amount: attrs?.total_formatted ?? null,
           currency: attrs?.currency ?? null,
+          title: job?.title,
+          title_ka: job?.title_ka,
+          company_id: job?.company_id,
+          company_name: jobCompany?.name,
+          company_name_ka: jobCompany?.name_ka,
+          company_slug: jobCompany?.slug,
+          posted_by: job?.posted_by,
+          actor_name: buyer?.full_name ?? null,
+          actor_name_ka: buyer?.full_name_ka ?? null,
         },
       });
     }
