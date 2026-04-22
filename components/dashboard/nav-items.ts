@@ -11,7 +11,6 @@ import {
   CreditCard,
   Mail,
   BarChart3,
-  ShieldCheck,
   ScrollText,
   ExternalLink,
 } from "lucide-react";
@@ -64,7 +63,8 @@ const adminNav: NavItem[] = [
   { href: "/admin/analytics", labelKey: "analytics", icon: BarChart3 },
   { href: "/admin/subscriptions", labelKey: "subscriptions", icon: CreditCard },
   { href: "/admin/jobs/external/new", labelKey: "addExternalJob", icon: ExternalLink, exact: true },
-  { href: "/admin/moderation", labelKey: "moderation", icon: ShieldCheck },
+  // Moderation route exists but hidden from nav until MODERATION_ENABLED is used.
+  // Re-add with `icon: ShieldCheck` from lucide-react when restoring.
   { href: "/admin/logs", labelKey: "logs", icon: ScrollText },
 ];
 

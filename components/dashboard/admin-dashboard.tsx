@@ -6,7 +6,6 @@ import {
   FileText,
   CreditCard,
   Sparkles,
-  ShieldCheck,
   TrendingUp,
   BarChart3,
   ScrollText,
@@ -21,7 +20,7 @@ type AdminDashboardProps = {
     totalApplications: number;
     paidSubscriptions: number;
     activeBoosts: number;
-    pendingJobs: number;
+    pendingJobs: number; // still fetched but not displayed while moderation is paused
     newUsersThisWeek: number;
   };
   t: (key: string) => string;
@@ -48,7 +47,7 @@ export function AdminDashboard({ data, t }: AdminDashboardProps) {
         <h2 className="text-[13px] font-semibold tracking-tight text-muted-foreground/70 mb-3 uppercase">
           {t("monetizationStats")}
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-3">
           <StatCard
             icon={CreditCard}
             label={t("paidSubscriptions")}
@@ -63,13 +62,6 @@ export function AdminDashboard({ data, t }: AdminDashboardProps) {
             accent="amber"
           />
           <StatCard
-            icon={ShieldCheck}
-            label={t("pendingModeration")}
-            value={data.pendingJobs}
-            highlight={data.pendingJobs > 0}
-            accent="red"
-          />
-          <StatCard
             icon={TrendingUp}
             label={t("newUsersThisWeek")}
             value={data.newUsersThisWeek}
@@ -82,12 +74,11 @@ export function AdminDashboard({ data, t }: AdminDashboardProps) {
         <h2 className="text-[13px] font-semibold tracking-tight text-muted-foreground/70 mb-3 uppercase">
           {t("quickLinks")}
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <QuickLink href="/admin/users" icon={Users} label={t("manageUsers")} />
           <QuickLink href="/admin/jobs" icon={Briefcase} label={t("manageJobs")} />
           <QuickLink href="/admin/companies" icon={Building2} label={t("manageCompanies")} />
           <QuickLink href="/admin/subscriptions" icon={CreditCard} label={t("subscriptionsTitle")} />
-          <QuickLink href="/admin/moderation" icon={ShieldCheck} label={t("moderation")} />
           <QuickLink href="/admin/analytics" icon={BarChart3} label={t("analyticsTitle")} />
           <QuickLink href="/admin/logs" icon={ScrollText} label={t("logsTitle")} />
         </div>
