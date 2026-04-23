@@ -143,6 +143,8 @@ export default async function JobsPage({
     allCategories: t("filters.allCategories"),
     allLocations: t("filters.allLocations"),
     allTypes: t("filters.allTypes"),
+    // ICU placeholder preserved so the client can substitute per suggestion
+    suggestInCategory: t("filters.suggestInCategory", { category: "{category}" }),
     types: jobTranslations.types,
   };
 
@@ -180,6 +182,7 @@ export default async function JobsPage({
           <JobFilters
             categories={categoryOptions}
             translations={filterTranslations}
+            locale={locale}
           />
         </Suspense>
       </div>

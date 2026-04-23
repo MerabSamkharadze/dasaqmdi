@@ -162,6 +162,7 @@ export default async function HomePage({
     allCategories: t("filters.allCategories"),
     allLocations: t("filters.allLocations"),
     allTypes: t("filters.allTypes"),
+    suggestInCategory: t("filters.suggestInCategory", { category: "{category}" }),
     types: jobTranslations.types,
   };
 
@@ -211,6 +212,7 @@ export default async function HomePage({
           <JobFilters
             categories={categoryOptions}
             translations={filterTranslations}
+            locale={locale}
           />
         </Suspense>
       </div>

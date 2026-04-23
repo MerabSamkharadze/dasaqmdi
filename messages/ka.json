@@ -83,7 +83,8 @@
       "salary": "ხელფასი",
       "allCategories": "ყველა კატეგორია",
       "allLocations": "ყველა მდებარეობა",
-      "allTypes": "ყველა ტიპი"
+      "allTypes": "ყველა ტიპი",
+      "suggestInCategory": "ეძებთ სამსახურს კატეგორიაში „{category}“"
     },
     "types": {
       "full-time": "სრული განაკვეთი",
