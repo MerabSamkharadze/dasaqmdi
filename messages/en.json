@@ -85,7 +85,13 @@
       "allLocations": "All Locations",
       "allTypes": "All Types",
       "suggestInCategory": "Looking for jobs in {category}?",
-      "fallbackBanner": "No exact match for \"{term}\" — showing jobs in {categories}"
+      "suggestInCity": "Search in {city}?",
+      "fallbackBanner": "No exact match for \"{term}\" — showing jobs in {categories}",
+      "activeSearch": "Search",
+      "activeCategory": "Category",
+      "activeCity": "City",
+      "activeType": "Type",
+      "clearAll": "Clear all"
     },
     "types": {
       "full-time": "Full-time",

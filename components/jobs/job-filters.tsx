@@ -13,10 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, MapPin } from "lucide-react";
 import { JOB_TYPES } from "@/lib/types/enums";
-import { searchSynonymCategoriesAction } from "@/lib/actions/synonyms";
-import type { ResolvedCategory } from "@/lib/queries/jobs";
+import {
+  searchSynonymCategoriesAction,
+  searchCityCanonicalAction,
+} from "@/lib/actions/synonyms";
+import type { ResolvedCategory, ResolvedCity } from "@/lib/queries/jobs";
 
 const SEARCH_DEBOUNCE_MS = 2000;
 // Autocomplete is a separate, faster signal than the feed search.
@@ -40,8 +43,9 @@ type JobFiltersProps = {
     allCategories: string;
     allLocations: string;
     allTypes: string;
-    // ICU placeholder preserved — client substitutes per suggestion
+    // ICU placeholders preserved — client substitutes per suggestion
     suggestInCategory: string;
+    suggestInCity: string;
     types: Record<string, string>;
   };
 };
@@ -51,15 +55,28 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const autocompleteRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const requestSeqRef = useRef(0);
-  const [suggestions, setSuggestions] = useState<ResolvedCategory[]>([]);
+
+  // Feed-search debounce (fires the 2s URL update for q and city)
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cityDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Autocomplete debounces (fires the 300ms suggestion lookups)
+  const categoryAcRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cityAcRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Stale-response guards — monotonically-increasing sequence per autocomplete
+  const categorySeqRef = useRef(0);
+  const citySeqRef = useRef(0);
+
+  const [categorySuggestions, setCategorySuggestions] = useState<ResolvedCategory[]>([]);
+  const [citySuggestion, setCitySuggestion] = useState<ResolvedCity | null>(null);
 
   useEffect(() => {
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (autocompleteRef.current) clearTimeout(autocompleteRef.current);
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+      if (cityDebounceRef.current) clearTimeout(cityDebounceRef.current);
+      if (categoryAcRef.current) clearTimeout(categoryAcRef.current);
+      if (cityAcRef.current) clearTimeout(cityAcRef.current);
     };
   }, []);
 
@@ -87,23 +104,18 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
     [updateParams]
   );
 
-  const fetchSuggestions = useCallback(
+  // ── Category autocomplete ─────────────────────────────────────────
+
+  const fetchCategorySuggestions = useCallback(
     (term: string) => {
-      // Don't suggest while an explicit category is active — it would
-      // override the user's deliberate scoping.
       if (searchParams.get("category")) {
-        setSuggestions([]);
+        setCategorySuggestions([]);
         return;
       }
-      if (term.length < AUTOCOMPLETE_MIN_LENGTH) {
-        setSuggestions([]);
-        return;
-      }
-      const seq = ++requestSeqRef.current;
+      const seq = ++categorySeqRef.current;
       void searchSynonymCategoriesAction(term).then((result) => {
-        // Drop stale responses — user may have typed again mid-flight
-        if (seq !== requestSeqRef.current) return;
-        setSuggestions(result.categories);
+        if (seq !== categorySeqRef.current) return;
+        setCategorySuggestions(result.categories);
       });
     },
     [searchParams]
@@ -113,45 +125,103 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
     (value: string) => {
       const trimmed = value.trim();
 
-      // Feed search — 2s debounce (existing behavior)
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
+      // Feed search — 2s debounce
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+      searchDebounceRef.current = setTimeout(() => {
         updateParam("q", trimmed);
       }, SEARCH_DEBOUNCE_MS);
 
-      // Suggestion lookup — 300ms debounce (new)
-      if (autocompleteRef.current) clearTimeout(autocompleteRef.current);
+      // Category suggestion — 300ms debounce
+      if (categoryAcRef.current) clearTimeout(categoryAcRef.current);
       if (trimmed.length < AUTOCOMPLETE_MIN_LENGTH) {
-        setSuggestions([]);
+        setCategorySuggestions([]);
         return;
       }
-      autocompleteRef.current = setTimeout(() => {
-        fetchSuggestions(trimmed);
+      categoryAcRef.current = setTimeout(() => {
+        fetchCategorySuggestions(trimmed);
       }, AUTOCOMPLETE_DEBOUNCE_MS);
     },
-    [updateParam, fetchSuggestions]
+    [updateParam, fetchCategorySuggestions]
   );
 
-  const applySuggestion = useCallback(
+  const applyCategorySuggestion = useCallback(
     (slug: string) => {
-      // Switching to category scope: clear q (we've captured the intent)
-      // and clear any in-flight suggestion list so the chip disappears.
-      setSuggestions([]);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (autocompleteRef.current) clearTimeout(autocompleteRef.current);
+      setCategorySuggestions([]);
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+      if (categoryAcRef.current) clearTimeout(categoryAcRef.current);
       updateParams({ category: slug, q: null });
     },
     [updateParams]
   );
 
-  // Hide suggestions entirely when an explicit category is already active —
-  // otherwise we'd nudge the user to re-scope what they already scoped.
-  const visibleSuggestions = searchParams.get("category") ? [] : suggestions;
+  // ── City autocomplete ─────────────────────────────────────────────
+
+  const fetchCitySuggestion = useCallback((term: string) => {
+    const seq = ++citySeqRef.current;
+    void searchCityCanonicalAction(term).then((result) => {
+      if (seq !== citySeqRef.current) return;
+      setCitySuggestion(result.city);
+    });
+  }, []);
+
+  const handleCityChange = useCallback(
+    (value: string) => {
+      const trimmed = value.trim();
+
+      // Feed filter — 2s debounce (uses its own timer so q and city don't
+      // clobber each other's scheduled updates)
+      if (cityDebounceRef.current) clearTimeout(cityDebounceRef.current);
+      cityDebounceRef.current = setTimeout(() => {
+        updateParam("city", trimmed);
+      }, SEARCH_DEBOUNCE_MS);
+
+      // City canonical lookup — 300ms debounce
+      if (cityAcRef.current) clearTimeout(cityAcRef.current);
+      if (trimmed.length < AUTOCOMPLETE_MIN_LENGTH) {
+        setCitySuggestion(null);
+        return;
+      }
+      cityAcRef.current = setTimeout(() => {
+        fetchCitySuggestion(trimmed);
+      }, AUTOCOMPLETE_DEBOUNCE_MS);
+    },
+    [updateParam, fetchCitySuggestion]
+  );
+
+  const applyCitySuggestion = useCallback(
+    (canonicalEn: string) => {
+      setCitySuggestion(null);
+      if (cityDebounceRef.current) clearTimeout(cityDebounceRef.current);
+      if (cityAcRef.current) clearTimeout(cityAcRef.current);
+      updateParam("city", canonicalEn);
+    },
+    [updateParam]
+  );
+
+  // ── Visibility rules ──────────────────────────────────────────────
+
+  // Category: hide when explicit category filter is already set
+  const visibleCategorySuggestions = searchParams.get("category")
+    ? []
+    : categorySuggestions;
+
+  // City: hide when URL already holds the canonical form (avoid self-suggesting)
+  const urlCity = searchParams.get("city");
+  const urlCityLc = urlCity?.toLowerCase();
+  const visibleCitySuggestion =
+    citySuggestion &&
+    urlCityLc !== citySuggestion.name_en.toLowerCase() &&
+    urlCityLc !== citySuggestion.name_ka.toLowerCase()
+      ? citySuggestion
+      : null;
+
+  const hasAnySuggestion =
+    visibleCategorySuggestions.length > 0 || visibleCitySuggestion !== null;
 
   return (
     <div className={cn("flex flex-col gap-3 transition-opacity duration-200", isPending && "opacity-60")}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        {/* Search — debounced feed (2s) + debounced suggestion (300ms) */}
+        {/* Search — debounced feed (2s) + debounced category suggestion (300ms) */}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
           <Input
@@ -202,33 +272,28 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
           </SelectContent>
         </Select>
 
-        {/* City — debounced like search */}
+        {/* City — debounced feed (2s) + debounced canonical lookup (300ms) */}
         <Input
           defaultValue={searchParams.get("city") ?? ""}
           placeholder={translations.location}
           className="w-full sm:w-[130px] h-9 text-[13px]"
-          onChange={(e) => {
-            if (debounceRef.current) clearTimeout(debounceRef.current);
-            debounceRef.current = setTimeout(() => {
-              updateParam("city", e.target.value.trim());
-            }, SEARCH_DEBOUNCE_MS);
-          }}
+          onChange={(e) => handleCityChange(e.target.value)}
         />
       </div>
 
-      {/* Synonym autocomplete — subtle suggestion chips */}
-      {visibleSuggestions.length > 0 && (
+      {/* Autocomplete chips — category + city suggestions in one row */}
+      {hasAnySuggestion && (
         <div className="flex flex-wrap items-center gap-2 animate-fade-in">
-          {visibleSuggestions.map((cat) => {
+          {visibleCategorySuggestions.map((cat) => {
             const label = locale === "ka" ? cat.name_ka : cat.name_en;
             // Function form — avoids $& / $1 interpolation if a category
             // name ever contains "$" (e.g. a "50$" salary landing page).
             const message = translations.suggestInCategory.replace("{category}", () => label);
             return (
               <button
-                key={cat.slug}
+                key={`cat-${cat.slug}`}
                 type="button"
-                onClick={() => applySuggestion(cat.slug)}
+                onClick={() => applyCategorySuggestion(cat.slug)}
                 className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[12px] text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30"
               >
                 <Sparkles className="h-3 w-3 opacity-70" aria-hidden="true" />
@@ -236,6 +301,21 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
               </button>
             );
           })}
+
+          {visibleCitySuggestion && (() => {
+            const label = locale === "ka" ? visibleCitySuggestion.name_ka : visibleCitySuggestion.name_en;
+            const message = translations.suggestInCity.replace("{city}", () => label);
+            return (
+              <button
+                type="button"
+                onClick={() => applyCitySuggestion(visibleCitySuggestion.name_en)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[12px] text-primary transition-colors hover:border-primary/40 hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30"
+              >
+                <MapPin className="h-3 w-3 opacity-70" aria-hidden="true" />
+                <span className="truncate max-w-[320px]">{message}</span>
+              </button>
+            );
+          })()}
         </div>
       )}
 

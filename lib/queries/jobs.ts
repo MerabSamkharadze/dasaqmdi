@@ -197,17 +197,20 @@ async function resolveCategoriesViaRpc(
   }));
 }
 
-// Resolve a city search term to the list of known variants for the best-
-// matching canonical city (e.g. "tblisi" → ["Tbilisi", "თბილისი", "Tiflis",
-// "ტფილისი"]). Returns the transliteration candidates as a fallback when no
-// canonical match exists, so unknown villages/districts still get some
-// cross-script tolerance instead of a strict ILIKE miss.
-async function resolveCityVariants(
+export type ResolvedCity = {
+  name_en: string;
+  name_ka: string;
+};
+
+// Shared core: try the RPC across transliteration candidates, return the
+// first canonical match (or null). Used by both variant expansion (for the
+// feed filter) and canonical lookup (for the autocomplete chip).
+async function resolveCityMatch(
   supabase: AnonClient,
   term: string,
-): Promise<string[]> {
+): Promise<CityRpcRow | null> {
   const candidates = generateSearchCandidates(term);
-  if (candidates.length === 0) return [];
+  if (candidates.length === 0) return null;
 
   const responses = await Promise.all(
     candidates.map((c) =>
@@ -217,17 +220,51 @@ async function resolveCityVariants(
 
   for (const r of responses) {
     const rows = (r.data ?? []) as CityRpcRow[];
-    if (rows.length > 0) {
-      const match = rows[0];
-      const variants = new Set<string>([match.name_en, match.name_ka]);
-      for (const alias of match.aliases ?? []) variants.add(alias);
-      return Array.from(variants);
-    }
+    if (rows.length > 0) return rows[0];
   }
+  return null;
+}
 
-  // No canonical match — return the original + transliterated form so we
-  // at least try both scripts against the free-form jobs.city text.
-  return candidates;
+// Resolve a city search term to the list of known variants for the best-
+// matching canonical city (e.g. "tblisi" → ["Tbilisi", "თბილისი", "Tiflis",
+// "ტფილისი"]). Returns the transliteration candidates as a fallback when no
+// canonical match exists, so unknown villages/districts still get some
+// cross-script tolerance instead of a strict ILIKE miss.
+async function resolveCityVariants(
+  supabase: AnonClient,
+  term: string,
+): Promise<string[]> {
+  const match = await resolveCityMatch(supabase, term);
+  if (!match) return generateSearchCandidates(term);
+
+  const variants = new Set<string>([match.name_en, match.name_ka]);
+  for (const alias of match.aliases ?? []) variants.add(alias);
+  return Array.from(variants);
+}
+
+// Autocomplete helper for JobFilters — exposes just the canonical bilingual
+// pair so the UI can render a chip ("Searching in Tbilisi?") and the click
+// handler can push the canonical English name into the URL.
+//
+// Cached 5 min per term, like the category autocomplete. Short terms are
+// skipped because trigram scores are noisy below 2 chars.
+const resolveCityCanonicalCached = unstable_cache(
+  async (term: string): Promise<ResolvedCity | null> => {
+    const supabase = createAnonClient();
+    const match = await resolveCityMatch(supabase, term);
+    if (!match) return null;
+    return { name_en: match.name_en, name_ka: match.name_ka };
+  },
+  ["city-canonical"],
+  { revalidate: 300 },
+);
+
+export async function resolveCityCanonical(
+  term: string,
+): Promise<ResolvedCity | null> {
+  const trimmed = term.trim();
+  if (trimmed.length < 2) return null;
+  return resolveCityCanonicalCached(trimmed.toLowerCase());
 }
 
 // High-level: transliterate the term across scripts, fan out to the RPC in

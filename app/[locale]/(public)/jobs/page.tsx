@@ -9,6 +9,7 @@ import { CountBadge } from "@/components/shared/count-badge";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
 import { SearchFallbackBanner } from "@/components/jobs/search-fallback-banner";
+import { ActiveFilterBadges, type FilterBadge } from "@/components/jobs/active-filter-badges";
 import { Pagination } from "@/components/jobs/pagination";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -146,6 +147,7 @@ export default async function JobsPage({
     allTypes: t("filters.allTypes"),
     // ICU placeholder preserved so the client can substitute per suggestion
     suggestInCategory: t("filters.suggestInCategory", { category: "{category}" }),
+    suggestInCity: t("filters.suggestInCity", { city: "{city}" }),
     types: jobTranslations.types,
   };
 
@@ -153,6 +155,36 @@ export default async function JobsPage({
     slug: c.slug,
     label: locale === "ka" ? c.name_ka : c.name_en,
   }));
+
+  // Build dismissable badges for currently-applied filters
+  const activeBadges: FilterBadge[] = [];
+  if (searchParams.q) {
+    activeBadges.push({
+      paramKey: "q",
+      label: `${t("filters.activeSearch")}: "${searchParams.q}"`,
+    });
+  }
+  if (searchParams.category) {
+    const cat = categories.find((c) => c.slug === searchParams.category);
+    if (cat) {
+      activeBadges.push({
+        paramKey: "category",
+        label: `${t("filters.activeCategory")}: ${locale === "ka" ? cat.name_ka : cat.name_en}`,
+      });
+    }
+  }
+  if (searchParams.city) {
+    activeBadges.push({
+      paramKey: "city",
+      label: `${t("filters.activeCity")}: ${searchParams.city}`,
+    });
+  }
+  if (searchParams.type) {
+    activeBadges.push({
+      paramKey: "type",
+      label: `${t("filters.activeType")}: ${t(`types.${searchParams.type}`)}`,
+    });
+  }
 
   const preservedParams: Record<string, string> = {};
   if (searchParams.category) preservedParams.category = searchParams.category;
@@ -188,13 +220,16 @@ export default async function JobsPage({
         </Suspense>
       </div>
 
-      {/* Active filters summary */}
-      {(searchParams.q || searchParams.category || searchParams.type || searchParams.city) && (
-        <div className="flex items-center gap-2 text-[12px] text-muted-foreground/60">
-          <span>
+      {/* Active filters — dismissable badges + result count */}
+      {activeBadges.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <div className="text-[12px] text-muted-foreground/60">
             {t("resultsCount", { count: totalCount })}
-            {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
-          </span>
+          </div>
+          <ActiveFilterBadges
+            badges={activeBadges}
+            clearAllLabel={t("filters.clearAll")}
+          />
         </div>
       )}
 

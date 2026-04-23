@@ -2,11 +2,17 @@
 
 import {
   resolveCategoriesForTerm,
+  resolveCityCanonical,
   type ResolvedCategory,
+  type ResolvedCity,
 } from "@/lib/queries/jobs";
 
 export type SynonymSuggestionResult = {
   categories: ResolvedCategory[];
+};
+
+export type CitySuggestionResult = {
+  city: ResolvedCity | null;
 };
 
 // Client-callable wrapper around resolveCategoriesForTerm for the
@@ -17,4 +23,13 @@ export async function searchSynonymCategoriesAction(
 ): Promise<SynonymSuggestionResult> {
   const categories = await resolveCategoriesForTerm(term);
   return { categories };
+}
+
+// City autocomplete — resolves a typed term to its canonical bilingual form
+// so the UI can chip "Searching in Tbilisi?" and rewrite the URL on accept.
+export async function searchCityCanonicalAction(
+  term: string,
+): Promise<CitySuggestionResult> {
+  const city = await resolveCityCanonical(term);
+  return { city };
 }
