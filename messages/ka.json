@@ -84,7 +84,8 @@
       "allCategories": "ყველა კატეგორია",
       "allLocations": "ყველა მდებარეობა",
       "allTypes": "ყველა ტიპი",
-      "suggestInCategory": "ეძებთ სამსახურს კატეგორიაში „{category}“"
+      "suggestInCategory": "ეძებთ სამსახურს კატეგორიაში „{category}“",
+      "fallbackBanner": "„{term}“-ზე ზუსტი დამთხვევა ვერ მოიძებნა — ნაჩვენებია ვაკანსიები კატეგორიაში {categories}"
     },
     "types": {
       "full-time": "სრული განაკვეთი",

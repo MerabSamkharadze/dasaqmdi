@@ -8,6 +8,7 @@ import { getSavedJobIds } from "@/lib/queries/saved-jobs";
 import { CountBadge } from "@/components/shared/count-badge";
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
+import { SearchFallbackBanner } from "@/components/jobs/search-fallback-banner";
 import { Pagination } from "@/components/jobs/pagination";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -94,7 +95,7 @@ export default async function JobsPage({
   // Step 3: Fetch jobs — auto-filter by preferred categories if no manual filter
   const hasManualFilter = !!(searchParams.category || searchParams.q || searchParams.type || searchParams.city);
   const showAll = searchParams.all === "1";
-  const { jobs, totalPages, currentPage, totalCount } = await getJobs({
+  const { jobs, totalPages, currentPage, totalCount, searchFallback } = await getJobs({
     page,
     category: searchParams.category,
     categories: !hasManualFilter && !showAll && preferredCategories.length > 0 ? preferredCategories : undefined,
@@ -195,6 +196,16 @@ export default async function JobsPage({
             {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
           </span>
         </div>
+      )}
+
+      {/* Synonym fallback indicator — shows when we broadened q → category */}
+      {searchFallback && (
+        <SearchFallbackBanner
+          originalTerm={searchFallback.originalTerm}
+          resolvedCategories={searchFallback.resolvedCategories}
+          locale={locale}
+          template={t("filters.fallbackBanner")}
+        />
       )}
 
       {/* Personalized feed indicator */}

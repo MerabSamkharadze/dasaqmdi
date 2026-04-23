@@ -1,5 +1,6 @@
 import { JobList } from "@/components/jobs/job-list";
 import { JobFilters } from "@/components/jobs/job-filters";
+import { SearchFallbackBanner } from "@/components/jobs/search-fallback-banner";
 import { Pagination } from "@/components/jobs/pagination";
 import { TopMatches, TopMatchesEmpty } from "@/components/jobs/top-matches";
 import { getJobs, getVipJobs } from "@/lib/queries/jobs";
@@ -103,7 +104,7 @@ export default async function HomePage({
   // Step 3: Fetch jobs — auto-filter by preferred categories if no manual filter
   const hasManualFilter = !!(searchParams.category || searchParams.q || searchParams.type || searchParams.city);
   const showAll = searchParams.all === "1";
-  const { jobs, totalPages, currentPage, totalCount } = await getJobs({
+  const { jobs, totalPages, currentPage, totalCount, searchFallback } = await getJobs({
     page,
     category: searchParams.category,
     categories: !hasManualFilter && !showAll && preferredCategories.length > 0 ? preferredCategories : undefined,
@@ -224,6 +225,18 @@ export default async function HomePage({
             {t("resultsCount", { count: totalCount })}
             {searchParams.q && <> — &ldquo;{searchParams.q}&rdquo;</>}
           </span>
+        </div>
+      )}
+
+      {/* Synonym fallback indicator — shows when we broadened q → category */}
+      {searchFallback && (
+        <div className="mb-6">
+          <SearchFallbackBanner
+            originalTerm={searchFallback.originalTerm}
+            resolvedCategories={searchFallback.resolvedCategories}
+            locale={locale}
+            template={t("filters.fallbackBanner")}
+          />
         </div>
       )}
 

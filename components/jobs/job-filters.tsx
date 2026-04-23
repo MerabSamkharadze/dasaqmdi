@@ -144,11 +144,9 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
     [updateParams]
   );
 
-  // Hide top suggestion if it points to a category that's already active
-  const activeCategory = searchParams.get("category");
-  const visibleSuggestions = activeCategory
-    ? []
-    : suggestions.filter((s) => s.slug !== activeCategory);
+  // Hide suggestions entirely when an explicit category is already active —
+  // otherwise we'd nudge the user to re-scope what they already scoped.
+  const visibleSuggestions = searchParams.get("category") ? [] : suggestions;
 
   return (
     <div className={cn("flex flex-col gap-3 transition-opacity duration-200", isPending && "opacity-60")}>
@@ -223,7 +221,9 @@ export function JobFilters({ categories, locale, translations }: JobFiltersProps
         <div className="flex flex-wrap items-center gap-2 animate-fade-in">
           {visibleSuggestions.map((cat) => {
             const label = locale === "ka" ? cat.name_ka : cat.name_en;
-            const message = translations.suggestInCategory.replace("{category}", label);
+            // Function form — avoids $& / $1 interpolation if a category
+            // name ever contains "$" (e.g. a "50$" salary landing page).
+            const message = translations.suggestInCategory.replace("{category}", () => label);
             return (
               <button
                 key={cat.slug}

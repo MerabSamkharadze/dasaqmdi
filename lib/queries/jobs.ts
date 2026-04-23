@@ -111,7 +111,13 @@ async function runJobsQuery({
   }
   if (city) query = query.ilike("city", `%${city}%`);
   if (type) query = query.eq("job_type", type);
-  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`);
+  if (q) {
+    // Strip PostgREST special chars: commas split .or() filters, parens
+    // group them, asterisk is wildcard metachar. Leaving them in would
+    // break the query silently when users paste titles like "Manager, Ops".
+    const safe = q.replace(/[,()*]/g, " ").trim();
+    if (safe) query = query.or(`title.ilike.%${safe}%,description.ilike.%${safe}%`);
+  }
 
   const { data, count, error } = await query.returns<JobWithCompany[]>();
 

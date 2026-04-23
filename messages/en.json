@@ -84,7 +84,8 @@
       "allCategories": "All Categories",
       "allLocations": "All Locations",
       "allTypes": "All Types",
-      "suggestInCategory": "Looking for jobs in {category}?"
+      "suggestInCategory": "Looking for jobs in {category}?",
+      "fallbackBanner": "No exact match for \"{term}\" — showing jobs in {categories}"
     },
     "types": {
       "full-time": "Full-time",
