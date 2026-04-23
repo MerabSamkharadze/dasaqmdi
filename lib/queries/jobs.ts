@@ -23,6 +23,22 @@ type SynonymRpcRow = {
   score: number;
 };
 
+// Shape returned by the resolve_city RPC.
+type CityRpcRow = {
+  id: number;
+  name_en: string;
+  name_ka: string;
+  aliases: string[] | null;
+  score: number;
+};
+
+// PostgREST `.or()` treats commas as filter separators and parens as groupers,
+// and ILIKE treats `%` / `_` as wildcards. Stripping these defensively so
+// arbitrary user-typed or DB-stored strings don't break the query syntax.
+function sanitizeForOrFilter(value: string): string {
+  return value.replace(/[,()%_*]/g, " ").trim();
+}
+
 type GetJobsParams = {
   page?: number;
   category?: string;
@@ -109,13 +125,22 @@ async function runJobsQuery({
   } else if (categoryIds && categoryIds.length > 0) {
     query = query.in("category_id", categoryIds);
   }
-  if (city) query = query.ilike("city", `%${city}%`);
   if (type) query = query.eq("job_type", type);
+
+  // City: resolve via canonical cities table when possible, otherwise fall
+  // back to the user's typed term + its cross-script transliteration. In
+  // both cases we OR-match jobs.city against every variant.
+  if (city) {
+    const variants = await resolveCityVariants(supabase, city);
+    const safeVariants = variants.map(sanitizeForOrFilter).filter(Boolean);
+    if (safeVariants.length > 0) {
+      const orFilter = safeVariants.map((v) => `city.ilike.%${v}%`).join(",");
+      query = query.or(orFilter);
+    }
+  }
+
   if (q) {
-    // Strip PostgREST special chars: commas split .or() filters, parens
-    // group them, asterisk is wildcard metachar. Leaving them in would
-    // break the query silently when users paste titles like "Manager, Ops".
-    const safe = q.replace(/[,()*]/g, " ").trim();
+    const safe = sanitizeForOrFilter(q);
     if (safe) query = query.or(`title.ilike.%${safe}%,description.ilike.%${safe}%`);
   }
 
@@ -170,6 +195,39 @@ async function resolveCategoriesViaRpc(
     name_en: row.name_en,
     name_ka: row.name_ka,
   }));
+}
+
+// Resolve a city search term to the list of known variants for the best-
+// matching canonical city (e.g. "tblisi" → ["Tbilisi", "თბილისი", "Tiflis",
+// "ტფილისი"]). Returns the transliteration candidates as a fallback when no
+// canonical match exists, so unknown villages/districts still get some
+// cross-script tolerance instead of a strict ILIKE miss.
+async function resolveCityVariants(
+  supabase: AnonClient,
+  term: string,
+): Promise<string[]> {
+  const candidates = generateSearchCandidates(term);
+  if (candidates.length === 0) return [];
+
+  const responses = await Promise.all(
+    candidates.map((c) =>
+      supabase.rpc("resolve_city" as never, { search_term: c } as never),
+    ),
+  );
+
+  for (const r of responses) {
+    const rows = (r.data ?? []) as CityRpcRow[];
+    if (rows.length > 0) {
+      const match = rows[0];
+      const variants = new Set<string>([match.name_en, match.name_ka]);
+      for (const alias of match.aliases ?? []) variants.add(alias);
+      return Array.from(variants);
+    }
+  }
+
+  // No canonical match — return the original + transliterated form so we
+  // at least try both scripts against the free-form jobs.city text.
+  return candidates;
 }
 
 // High-level: transliterate the term across scripts, fan out to the RPC in
