@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
 import type { Category } from "@/lib/types";
 import type { SalaryCurrency } from "@/lib/types/enums";
 
@@ -25,7 +25,7 @@ export type SalaryAggregation = {
  */
 export const getSalaryData = unstable_cache(
   async (): Promise<SalaryAggregation[]> => {
-    const supabase = createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from("jobs")
@@ -116,7 +116,7 @@ export const getSalaryData = unstable_cache(
 
 export const getSalaryCities = unstable_cache(
   async (): Promise<string[]> => {
-    const supabase = createClient();
+    const supabase = createPublicClient();
 
     const { data, error } = await supabase
       .from("jobs")

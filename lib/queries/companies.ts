@@ -1,5 +1,5 @@
 import { unstable_cache } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createPublicClient } from "@/lib/supabase/server";
 import type { Company } from "@/lib/types";
 
 // Narrow column set matching what the /companies list view actually renders.
@@ -46,7 +46,8 @@ export async function getCompanyById(id: string): Promise<Company | null> {
  */
 export const getAllCompanies = unstable_cache(
   async (): Promise<Company[]> => {
-    const supabase = createClient();
+    // Stateless anon client — cookies() is disallowed inside unstable_cache
+    const supabase = createPublicClient();
     const { data } = await supabase
       .from("companies")
       .select(LIST_COLUMNS)

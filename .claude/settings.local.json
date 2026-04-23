@@ -73,7 +73,13 @@
       "Bash(sed -n '393,397p' \"app/[locale]/\\(public\\)/jobs/[id]/page.tsx\")",
       "WebFetch(domain:supabase.com)",
       "Bash(split -b 50k \"C:/Users/msamkharadze/.claude/projects/C--Users-msamkharadze-Desktop-personal-my-app/18e9ba15-9d9e-4dd1-b2f2-cafdf5fa7716/tool-results/toolu_01S7FKepKcoHC3xR596qBbrn.json\" \"C:/Users/msamkharadze/Desktop/personal/my-app/.report-\")",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(lsof -ti:3000)",
+      "Bash(xargs -r kill -9)",
+      "Bash(lsof -ti:3001)",
+      "Bash(powershell -Command 'Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }')",
+      "Bash(jobs -p)",
+      "PowerShell(Get-NetTCPConnection *)"
     ]
   }
 }
