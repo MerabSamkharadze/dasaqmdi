@@ -110,6 +110,7 @@ export type Database = {
           address_ka: string | null;
           employee_count: "1-10" | "11-50" | "51-200" | "201-500" | "500+" | null;
           is_verified: boolean;
+          admin_verified: boolean;
           tech_stack: string[];
           why_work_here: string | null;
           why_work_here_ka: string | null;
@@ -133,6 +134,7 @@ export type Database = {
           address_ka?: string | null;
           employee_count?: "1-10" | "11-50" | "51-200" | "201-500" | "500+" | null;
           is_verified?: boolean;
+          admin_verified?: boolean;
           tech_stack?: string[];
           why_work_here?: string | null;
           why_work_here_ka?: string | null;
@@ -156,6 +158,7 @@ export type Database = {
           address_ka?: string | null;
           employee_count?: "1-10" | "11-50" | "51-200" | "201-500" | "500+" | null;
           is_verified?: boolean;
+          admin_verified?: boolean;
           tech_stack?: string[];
           why_work_here?: string | null;
           why_work_here_ka?: string | null;

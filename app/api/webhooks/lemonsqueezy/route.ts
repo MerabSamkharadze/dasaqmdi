@@ -230,11 +230,21 @@ export async function POST(request: Request) {
         { onConflict: "company_id" }
       );
 
-    // Update company verification status
-    const isVerified = plan === "verified" && status === "active";
+    // Update company verification status.
+    // `is_verified` = admin grant OR active Pro subscription. We must read
+    // `admin_verified` first so this webhook doesn't clobber a grant the
+    // admin made independently of the subscription lifecycle (e.g. company
+    // is manually verified, later buys Business, still keeps the badge).
+    const subscriptionBacked = plan === "verified" && status === "active";
+    const { data: companyRow } = await supabase
+      .from("companies")
+      .select("admin_verified")
+      .eq("id", companyId)
+      .single();
+    const adminVerified = companyRow?.admin_verified ?? false;
     await supabase
       .from("companies")
-      .update({ is_verified: isVerified })
+      .update({ is_verified: adminVerified || subscriptionBacked })
       .eq("id", companyId);
 
     // Reconcile featured slot count.
@@ -316,10 +326,18 @@ export async function POST(request: Request) {
       .update({ status: "expired" })
       .eq("company_id", companyId);
 
-    // Remove featured + verified
+    // Clear subscription-backed verification, but preserve admin grant.
+    // `is_verified` collapses to whatever `admin_verified` says — if the
+    // admin granted the badge independently, it survives the expiry.
+    const { data: companyRow } = await supabase
+      .from("companies")
+      .select("admin_verified")
+      .eq("id", companyId)
+      .single();
+    const adminVerified = companyRow?.admin_verified ?? false;
     await supabase
       .from("companies")
-      .update({ is_verified: false })
+      .update({ is_verified: adminVerified })
       .eq("id", companyId);
 
     // Only clear subscription-slot featured; paid-extras keep their remaining window.

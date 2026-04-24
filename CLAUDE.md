@@ -315,6 +315,7 @@ components/
 016_admin_logs.sql               # admin_logs table + indexes + RLS
 017_external_jobs.sql            # external_url, external_source + system company "dasaqmdi"
 018_vip_jobs.sql                 # vip_level, vip_until + index
+026_admin_verified.sql           # admin_verified on companies (separate admin grants from subscription-backed verification)
 ```
 
 ### Roles: `seeker` (apply, track, save), `employer` (post, review, billing), `admin` (moderate all)
@@ -613,6 +614,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 | `019_storage_policies.sql` | RLS policies for avatars / company-logos / resumes buckets (owner-write, public/owner-read) |
 | `020_admin_logs_delete_policy.sql` | DELETE policy for admin_logs (was missing from M016, blocked bulk/age cleanup) |
 | `025_featured_extra.sql` | featured_until column on jobs + partial index (paid-extra featured slots, 30-day window) |
+| `026_admin_verified.sql` | admin_verified column on companies + backfill (separate admin grants from subscription-backed verification so webhook doesn't clobber manual grants) |
 
 ---
 

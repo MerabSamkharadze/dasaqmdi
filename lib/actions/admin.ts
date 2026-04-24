@@ -45,7 +45,7 @@ export async function verifyCompanyAction(companyId: string): Promise<ActionResu
 
   const { error } = await supabase
     .from("companies")
-    .update({ is_verified: true })
+    .update({ admin_verified: true, is_verified: true })
     .eq("id", companyId);
 
   if (error) return { error: error.message };
