@@ -231,11 +231,14 @@ export async function POST(request: Request) {
       );
 
     // Update company verification status.
-    // `is_verified` = admin grant OR active Pro subscription. We must read
-    // `admin_verified` first so this webhook doesn't clobber a grant the
-    // admin made independently of the subscription lifecycle (e.g. company
-    // is manually verified, later buys Business, still keeps the badge).
-    const subscriptionBacked = plan === "verified" && status === "active";
+    // `is_verified` = admin grant OR Pro subscription that still entitles
+    // the customer to access. "Access" survives `cancelled` (user cancelled
+    // but period not yet over) and `past_due` (payment retry grace period).
+    // Only `expired` actually strips the entitlement — that transition is
+    // handled by the `subscription_expired` branch below. Reading
+    // `admin_verified` first so a manually-granted badge survives whatever
+    // the subscription does.
+    const subscriptionBacked = plan === "verified" && status !== "expired";
     const { data: companyRow } = await supabase
       .from("companies")
       .select("admin_verified")
