@@ -149,7 +149,7 @@ export default async function EmployerJobsPage({
                 )}
                 style={{ animationDelay: `${i * 20}ms` }}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link

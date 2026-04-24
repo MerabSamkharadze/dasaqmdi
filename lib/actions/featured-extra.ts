@@ -57,6 +57,11 @@ export async function createFeaturedExtraCheckoutAction(
   );
 
   if (error || !checkout) {
+    console.error("[featured-extra] createCheckout failed:", {
+      variantId: FEATURED_EXTRA_VARIANT_ID,
+      storeId: process.env.LEMONSQUEEZY_STORE_ID,
+      lsError: error,
+    });
     return { error: "Failed to create checkout session" };
   }
 

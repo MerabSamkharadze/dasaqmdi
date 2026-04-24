@@ -70,7 +70,7 @@ export function JobActionButtons({
   }
 
   return (
-    <div className="flex items-center gap-0.5 shrink-0 relative">
+    <div className="flex items-center flex-wrap gap-0.5 shrink-0 relative justify-start sm:justify-end w-full sm:w-auto">
       {error && (
         <span className="absolute -top-6 right-0 text-[11px] text-destructive/80 whitespace-nowrap">
           {error}
@@ -104,24 +104,24 @@ export function JobActionButtons({
       {!isClosed && !isExpired && (
         <Button
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={handleClose}
           disabled={isPending}
-          className="gap-1.5 text-muted-foreground/70 text-[13px]"
+          aria-label="Close"
+          className="h-8 w-8 rounded-xl text-muted-foreground/70"
         >
-          <XCircle className="h-3 w-3" />
-          Close
+          <XCircle className="h-3.5 w-3.5" />
         </Button>
       )}
 
       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" asChild>
-        <Link href={`/employer/jobs/${jobId}/applications`}>
+        <Link href={`/employer/jobs/${jobId}/applications`} aria-label="Applications">
           <Users className="h-3.5 w-3.5 text-muted-foreground/70" />
         </Link>
       </Button>
 
       <Button variant="ghost" size="icon" className="h-8 w-8 rounded-xl" asChild>
-        <Link href={`/employer/jobs/${jobId}`}>
+        <Link href={`/employer/jobs/${jobId}`} aria-label="Edit">
           <Edit className="h-3.5 w-3.5 text-muted-foreground/70" />
         </Link>
       </Button>

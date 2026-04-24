@@ -55,10 +55,12 @@ export function VipBoostButton({ jobId, vipLevel, vipUntil }: VipBoostButtonProp
         variant="outline"
         size="sm"
         disabled
-        className="gap-1.5 text-[11px] h-7 border-amber-300/50 text-amber-600 dark:border-amber-500/30 dark:text-amber-400 cursor-default"
+        title={t("boostActive", { date: until })}
+        aria-label={t("boostActive", { date: until })}
+        className="gap-1 text-[11px] h-7 px-2 border-amber-300/50 text-amber-600 dark:border-amber-500/30 dark:text-amber-400 cursor-default tabular-nums"
       >
         <Sparkles className="h-3 w-3" />
-        {t("boostActive", { date: until })}
+        <span>VIP · {until}</span>
       </Button>
     );
   }

@@ -52,6 +52,12 @@ export async function createVipBoostCheckoutAction(
   );
 
   if (error || !checkout) {
+    console.error("[vip-boost] createCheckout failed:", {
+      level,
+      variantId: VIP_VARIANTS[level],
+      storeId: process.env.LEMONSQUEEZY_STORE_ID,
+      lsError: error,
+    });
     return { error: "Failed to create checkout session" };
   }
 
