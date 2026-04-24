@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button";
 import {
   closeJobAction,
   renewJobAction,
-  toggleJobFeaturedAction,
 } from "@/lib/actions/jobs";
-import { Edit, XCircle, RefreshCw, Users, Star } from "lucide-react";
+import { Edit, XCircle, RefreshCw, Users } from "lucide-react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { VipBoostButton } from "@/components/dashboard/vip-boost-button";
-import { cn } from "@/lib/utils";
+import { FeaturedStarButton } from "@/components/dashboard/featured-star-button";
 
 // E6: Standalone renew button for dashboard
 export function RenewJobButton({ jobId }: { jobId: string }) {
@@ -37,6 +36,7 @@ type JobActionButtonsProps = {
   isExpired: boolean;
   isClosed: boolean;
   isFeatured?: boolean;
+  featuredUntil?: string | null;
   vipLevel?: string;
   vipUntil?: string | null;
 };
@@ -46,6 +46,7 @@ export function JobActionButtons({
   isExpired,
   isClosed,
   isFeatured = false,
+  featuredUntil = null,
   vipLevel = "normal",
   vipUntil = null,
 }: JobActionButtonsProps) {
@@ -64,14 +65,6 @@ export function JobActionButtons({
     setError(null);
     startTransition(async () => {
       const result = await renewJobAction(jobId);
-      if (result.error) setError(result.error);
-    });
-  }
-
-  function handleToggleFeatured() {
-    setError(null);
-    startTransition(async () => {
-      const result = await toggleJobFeaturedAction(jobId);
       if (result.error) setError(result.error);
     });
   }
@@ -97,23 +90,11 @@ export function JobActionButtons({
       )}
 
       {!isClosed && !isExpired && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleToggleFeatured}
-          disabled={isPending}
-          aria-label={isFeatured ? "Unfeature job" : "Feature job"}
-          className="h-8 w-8 rounded-xl"
-        >
-          <Star
-            className={cn(
-              "h-3.5 w-3.5 transition-colors duration-200",
-              isFeatured
-                ? "fill-amber-500 text-amber-500"
-                : "text-muted-foreground/70 hover:text-amber-500",
-            )}
-          />
-        </Button>
+        <FeaturedStarButton
+          jobId={jobId}
+          isFeatured={isFeatured}
+          featuredUntil={featuredUntil}
+        />
       )}
 
       {!isClosed && !isExpired && (

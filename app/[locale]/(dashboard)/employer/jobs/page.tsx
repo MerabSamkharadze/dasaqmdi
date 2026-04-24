@@ -7,7 +7,7 @@ import { localized, cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { CountBadge } from "@/components/shared/count-badge";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Briefcase, Calendar, Sparkles } from "lucide-react";
+import { PlusCircle, Briefcase, Calendar, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { JobActionButtons } from "@/components/dashboard/job-action-buttons";
 import { EmployerJobFilters } from "@/components/dashboard/employer-job-filters";
@@ -29,7 +29,7 @@ function formatDate(dateString: string, locale: string): string {
 export default async function EmployerJobsPage({
   searchParams,
 }: {
-  searchParams: { q?: string; status?: string; category?: string; boost?: string };
+  searchParams: { q?: string; status?: string; category?: string; boost?: string; featured?: string };
 }) {
   const supabase = createClient();
   const {
@@ -98,6 +98,18 @@ export default async function EmployerJobsPage({
             <p className="font-semibold">{td("boostSuccessTitle")}</p>
             <p className="mt-0.5 text-amber-700 dark:text-amber-400/80">
               {td("boostSuccessDescription")}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {searchParams.featured === "success" && (
+        <div className="flex items-start gap-3 rounded-xl border border-amber-300/50 bg-amber-50/60 px-4 py-3 text-[13px] text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-400 animate-fade-in">
+          <Star className="h-4 w-4 shrink-0 mt-0.5 fill-amber-500" />
+          <div className="flex-1">
+            <p className="font-semibold">{td("featuredSuccessTitle")}</p>
+            <p className="mt-0.5 text-amber-700 dark:text-amber-400/80">
+              {td("featuredSuccessDescription")}
             </p>
           </div>
         </div>
@@ -179,6 +191,7 @@ export default async function EmployerJobsPage({
                     isExpired={isExpired}
                     isClosed={isClosed}
                     isFeatured={job.is_featured}
+                    featuredUntil={job.featured_until}
                     vipLevel={job.vip_level}
                     vipUntil={job.vip_until}
                   />

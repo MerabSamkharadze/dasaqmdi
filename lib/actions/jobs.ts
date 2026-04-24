@@ -173,9 +173,14 @@ export async function incrementJobViewAction(jobId: string): Promise<void> {
 
 /**
  * Toggle a job's featured state. Plan-gated:
- *   - Starter: cannot feature anything
- *   - Business: up to 1 featured active job
- *   - Pro: up to 3 featured active jobs
+ *   - Starter: cannot feature anything (can still buy extra slots)
+ *   - Business: up to 1 featured active job via subscription
+ *   - Pro: up to 3 featured active jobs via subscription
+ *
+ * Paid-extra slots (featured_until set) are independent:
+ *   - Not counted against plan limit
+ *   - Cannot be toggled off before expiry (user paid for the window)
+ *   - Cleared automatically when featured_until is reached (lazy, on read)
  */
 export async function toggleJobFeaturedAction(jobId: string): Promise<ActionResult> {
   const supabase = createClient();
@@ -187,18 +192,25 @@ export async function toggleJobFeaturedAction(jobId: string): Promise<ActionResu
 
   const { data: job } = await supabase
     .from("jobs")
-    .select("id, posted_by, company_id, is_featured, status")
+    .select("id, posted_by, company_id, is_featured, status, featured_until")
     .eq("id", jobId)
     .single();
 
   if (!job) return { error: "Job not found" };
   if (job.posted_by !== user.id) return { error: "Not authorized for this job" };
 
-  // Unfeaturing is always allowed
   if (job.is_featured) {
+    // Paid-extra still active → refuse to toggle off.
+    if (job.featured_until && new Date(job.featured_until).getTime() > Date.now()) {
+      return {
+        error: "Featured-extra is active on this job; it will expire automatically.",
+      };
+    }
+    // Subscription slot OR expired paid-extra — clearing featured_until too so
+    // any stale paid-extra timestamp doesn't stick around.
     const { error } = await supabase
       .from("jobs")
-      .update({ is_featured: false })
+      .update({ is_featured: false, featured_until: null })
       .eq("id", jobId);
     if (error) return { error: error.message };
     revalidatePath("/employer/jobs");
@@ -206,11 +218,11 @@ export async function toggleJobFeaturedAction(jobId: string): Promise<ActionResu
     return { error: null };
   }
 
-  // Featuring — check plan limit
+  // Featuring — check plan limit (subscription slots only)
   const plan = await getActivePlan(job.company_id);
   const limit = getFeaturedSlotLimit(plan);
   if (limit === 0) {
-    return { error: "Featured jobs are a Business plan feature. Upgrade to unlock." };
+    return { error: "Featured jobs are a Business plan feature. Upgrade or buy an extra slot." };
   }
 
   const { count: currentCount } = await supabase
@@ -218,17 +230,18 @@ export async function toggleJobFeaturedAction(jobId: string): Promise<ActionResu
     .select("id", { count: "exact", head: true })
     .eq("company_id", job.company_id)
     .eq("status", "active")
-    .eq("is_featured", true);
+    .eq("is_featured", true)
+    .is("featured_until", null);
 
   if ((currentCount ?? 0) >= limit) {
     return {
-      error: `Featured slot limit reached (${limit}). Unfeature another job first.`,
+      error: `Featured slot limit reached (${limit}). Unfeature another job or buy an extra slot.`,
     };
   }
 
   const { error } = await supabase
     .from("jobs")
-    .update({ is_featured: true })
+    .update({ is_featured: true, featured_until: null })
     .eq("id", jobId);
 
   if (error) return { error: error.message };

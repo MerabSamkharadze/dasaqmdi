@@ -320,6 +320,8 @@
     "noResults": "No jobs found",
     "boostSuccessTitle": "Boost activated",
     "boostSuccessDescription": "Your job will appear in premium placement. You'll get a notification when it's about to expire.",
+    "featuredSuccessTitle": "Extra featured slot activated",
+    "featuredSuccessDescription": "Your job is now featured for 30 days — it'll automatically revert when the window ends.",
     "starterLimitTitle": "You've reached the Starter {limit}-job limit",
     "starterLimitDescription": "To post another job, close an existing one or upgrade to the Business plan.",
     "upgradeToBusiness": "Upgrade to Business",
@@ -667,6 +669,12 @@
     "silverSubtitle": "VIP placement in the jobs feed for {days} days",
     "goldTitle": "🥇 Gold Premium",
     "goldSubtitle": "Top placement + Hero carousel on homepage for {days} days",
+    "featuredExtraActive": "Featured until {date}",
+    "featuredExtraTitle": "Feature this job",
+    "featuredExtraDescription": "You've used all included Featured slots on your plan. Buy an extra 30-day slot for this job without upgrading.",
+    "featuredExtraBadge": "Extra slot",
+    "featuredExtraOptionTitle": "⭐ Featured slot",
+    "featuredExtraOptionSubtitle": "Star badge + priority placement for {days} days",
     "cancel": "Cancel"
   },
   "errors": {

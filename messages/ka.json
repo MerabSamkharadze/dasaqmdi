@@ -320,6 +320,8 @@
     "noResults": "ვაკანსიები ვერ მოიძებნა",
     "boostSuccessTitle": "Boost გააქტიურდა",
     "boostSuccessDescription": "შენი ვაკანსია გამორჩეული ადგილიდან გამოჩნდება — მიიღე შეტყობინება როცა ვადა ამოეწურება.",
+    "featuredSuccessTitle": "დამატებითი Featured სლოტი გააქტიურდა",
+    "featuredSuccessDescription": "შენი ვაკანსია გამორჩეულია 30 დღე — შემდეგ ავტომატურად გამოირთვება.",
     "starterLimitTitle": "მიაღწიე Starter-ის {limit} ვაკანსიის ლიმიტს",
     "starterLimitDescription": "ახალი ვაკანსიის გამოსაქვეყნებლად ან დახურე რომელიმე არსებული, ან გადადი Business პაკეტზე.",
     "upgradeToBusiness": "Business-ზე გადასვლა",
@@ -666,6 +668,12 @@
     "silverSubtitle": "VIP placement ვაკანსიების feed-ში {days} დღე",
     "goldTitle": "🥇 Gold Premium",
     "goldSubtitle": "Premium placement + Hero carousel მთავარ გვერდზე {days} დღე",
+    "featuredExtraActive": "გამორჩეულია {date}-მდე",
+    "featuredExtraTitle": "ვაკანსიის გამორჩევა",
+    "featuredExtraDescription": "თქვენი გეგმის გამორჩეული ვაკანსიების ლიმიტი ამოწურულია. შეიძინე დამატებითი სლოტი 30 დღით — გამოწერის განახლების გარეშე.",
+    "featuredExtraBadge": "დამატებითი",
+    "featuredExtraOptionTitle": "⭐ გამორჩეული სლოტი",
+    "featuredExtraOptionSubtitle": "ვარსკვლავის ნიშანი + პრიორიტეტული პოზიცია {days} დღე",
     "cancel": "გაუქმება"
   },
   "errors": {

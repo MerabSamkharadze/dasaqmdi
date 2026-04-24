@@ -83,3 +83,19 @@ export function variantToVipLevel(variantId: string): VipBoostLevel | null {
   if (variantId === process.env.LEMONSQUEEZY_VIP_GOLD_VARIANT_ID) return "gold";
   return null;
 }
+
+// ── Extra Featured Slot (one-time product) ───────────────────────────────
+// Pay-per-slot Featured star for employers who have exhausted the plan's
+// included featured slots. 30-day duration, independent of subscription.
+// Stored on jobs as (is_featured = true, featured_until = now + N days).
+export const FEATURED_EXTRA_CONFIG = {
+  days: 30,
+  priceLabel: "5₾",
+};
+
+export const FEATURED_EXTRA_VARIANT_ID =
+  process.env.LEMONSQUEEZY_FEATURED_EXTRA_VARIANT_ID ?? "";
+
+export function isFeaturedExtraVariant(variantId: string): boolean {
+  return !!FEATURED_EXTRA_VARIANT_ID && variantId === FEATURED_EXTRA_VARIANT_ID;
+}

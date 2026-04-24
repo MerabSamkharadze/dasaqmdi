@@ -421,18 +421,29 @@ Legacy subscribers (on old variant IDs) keep their grandfathered price — Lemon
 
 There are **two separate ways** an employer can make a job more visible. They layer independently.
 
-#### 1. ⭐ Featured (subscription benefit, persistent)
+#### 1. ⭐ Featured (subscription slot — persistent, OR paid-extra — time-boxed)
 
-- **What**: Mark a job as `is_featured = true`. Shown with a star badge; sorted above normal listings in the feed.
+Two flavors share the same `is_featured = true` star; distinguished by `featured_until`:
+
+**Subscription slot** (`featured_until IS NULL`)
 - **Cost**: Included in subscription — no extra charge.
-- **Limit**: Plan-gated slot count — Starter 0, Business 1, Pro 3. Enforced in `toggleJobFeaturedAction` via `getFeaturedSlotLimit(plan)`.
-- **Duration**: Active for as long as the subscription is active. Cleared on `subscription_expired`.
-- **UX**: ⭐ Star icon in `JobActionButtons` on `/employer/jobs`. Click toggles on/off. Over-limit returns a clear error.
+- **Limit**: Plan-gated slot count — Starter 0, Business 1, Pro 3. Enforced in `toggleJobFeaturedAction` via `getFeaturedSlotLimit(plan)`, counted only against rows with `featured_until IS NULL`.
+- **Duration**: Active for as long as the subscription is active. Cleared on `subscription_expired` (paid-extras preserved).
+- **UX**: ⭐ Star icon in `FeaturedStarButton` on `/employer/jobs`. Click toggles on/off.
 - **Webhook reconciliation** (`app/api/webhooks/lemonsqueezy/route.ts`):
   - `subscription_created` with 0 currently featured → welcome-feature the N newest active jobs
-  - `subscription_updated` with over-limit (e.g. downgrade Pro → Business) → keeps the N newest, unfeatures the rest
+  - `subscription_updated` with over-limit (e.g. downgrade Pro → Business) → keeps the N newest, unfeatures the rest (paid-extras untouched)
   - Otherwise leaves user's choices untouched
-- **Storage**: `jobs.is_featured` (boolean)
+
+**Paid-extra slot** (`featured_until > now()`) — Phase 21 follow-up
+- **What**: Self-service one-time purchase when the plan's included slots are exhausted. Same star badge, doesn't count against the plan limit, works on any plan (including Starter).
+- **Price**: 5₾ for 30 days.
+- **Trigger**: Clicking the ⭐ star when slots are full opens an AlertDialog with the 5₾ / 30d option. Error-string matching on `toggleJobFeaturedAction` result ("slot limit reached") surfaces the upsell.
+- **Checkout**: `createFeaturedExtraCheckoutAction(jobId)` opens a Lemon Squeezy one-time-product checkout. Custom data `{ type: "featured_extra", job_id, user_id }`.
+- **Activation**: `order_created` webhook (filtered by `custom_data.type === "featured_extra"`) sets `is_featured = true` + `featured_until = now + 30d`. Variant sanity check via `isFeaturedExtraVariant()`. Logs `featured_extra_purchased` to `admin_logs`.
+- **UX**: Star is disabled and shown fill-on while paid-extra is active; hover/aria shows "Featured until {date}". Toggle-off is blocked until expiry. Post-checkout redirect lands on `/employer/jobs?featured=success`.
+- **Expiry**: Lazy — no cron. `runJobsQuery` in `lib/queries/jobs.ts` strips the star from rows whose `featured_until` is in the past; `isFeaturedActive` helper in `lib/featured.ts` is the single source of truth.
+- **Storage**: `jobs.is_featured` (boolean) + `jobs.featured_until` (timestamptz, nullable).
 
 #### 2. ✨ Boost / VIP (one-time purchase, time-boxed)
 
@@ -528,6 +539,7 @@ LEMONSQUEEZY_PRO_ANNUAL_VARIANT_ID=<variant-id>                   # Business pla
 LEMONSQUEEZY_VERIFIED_ANNUAL_VARIANT_ID=<variant-id>              # Pro plan, yearly (1990₾) — optional; hides toggle if absent
 LEMONSQUEEZY_VIP_SILVER_VARIANT_ID=<one-time-product-variant-id>  # 30₾ Silver boost (7 days)
 LEMONSQUEEZY_VIP_GOLD_VARIANT_ID=<one-time-product-variant-id>    # 80₾ Gold boost (14 days)
+LEMONSQUEEZY_FEATURED_EXTRA_VARIANT_ID=<one-time-product-variant-id>  # 5₾ extra Featured slot (30 days) — optional; star-upsell dialog hides if absent
 MODERATION_ENABLED=false
 INDEXNOW_KEY=<bing-indexnow-key>
 ```
@@ -586,6 +598,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 |---|---|---|
 | Silver Spotlight one-time product | LS-ში შექმნა, 30₾, env: `LEMONSQUEEZY_VIP_SILVER_VARIANT_ID` | ⏳ |
 | Gold Premium one-time product | LS-ში შექმნა, 80₾, env: `LEMONSQUEEZY_VIP_GOLD_VARIANT_ID` | ⏳ |
+| Extra Featured slot one-time product | LS-ში შექმნა, 5₾, env: `LEMONSQUEEZY_FEATURED_EXTRA_VARIANT_ID` (optional — star upsell hides if absent) | ⏳ |
 | Business annual variant | 790₾/yr subscription variant, env: `LEMONSQUEEZY_PRO_ANNUAL_VARIANT_ID` (optional — toggle hides if missing) | ⏳ |
 | Pro annual variant | 1990₾/yr subscription variant, env: `LEMONSQUEEZY_VERIFIED_ANNUAL_VARIANT_ID` (optional) | ⏳ |
 | Webhook event `order_created` | LS Dashboard → Webhooks → ჩართე ეს event | ⏳ |
@@ -599,6 +612,7 @@ LEMONSQUEEZY_VERIFIED_VARIANT_ID=<variant-id>
 | `018_vip_jobs.sql` | vip_level, vip_until columns + index |
 | `019_storage_policies.sql` | RLS policies for avatars / company-logos / resumes buckets (owner-write, public/owner-read) |
 | `020_admin_logs_delete_policy.sql` | DELETE policy for admin_logs (was missing from M016, blocked bulk/age cleanup) |
+| `025_featured_extra.sql` | featured_until column on jobs + partial index (paid-extra featured slots, 30-day window) |
 
 ---
 

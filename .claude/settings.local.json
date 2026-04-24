@@ -79,7 +79,8 @@
       "Bash(lsof -ti:3001)",
       "Bash(powershell -Command 'Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }')",
       "Bash(jobs -p)",
-      "PowerShell(Get-NetTCPConnection *)"
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(echo \"EXIT=$?\")"
     ]
   }
 }

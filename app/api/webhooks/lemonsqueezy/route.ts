@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { VIP_CONFIG, variantToVipLevel } from "@/lib/lemonsqueezy";
+import {
+  VIP_CONFIG,
+  variantToVipLevel,
+  FEATURED_EXTRA_CONFIG,
+  isFeaturedExtraVariant,
+} from "@/lib/lemonsqueezy";
 import type { SubscriptionPlan } from "@/lib/types";
 
 function verifySignature(rawBody: string, signature: string): boolean {
@@ -118,6 +123,73 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
+  // ── One-time Extra Featured slot purchase ───────────────────────────────
+  // 5₾ / 30 days. Independent of subscription; does NOT count against the
+  // plan's featured-slot limit. Stored as (is_featured=true, featured_until=...).
+  if (eventName === "order_created" && customData?.type === "featured_extra") {
+    const jobId: string | undefined = customData.job_id;
+    const userId: string | undefined = customData.user_id;
+    if (!jobId) {
+      return NextResponse.json({ error: "Invalid featured payload" }, { status: 400 });
+    }
+
+    // Sanity-check the paid variant matches the configured featured-extra one
+    const paidVariantId = String(attrs?.first_order_item?.variant_id ?? "");
+    if (!isFeaturedExtraVariant(paidVariantId)) {
+      return NextResponse.json({ error: "Variant mismatch" }, { status: 400 });
+    }
+
+    const featuredUntil = new Date();
+    featuredUntil.setDate(featuredUntil.getDate() + FEATURED_EXTRA_CONFIG.days);
+
+    const { data: job } = await supabase
+      .from("jobs")
+      .select("title, title_ka, company_id, posted_by, company:companies!inner(name, name_ka, slug)")
+      .eq("id", jobId)
+      .single();
+
+    const { data: buyer } = userId
+      ? await supabase
+          .from("profiles")
+          .select("full_name, full_name_ka")
+          .eq("id", userId)
+          .single()
+      : { data: null };
+
+    await supabase
+      .from("jobs")
+      .update({ is_featured: true, featured_until: featuredUntil.toISOString() })
+      .eq("id", jobId);
+
+    if (userId) {
+      const jobCompany = job?.company as unknown as { name: string; name_ka: string | null; slug: string } | undefined;
+      await supabase.from("admin_logs").insert({
+        action: "featured_extra_purchased",
+        actor_id: userId,
+        target_type: "job",
+        target_id: jobId,
+        metadata: {
+          days: FEATURED_EXTRA_CONFIG.days,
+          featured_until: featuredUntil.toISOString(),
+          order_id: String(body.data?.id ?? ""),
+          total_amount: attrs?.total_formatted ?? null,
+          currency: attrs?.currency ?? null,
+          title: job?.title,
+          title_ka: job?.title_ka,
+          company_id: job?.company_id,
+          company_name: jobCompany?.name,
+          company_name_ka: jobCompany?.name_ka,
+          company_slug: jobCompany?.slug,
+          posted_by: job?.posted_by,
+          actor_name: buyer?.full_name ?? null,
+          actor_name_ka: buyer?.full_name_ka ?? null,
+        },
+      });
+    }
+
+    return NextResponse.json({ received: true });
+  }
+
   // ── Subscription events ─────────────────────────────────────────────────
   const companyId: string | undefined = customData?.company_id;
   if (!companyId) {
@@ -175,18 +247,22 @@ export async function POST(request: Request) {
     if (status === "active") {
       const limit = plan === "verified" ? 3 : plan === "pro" ? 1 : 0;
 
+      // Only reconcile subscription slots (featured_until IS NULL). Paid-extra
+      // featured jobs (featured_until set) were bought independently and must
+      // not be touched — the customer paid for their 30-day window.
       const { data: currentlyFeatured } = await supabase
         .from("jobs")
         .select("id")
         .eq("company_id", companyId)
         .eq("status", "active")
         .eq("is_featured", true)
+        .is("featured_until", null)
         .order("created_at", { ascending: false });
 
       const featuredIds = (currentlyFeatured ?? []).map((j) => j.id);
 
       if (featuredIds.length > limit) {
-        // Over limit → keep newest N, unfeature the rest
+        // Over limit → keep newest N, unfeature the rest (subscription slots only)
         const toUnfeature = featuredIds.slice(limit);
         await supabase
           .from("jobs")
@@ -197,12 +273,15 @@ export async function POST(request: Request) {
         limit > 0 &&
         eventName === "subscription_created"
       ) {
-        // Welcome experience on first subscription: auto-feature N newest
+        // Welcome experience on first subscription: auto-feature N newest.
+        // Excludes jobs that already hold a paid-extra slot (featured_until set)
+        // to avoid over-counting.
         const { data: newest } = await supabase
           .from("jobs")
           .select("id")
           .eq("company_id", companyId)
           .eq("status", "active")
+          .eq("is_featured", false)
           .order("created_at", { ascending: false })
           .limit(limit);
         const ids = (newest ?? []).map((j) => j.id);
@@ -214,11 +293,13 @@ export async function POST(request: Request) {
         }
       }
     } else if (plan === "free") {
-      // Downgraded to free (shouldn't really happen via webhook, but be safe)
+      // Downgraded to free (shouldn't really happen via webhook, but be safe).
+      // Again, preserve paid-extra slots.
       await supabase
         .from("jobs")
         .update({ is_featured: false })
-        .eq("company_id", companyId);
+        .eq("company_id", companyId)
+        .is("featured_until", null);
     }
   }
 
@@ -241,10 +322,12 @@ export async function POST(request: Request) {
       .update({ is_verified: false })
       .eq("id", companyId);
 
+    // Only clear subscription-slot featured; paid-extras keep their remaining window.
     await supabase
       .from("jobs")
       .update({ is_featured: false })
-      .eq("company_id", companyId);
+      .eq("company_id", companyId)
+      .is("featured_until", null);
   }
 
   return NextResponse.json({ received: true });

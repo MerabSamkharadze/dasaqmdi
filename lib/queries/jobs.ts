@@ -151,9 +151,21 @@ async function runJobsQuery({
     return { jobs: [], count: 0 };
   }
 
-  // Sort: gold (PREMIUM) → silver (VIP) → featured → normal
+  // Sort: gold (PREMIUM) → silver (VIP) → featured → normal. Also drop the
+  // star from jobs whose paid-extra `featured_until` has lapsed — the DB row
+  // is reconciled lazily (no cron), so the feed must treat expired rows as
+  // non-featured for both sort-priority and any downstream badge rendering.
   const now = Date.now();
-  const sorted = (data ?? []).sort((a, b) => {
+  const sorted = (data ?? []).map((job) => {
+    if (
+      job.is_featured &&
+      job.featured_until !== null &&
+      new Date(job.featured_until).getTime() <= now
+    ) {
+      return { ...job, is_featured: false };
+    }
+    return job;
+  }).sort((a, b) => {
     const aVip = a.vip_level !== "normal" && a.vip_until && new Date(a.vip_until).getTime() > now;
     const bVip = b.vip_level !== "normal" && b.vip_until && new Date(b.vip_until).getTime() > now;
     if (aVip && !bVip) return -1;
@@ -163,7 +175,10 @@ async function runJobsQuery({
       const bGold = b.vip_level === "gold" ? 0 : 1;
       if (aGold !== bGold) return aGold - bGold;
     }
-    return 0; // keep DB order for same tier
+    // Same VIP tier → featured ahead of non-featured (post-expiry-stripped).
+    if (a.is_featured && !b.is_featured) return -1;
+    if (!a.is_featured && b.is_featured) return 1;
+    return 0;
   });
 
   return { jobs: sorted, count: count ?? 0 };
@@ -482,7 +497,20 @@ export async function getJobsByEmployer(
     return [];
   }
 
-  return data ?? [];
+  // Lazy expiry: strip the Featured star from paid-extra rows whose window
+  // has closed so the employer's view matches the public feed (the DB row is
+  // reconciled lazily — no cron).
+  const nowMs = Date.now();
+  return (data ?? []).map((job) => {
+    if (
+      job.is_featured &&
+      job.featured_until !== null &&
+      new Date(job.featured_until).getTime() <= nowMs
+    ) {
+      return { ...job, is_featured: false };
+    }
+    return job;
+  });
 }
 
 // Note: Job detail page selects extended company fields (city, website, description).

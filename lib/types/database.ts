@@ -193,6 +193,7 @@ export type Database = {
           external_source: string | null;
           vip_level: "normal" | "silver" | "gold";
           vip_until: string | null;
+          featured_until: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -219,6 +220,7 @@ export type Database = {
           tags?: string[];
           views_count?: number;
           is_featured?: boolean;
+          featured_until?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -245,6 +247,7 @@ export type Database = {
           tags?: string[];
           views_count?: number;
           is_featured?: boolean;
+          featured_until?: string | null;
           created_at?: string;
           updated_at?: string;
         };
