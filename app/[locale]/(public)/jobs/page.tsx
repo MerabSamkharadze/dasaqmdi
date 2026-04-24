@@ -239,7 +239,7 @@ export default async function JobsPage({
           originalTerm={searchFallback.originalTerm}
           resolvedCategories={searchFallback.resolvedCategories}
           locale={locale}
-          template={t("filters.fallbackBanner")}
+          template={t.raw("filters.fallbackBanner")}
         />
       )}
 
